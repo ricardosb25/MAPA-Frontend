@@ -1,0 +1,217 @@
+import { Component } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
+
+@Component({
+  selector: 'app-header-navbar',
+  standalone: true,
+  imports: [CommonModule, RouterModule],
+  template: `
+    <header class="navbar-header">
+      <div class="navbar-left">
+        <div class="brand-group">
+          <div class="brand-icon-badge">
+            <i class="fa-solid fa-gauge-high"></i>
+          </div>
+          <div class="brand-text-container">
+            <span class="brand-main-title">MAPA</span>
+            <span class="brand-sub-title">MOTOR ANALYSIS ACADEMY</span>
+          </div>
+        </div>
+      </div>
+
+      <nav class="navbar-center">
+        <a routerLink="/dashboard" class="nav-item">
+          <i class="fa-solid fa-border-all nav-icon"></i>
+          <span>Painel</span>
+        </a>
+        <a routerLink="/garage" routerLinkActive="active" class="nav-item">
+          <i class="fa-solid fa-warehouse nav-icon"></i>
+          <span>Garagem</span>
+        </a>
+        <a routerLink="/calibration" class="nav-item">
+          <i class="fa-solid fa-sliders nav-icon"></i>
+          <span>Calibração</span>
+        </a>
+        <a routerLink="/dyno" class="nav-item">
+          <i class="fa-solid fa-gauge-high nav-icon"></i>
+          <span>Dinamômetro</span>
+        </a>
+      </nav>
+
+      <div class="navbar-right">
+        <button type="button" class="theme-toggle-button" aria-label="Toggle theme">
+          <i class="fa-regular fa-sun"></i>
+        </button>
+        
+        <div class="class-badge">
+          TURMA MEC-4B
+        </div>
+
+        <div class="user-profile-info">
+          <span class="user-name">Ricardo B.</span>
+          <span class="user-role">INSTRUTOR</span>
+        </div>
+      </div>
+    </header>
+  `,
+  styles: [`
+    .navbar-header {
+      width: 100%;
+      height: 64px;
+      background-color: #e5e7eb;
+      border-bottom: 1px solid #cbd5e1;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 24px;
+      box-sizing: border-box;
+    }
+
+    .navbar-left {
+      display: flex;
+      align-items: center;
+    }
+
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .brand-icon-badge {
+      width: 34px;
+      height: 34px;
+      background-color: #0099ff;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ffffff;
+      font-size: 1rem;
+    }
+
+    .brand-text-container {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
+    }
+
+    .brand-main-title {
+      font-weight: 900;
+      font-size: 1.15rem;
+      letter-spacing: -0.02em;
+      color: #0f172a;
+    }
+
+    .brand-sub-title {
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      color: #64748b;
+      text-transform: uppercase;
+    }
+
+    .navbar-center {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      border-radius: 8px;
+      text-decoration: none;
+      color: #475569;
+      font-size: 0.875rem;
+      font-weight: 600;
+      transition: all 0.2s ease;
+
+      &:hover {
+        background-color: #d1d5db;
+        color: #0f172a;
+      }
+
+      &.active {
+        background-color: #dbeafe;
+        color: #0284c7;
+        border: 1px solid #bfdbfe;
+      }
+    }
+
+    .nav-icon {
+      font-size: 0.9rem;
+    }
+
+    .navbar-right {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .theme-toggle-button {
+      background: none;
+      border: none;
+      color: #64748b;
+      font-size: 1rem;
+      cursor: pointer;
+      padding: 6px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      &:hover {
+        color: #0f172a;
+        background-color: #d1d5db;
+      }
+    }
+
+    .class-badge {
+      border: 1px solid #94a3b8;
+      border-radius: 4px;
+      padding: 4px 8px;
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      color: #334155;
+      background-color: rgba(255, 255, 255, 0.4);
+    }
+
+    .user-profile-info {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      line-height: 1.2;
+    }
+
+    .user-name {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #0f172a;
+    }
+
+    .user-role {
+      font-size: 0.65rem;
+      font-weight: 700;
+      color: #64748b;
+      letter-spacing: 0.05em;
+    }
+
+    @media (max-width: 992px) {
+      .navbar-header {
+        flex-wrap: wrap;
+        height: auto;
+        padding: 12px 16px;
+        gap: 12px;
+      }
+      .brand-sub-title {
+        display: none;
+      }
+    }
+  `]
+})
+export class HeaderNavbarComponent {}
