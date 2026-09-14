@@ -1,17 +1,15 @@
-export type EngineAspirationType = 'ASPIRADO' | 'TURBO';
-
-export interface EngineSpecification {
-  displacement: string;
-  compressionRatio: string;
-  revLimit: string;
-}
+export type EngineAspirationType = 'ASPIRADO' | 'TURBO' | string;
 
 export interface EngineModel {
-  id: string;
+  id: number;
   manufacturer: string;
   name: string;
-  aspiration: EngineAspirationType;
   description: string;
-  specification: EngineSpecification;
-  isSelected: boolean;
+  displacementLiters: number;
+  displacementCc: number;
+  compressionRatio: number;
+  rpmCutoff: number;
+  aspirationType: EngineAspirationType;
+  createdAt: string;
+  isSelected?: boolean;
 }

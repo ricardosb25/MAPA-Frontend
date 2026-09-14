@@ -9,81 +9,29 @@ import { EngineService } from './engine.service';
 export class MockEngineService implements EngineService {
   private initialEngines: EngineModel[] = [
     {
-      id: 'ap-1-8-8v',
+      id: 1,
       manufacturer: 'VOLKSWAGEN',
       name: 'AP 1.8 8V',
-      aspiration: 'ASPIRADO',
+      aspirationType: 'ASPIRADO',
       description: 'Motor didático clássico. Ideal para a primeira calibração de ignição.',
-      specification: {
-        displacement: '1.8L (1.781 cm³)',
-        compressionRatio: '9.2:1',
-        revLimit: '6500 rpm'
-      },
+      displacementLiters: 1.8,
+      displacementCc: 1781,
+      compressionRatio: 9.2,
+      rpmCutoff: 6500,
+      createdAt: '2026-09-12T00:00:00.000Z',
       isSelected: true
     },
     {
-      id: 'ea888-2-0-tsi',
+      id: 2,
       manufacturer: 'VOLKSWAGEN',
       name: 'EA888 2.0 TSI',
-      aspiration: 'TURBO',
+      aspirationType: 'TURBO',
       description: 'Injeção direta e turbo twin-scroll. Cuidado com detonação em carga alta.',
-      specification: {
-        displacement: '1.8L (1.781 cm³)',
-        compressionRatio: '9.2:1',
-        revLimit: '6500 rpm'
-      },
-      isSelected: false
-    },
-    {
-      id: '2jz-gte-3-0',
-      manufacturer: 'TOYOTA',
-      name: '2JZ-GTE 3.0',
-      aspiration: 'TURBO',
-      description: 'Seis em linha lendário. Muita margem de boost, muita chance de fundir.',
-      specification: {
-        displacement: '1.8L (1.781 cm³)',
-        compressionRatio: '9.2:1',
-        revLimit: '6500 rpm'
-      },
-      isSelected: false
-    },
-    {
-      id: 'k20a-vtec',
-      manufacturer: 'HONDA',
-      name: 'K20A VTEC',
-      aspiration: 'ASPIRADO',
-      description: 'Alta compressão e giro alto. Avanço agressivo demais destrói pistão.',
-      specification: {
-        displacement: '1.8L (1.781 cm³)',
-        compressionRatio: '9.2:1',
-        revLimit: '8500 rpm'
-      },
-      isSelected: false
-    },
-    {
-      id: 'ls3-6-2-v8',
-      manufacturer: 'GENERAL MOTORS',
-      name: 'LS3 6.2 V8',
-      aspiration: 'ASPIRADO',
-      description: 'Torque desde a marcha lenta. Excelente para estudar curva de carga.',
-      specification: {
-        displacement: '1.8L (1.781 cm³)',
-        compressionRatio: '9.2:1',
-        revLimit: '6500 rpm'
-      },
-      isSelected: false
-    },
-    {
-      id: 'b58-3-0-turbo',
-      manufacturer: 'BMW',
-      name: 'B58 3.0 Turbo',
-      aspiration: 'TURBO',
-      description: 'Turbo moderno com alta compressão. Exige mistura rica no topo.',
-      specification: {
-        displacement: '1.8L (1.781 cm³)',
-        compressionRatio: '9.2:1',
-        revLimit: '6500 rpm'
-      },
+      displacementLiters: 2.0,
+      displacementCc: 1984,
+      compressionRatio: 9.6,
+      rpmCutoff: 6800,
+      createdAt: '2026-09-12T00:00:00.000Z',
       isSelected: false
     }
   ];
@@ -105,7 +53,7 @@ export class MockEngineService implements EngineService {
     let newlySelectedEngine: EngineModel | undefined;
 
     const updatedEngines = currentEngines.map((engine) => {
-      if (engine.id === engineId) {
+      if (engine.id.toString() === engineId) {
         newlySelectedEngine = { ...engine, isSelected: true };
         return newlySelectedEngine;
       }

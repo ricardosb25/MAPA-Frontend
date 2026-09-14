@@ -119,7 +119,7 @@ export class GarageCatalogPageComponent implements OnInit {
     this.engineService.selectEngine(engineId).subscribe();
   }
 
-  trackByEngineId(index: number, engine: EngineModel): string {
+  trackByEngineId(index: number, engine: EngineModel): number {
     return engine.id;
   }
 }

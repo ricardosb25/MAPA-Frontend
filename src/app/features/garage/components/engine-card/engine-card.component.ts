@@ -15,7 +15,7 @@ import { EngineSpecItemComponent } from '../engine-spec-item/engine-spec-item.co
           <span class="manufacturer-text">{{ engine.manufacturer }}</span>
           <h3 class="engine-name">{{ engine.name }}</h3>
         </div>
-        <app-aspiration-badge [aspiration]="engine.aspiration"></app-aspiration-badge>
+        <app-aspiration-badge [aspiration]="engine.aspirationType"></app-aspiration-badge>
       </div>
 
       <p class="description-text">
@@ -25,9 +25,18 @@ import { EngineSpecItemComponent } from '../engine-spec-item/engine-spec-item.co
       <div class="divider"></div>
 
       <div class="specs-grid">
-        <app-engine-spec-item label="Cilindrada" [value]="engine.specification.displacement"></app-engine-spec-item>
-        <app-engine-spec-item label="Compressão" [value]="engine.specification.compressionRatio"></app-engine-spec-item>
-        <app-engine-spec-item label="Corte" [value]="engine.specification.revLimit"></app-engine-spec-item>
+        <app-engine-spec-item
+          label="Cilindrada"
+          [value]="engine.displacementLiters + 'L (' + engine.displacementCc + ' cm³)'"
+        ></app-engine-spec-item>
+        <app-engine-spec-item
+          label="Compressão"
+          [value]="engine.compressionRatio + ':1'"
+        ></app-engine-spec-item>
+        <app-engine-spec-item
+          label="Corte"
+          [value]="engine.rpmCutoff + ' rpm'"
+        ></app-engine-spec-item>
       </div>
 
       <button
@@ -166,7 +175,7 @@ export class EngineCardComponent {
 
   onSelectEngine(): void {
     if (!this.engine.isSelected) {
-      this.selectEngine.emit(this.engine.id);
+      this.selectEngine.emit(this.engine.id.toString());
     }
   }
 }
