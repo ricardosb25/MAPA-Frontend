@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
+import { AuthService } from '../../../core/services/auth.service';
 
 @Component({
   selector: 'app-header-navbar',
@@ -49,9 +50,13 @@ import { RouterModule } from '@angular/router';
         </div>
 
         <div class="user-profile-info">
-          <span class="user-name">Ricardo B.</span>
-          <span class="user-role">INSTRUTOR</span>
+          <span class="user-name">{{ (authService.currentUser$ | async)?.fullName ?? 'Visitante' }}</span>
+          <span class="user-role">{{ getRoleLabel((authService.currentUser$ | async)?.role) }}</span>
         </div>
+
+        <button type="button" class="theme-toggle-button" aria-label="Sair" (click)="handleLogout()">
+          <i class="fa-solid fa-right-from-bracket"></i>
+        </button>
       </div>
     </header>
   `,
@@ -214,4 +219,26 @@ import { RouterModule } from '@angular/router';
     }
   `]
 })
-export class HeaderNavbarComponent {}
+export class HeaderNavbarComponent {
+  constructor(
+    readonly authService: AuthService,
+    private readonly router: Router
+  ) {}
+
+  getRoleLabel(role: string | undefined): string {
+    if (role === 'TEACHER') {
+      return 'PROFESSOR';
+    }
+
+    if (role === 'STUDENT') {
+      return 'ALUNO';
+    }
+
+    return 'VISITANTE';
+  }
+
+  handleLogout(): void {
+    this.authService.logout();
+    void this.router.navigate(['/login']);
+  }
+}

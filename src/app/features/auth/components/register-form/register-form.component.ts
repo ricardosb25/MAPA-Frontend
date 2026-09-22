@@ -125,10 +125,9 @@ export const passwordMatchValidator: ValidatorFn = (controlGroup: AbstractContro
           <div class="input-wrapper select-wrapper" [class.input-error]="isFieldInvalid('profileType')">
             <i class="pi pi-user input-prefix-icon"></i>
             <select id="profileTypeSelect" formControlName="profileType" class="form-input custom-select">
-              <option value="" disabled selected hidden>Professor, aluno ou outro</option>
+              <option value="" disabled selected hidden>Professor ou aluno</option>
               <option [value]="profileTypes.TEACHER">Professor</option>
               <option [value]="profileTypes.STUDENT">Aluno</option>
-              <option [value]="profileTypes.OTHER">Outro</option>
             </select>
             <i class="pi pi-chevron-down input-suffix-icon"></i>
           </div>

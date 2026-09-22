@@ -1,8 +1,10 @@
-import { Component } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../../core/services/auth.service';
 import { RegisterCredentials } from '../../../../core/models/auth.model';
+import { FeedbackService } from '../../../../shared/services/feedback.service';
 import { InfoSidebarComponent } from '../../../../shared/components/info-sidebar/info-sidebar.component';
 import { RegisterFormComponent } from '../../components/register-form/register-form.component';
 
@@ -21,12 +23,6 @@ import { RegisterFormComponent } from '../../components/register-form/register-f
           [isSubmitting]="isSubmitting"
           (submitRegisterForm)="onRegisterSubmit($event)"
         ></app-register-form>
-
-        @if (feedbackMessage) {
-          <div class="feedback-toast" [class.feedback-success]="isSuccess">
-            {{ feedbackMessage }}
-          </div>
-        }
       </main>
     </div>
   `,
@@ -58,35 +54,6 @@ import { RegisterFormComponent } from '../../components/register-form/register-f
       position: relative;
     }
 
-    .feedback-toast {
-      position: fixed;
-      bottom: 2rem;
-      right: 2rem;
-      padding: 1rem 1.5rem;
-      background-color: #1e293b;
-      color: #ffffff;
-      border-radius: 12px;
-      font-size: 0.9rem;
-      font-weight: 500;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-      animation: slideIn 0.3s ease;
-    }
-
-    .feedback-toast.feedback-success {
-      background-color: #10b981;
-    }
-
-    @keyframes slideIn {
-      from {
-        opacity: 0;
-        transform: translateY(10px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
     @media (max-width: 991px) {
       .auth-page-layout {
         flex-direction: column;
@@ -101,34 +68,40 @@ import { RegisterFormComponent } from '../../components/register-form/register-f
     }
   `]
 })
-export class RegisterPageComponent {
+export class RegisterPageComponent implements OnDestroy {
   isSubmitting = false;
-  feedbackMessage = '';
-  isSuccess = false;
+  private feedbackTimeoutId: ReturnType<typeof setTimeout> | null = null;
 
   constructor(
     private readonly authService: AuthService,
+    private readonly feedbackService: FeedbackService,
     private readonly router: Router
   ) {}
 
+  ngOnDestroy(): void {
+    if (this.feedbackTimeoutId) {
+      clearTimeout(this.feedbackTimeoutId);
+    }
+  }
+
   onRegisterSubmit(credentials: RegisterCredentials): void {
     this.isSubmitting = true;
-    this.feedbackMessage = '';
 
     this.authService.register(credentials).subscribe({
-      next: (response) => {
+      next: (createdUser) => {
         this.isSubmitting = false;
-        this.isSuccess = true;
-        this.feedbackMessage = `Conta criada com sucesso! Bem-vindo(a), ${response.user.fullName}.`;
+        this.feedbackService.showSuccess(
+          'Conta criada',
+          `Bem-vindo(a), ${createdUser.fullName}. Faça login para continuar.`
+        );
 
-        setTimeout(() => {
-          this.router.navigate(['/garage']);
-        }, 600);
+        this.feedbackTimeoutId = setTimeout(() => {
+          this.router.navigate(['/login']);
+        }, 900);
       },
-      error: () => {
+      error: (httpError: HttpErrorResponse) => {
         this.isSubmitting = false;
-        this.isSuccess = false;
-        this.feedbackMessage = 'Erro ao cadastrar conta. Tente novamente.';
+        this.feedbackService.showAuthError(httpError, 'register');
       }
     });
   }
