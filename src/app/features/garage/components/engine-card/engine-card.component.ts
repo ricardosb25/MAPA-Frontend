@@ -39,20 +39,42 @@ import { EngineSpecItemComponent } from '../engine-spec-item/engine-spec-item.co
         ></app-engine-spec-item>
       </div>
 
-      <button
-        type="button"
-        class="action-button"
-        [class.selected-button]="engine.isSelected"
-        (click)="onSelectEngine()"
-      >
-        <ng-container *ngIf="engine.isSelected; else unselectedTemplate">
-          <i class="fa-solid fa-check check-icon"></i>
-          <span>Motor na bancada</span>
-        </ng-container>
-        <ng-template #unselectedTemplate>
-          <span>Selecionar motor</span>
-        </ng-template>
-      </button>
+      <div class="card-action-row">
+        <button
+          type="button"
+          class="action-button"
+          [class.selected-button]="engine.isSelected"
+          (click)="onSelectEngine()"
+        >
+          <ng-container *ngIf="engine.isSelected; else unselectedTemplate">
+            <i class="fa-solid fa-check check-icon"></i>
+            <span>Motor na bancada</span>
+          </ng-container>
+          <ng-template #unselectedTemplate>
+            <span>Selecionar motor</span>
+          </ng-template>
+        </button>
+
+        <button
+          type="button"
+          class="icon-button edit-button"
+          title="Editar motor"
+          aria-label="Editar motor"
+          (click)="onEditEngine()"
+        >
+          <i class="fa-solid fa-pen"></i>
+        </button>
+
+        <button
+          type="button"
+          class="icon-button delete-button"
+          title="Excluir motor"
+          aria-label="Excluir motor"
+          (click)="onDeleteEngine()"
+        >
+          <i class="fa-solid fa-trash"></i>
+        </button>
+      </div>
     </div>
   `,
   styles: [`
@@ -130,8 +152,14 @@ import { EngineSpecItemComponent } from '../engine-spec-item/engine-spec-item.co
       margin-bottom: 20px;
     }
 
+    .card-action-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
     .action-button {
-      width: 100%;
+      flex: 1;
       height: 42px;
       border: none;
       border-radius: 8px;
@@ -167,15 +195,53 @@ import { EngineSpecItemComponent } from '../engine-spec-item/engine-spec-item.co
     .check-icon {
       font-size: 0.9rem;
     }
+
+    .icon-button {
+      width: 42px;
+      height: 42px;
+      min-width: 42px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      background-color: #ffffff;
+      color: #475569;
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+    }
+
+    .edit-button:hover {
+      background-color: #0099ff;
+      border-color: #0099ff;
+      color: #ffffff;
+    }
+
+    .delete-button:hover {
+      background-color: #dc2626;
+      border-color: #dc2626;
+      color: #ffffff;
+    }
   `]
 })
 export class EngineCardComponent {
   @Input({ required: true }) engine!: EngineModel;
   @Output() selectEngine = new EventEmitter<string>();
+  @Output() editEngine = new EventEmitter<EngineModel>();
+  @Output() deleteEngine = new EventEmitter<EngineModel>();
 
   onSelectEngine(): void {
     if (!this.engine.isSelected) {
       this.selectEngine.emit(this.engine.id.toString());
     }
+  }
+
+  onEditEngine(): void {
+    this.editEngine.emit(this.engine);
+  }
+
+  onDeleteEngine(): void {
+    this.deleteEngine.emit(this.engine);
   }
 }
