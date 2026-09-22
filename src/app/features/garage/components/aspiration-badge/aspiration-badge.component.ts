@@ -7,9 +7,9 @@ import { EngineAspirationType } from '../../../../core/models/engine.model';
   standalone: true,
   imports: [CommonModule],
   template: `
-    <div class="aspiration-badge" [ngClass]="aspiration.toLowerCase()">
-      <i class="badge-icon" [ngClass]="aspiration === 'TURBO' ? 'fa-solid fa-wind' : 'fa-solid fa-bolt'"></i>
-      <span class="badge-text">{{ aspiration === 'TURBO' ? 'Turbo' : 'Aspirado' }}</span>
+    <div class="aspiration-badge" [ngClass]="normalizedAspiration">
+      <i class="badge-icon" [ngClass]="badgeIcon"></i>
+      <span class="badge-text">{{ badgeLabel }}</span>
     </div>
   `,
   styles: [`
@@ -37,6 +37,12 @@ import { EngineAspirationType } from '../../../../core/models/engine.model';
       border-color: #fcd34d;
     }
 
+    .aspiration-badge.supercharger {
+      background-color: #e0f2fe;
+      color: #0369a1;
+      border-color: #7dd3fc;
+    }
+
     .badge-icon {
       font-size: 0.7rem;
     }
@@ -44,4 +50,33 @@ import { EngineAspirationType } from '../../../../core/models/engine.model';
 })
 export class AspirationBadgeComponent {
   @Input({ required: true }) aspiration!: EngineAspirationType;
+
+  private readonly badgeConfiguration: Record<
+    EngineAspirationType,
+    { label: string; iconClass: string }
+  > = {
+    ASPIRADO: { label: 'Aspirado', iconClass: 'fa-solid fa-bolt' },
+    TURBO: { label: 'Turbo', iconClass: 'fa-solid fa-wind' },
+    SUPERCHARGER: { label: 'Supercharger', iconClass: 'fa-solid fa-gears' }
+  };
+
+  get normalizedAspiration(): string {
+    return this.matchedAspiration.toLowerCase();
+  }
+
+  get badgeLabel(): string {
+    return this.badgeConfiguration[this.matchedAspiration].label;
+  }
+
+  get badgeIcon(): string {
+    return this.badgeConfiguration[this.matchedAspiration].iconClass;
+  }
+
+  private get matchedAspiration(): EngineAspirationType {
+    const matchedOption = Object.keys(this.badgeConfiguration).find(
+      (aspirationOption) => aspirationOption === this.aspiration.toUpperCase()
+    );
+
+    return (matchedOption as EngineAspirationType | undefined) ?? 'ASPIRADO';
+  }
 }
