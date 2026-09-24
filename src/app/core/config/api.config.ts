@@ -9,5 +9,8 @@ export const API_CONFIG = {
       register: `${environment.apiUrl}/auth/register`,
       me: `${environment.apiUrl}/auth/me`
     }
+  },
+  buildEngineByIdUrl(engineId: string | number): string {
+    return `${environment.apiUrl}/motores/${engineId}`;
   }
 };

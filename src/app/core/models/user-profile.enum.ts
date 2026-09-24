@@ -1,6 +1,7 @@
 export enum UserProfileType {
   TEACHER = 'TEACHER',
-  STUDENT = 'STUDENT'
+  STUDENT = 'STUDENT',
+  ADMIN = 'ADMIN'
 }
 
 export interface UserProfileOption {

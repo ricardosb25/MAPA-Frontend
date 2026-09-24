@@ -55,25 +55,27 @@ import { EngineSpecItemComponent } from '../engine-spec-item/engine-spec-item.co
           </ng-template>
         </button>
 
-        <button
-          type="button"
-          class="icon-button edit-button"
-          title="Editar motor"
-          aria-label="Editar motor"
-          (click)="onEditEngine()"
-        >
-          <i class="fa-solid fa-pen"></i>
-        </button>
+        @if (canManage) {
+          <button
+            type="button"
+            class="icon-button edit-button"
+            title="Editar motor"
+            aria-label="Editar motor"
+            (click)="onEditEngine()"
+          >
+            <i class="fa-solid fa-pen"></i>
+          </button>
 
-        <button
-          type="button"
-          class="icon-button delete-button"
-          title="Excluir motor"
-          aria-label="Excluir motor"
-          (click)="onDeleteEngine()"
-        >
-          <i class="fa-solid fa-trash"></i>
-        </button>
+          <button
+            type="button"
+            class="icon-button delete-button"
+            title="Excluir motor"
+            aria-label="Excluir motor"
+            (click)="onDeleteEngine()"
+          >
+            <i class="fa-solid fa-trash"></i>
+          </button>
+        }
       </div>
     </div>
   `,
@@ -227,6 +229,7 @@ import { EngineSpecItemComponent } from '../engine-spec-item/engine-spec-item.co
 })
 export class EngineCardComponent {
   @Input({ required: true }) engine!: EngineModel;
+  @Input() canManage = false;
   @Output() selectEngine = new EventEmitter<string>();
   @Output() editEngine = new EventEmitter<EngineModel>();
   @Output() deleteEngine = new EventEmitter<EngineModel>();

@@ -226,6 +226,10 @@ export class HeaderNavbarComponent {
   ) {}
 
   getRoleLabel(role: string | undefined): string {
+    if (role === 'ADMIN') {
+      return 'ADMINISTRADOR';
+    }
+
     if (role === 'TEACHER') {
       return 'PROFESSOR';
     }

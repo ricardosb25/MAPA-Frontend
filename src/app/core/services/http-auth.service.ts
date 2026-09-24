@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable, map, tap } from 'rxjs';
+import { BehaviorSubject, Observable, distinctUntilChanged, map, tap } from 'rxjs';
 import { API_CONFIG } from '../config/api.config';
 import {
   AuthResponse,
@@ -11,6 +11,7 @@ import {
   mapLoginResponseToAuth,
   mapRegisterRequest
 } from '../models/auth.model';
+import { UserProfileType } from '../models/user-profile.enum';
 import { AuthService } from './auth.service';
 import { TokenStorageService } from './token-storage.service';
 
@@ -20,6 +21,7 @@ import { TokenStorageService } from './token-storage.service';
 export class HttpAuthService extends AuthService {
   private readonly currentUserSubject: BehaviorSubject<UserModel | null>;
   override readonly currentUser$: Observable<UserModel | null>;
+  override readonly isAdmin$: Observable<boolean>;
 
   constructor(
     private readonly httpClient: HttpClient,
@@ -30,6 +32,10 @@ export class HttpAuthService extends AuthService {
     const initialUser = hasExpiredSession ? null : this.tokenStorage.getUser();
     this.currentUserSubject = new BehaviorSubject<UserModel | null>(initialUser);
     this.currentUser$ = this.currentUserSubject.asObservable();
+    this.isAdmin$ = this.currentUser$.pipe(
+      map((user) => user?.role === UserProfileType.ADMIN),
+      distinctUntilChanged()
+    );
   }
 
   override login(credentials: LoginCredentials): Observable<AuthResponse> {
@@ -77,6 +83,10 @@ export class HttpAuthService extends AuthService {
 
   override isAuthenticated(): boolean {
     return this.getToken() !== null && !this.tokenStorage.isSessionExpired();
+  }
+
+  override isAdmin(): boolean {
+    return this.currentUserSubject.getValue()?.role === UserProfileType.ADMIN;
   }
 
   private persistSession(token: string, authenticatedUser: UserModel, expiresInSeconds?: number): void {

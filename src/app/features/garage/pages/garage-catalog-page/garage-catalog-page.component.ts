@@ -8,6 +8,7 @@ import {
   EnginePayload,
   PageResponse
 } from '../../../../core/models/engine.model';
+import { AuthService } from '../../../../core/services/auth.service';
 import { EngineService } from '../../../../core/services/engine.service';
 import { HeaderNavbarComponent } from '../../../../shared/components/header-navbar/header-navbar.component';
 import { PaginationControlsComponent } from '../../../../shared/components/pagination-controls/pagination-controls.component';
@@ -40,10 +41,12 @@ import { ConfirmDialogComponent } from '../../components/confirm-dialog/confirm-
             </p>
           </div>
 
-          <button type="button" class="create-engine-button" (click)="handleOpenCreateForm()">
-            <i class="fa-solid fa-plus"></i>
-            <span>Cadastrar motor</span>
-          </button>
+          @if (authService.isAdmin$ | async) {
+            <button type="button" class="create-engine-button" (click)="handleOpenCreateForm()">
+              <i class="fa-solid fa-plus"></i>
+              <span>Cadastrar motor</span>
+            </button>
+          }
         </section>
 
         <section class="engines-grid-section">
@@ -53,6 +56,7 @@ import { ConfirmDialogComponent } from '../../components/confirm-dialog/confirm-
                 <app-engine-card
                   *ngFor="let engine of enginesPage.content; trackBy: trackByEngineId"
                   [engine]="engine"
+                  [canManage]="(authService.isAdmin$ | async) ?? false"
                   (selectEngine)="handleSelectEngine($event)"
                   (editEngine)="handleOpenEditForm($event)"
                   (deleteEngine)="handleDeleteRequest($event)"
@@ -329,7 +333,10 @@ export class GarageCatalogPageComponent implements OnInit, OnDestroy {
   private hasAppliedInitialSelection = false;
   private feedbackTimeoutId: ReturnType<typeof setTimeout> | null = null;
 
-  constructor(private readonly engineService: EngineService) {}
+  constructor(
+    private readonly engineService: EngineService,
+    readonly authService: AuthService
+  ) {}
 
   ngOnInit(): void {
     this.enginesPage$ = this.pageQuerySubject.pipe(
@@ -362,6 +369,10 @@ export class GarageCatalogPageComponent implements OnInit, OnDestroy {
   }
 
   handleOpenCreateForm(): void {
+    if (!this.authService.isAdmin()) {
+      return;
+    }
+
     this.engineBeingEdited = null;
     this.formErrorMessage = null;
     this.formServerFieldErrors = null;
@@ -369,6 +380,10 @@ export class GarageCatalogPageComponent implements OnInit, OnDestroy {
   }
 
   handleOpenEditForm(engine: EngineModel): void {
+    if (!this.authService.isAdmin()) {
+      return;
+    }
+
     this.engineBeingEdited = engine;
     this.formErrorMessage = null;
     this.formServerFieldErrors = null;
@@ -385,6 +400,10 @@ export class GarageCatalogPageComponent implements OnInit, OnDestroy {
   }
 
   handleSubmitEngineForm(payload: EnginePayload): void {
+    if (!this.authService.isAdmin()) {
+      return;
+    }
+
     const engineBeingEdited = this.engineBeingEdited;
 
     this.isSubmittingForm = true;
@@ -422,6 +441,10 @@ export class GarageCatalogPageComponent implements OnInit, OnDestroy {
   }
 
   handleDeleteRequest(engine: EngineModel): void {
+    if (!this.authService.isAdmin()) {
+      return;
+    }
+
     this.engineBeingDeleted = engine;
     this.deleteErrorMessage = null;
     this.isDeleteDialogOpen = true;
@@ -437,6 +460,10 @@ export class GarageCatalogPageComponent implements OnInit, OnDestroy {
   }
 
   handleConfirmDelete(): void {
+    if (!this.authService.isAdmin()) {
+      return;
+    }
+
     const engineBeingDeleted = this.engineBeingDeleted;
 
     if (engineBeingDeleted === null) {
