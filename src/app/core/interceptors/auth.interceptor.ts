@@ -8,7 +8,9 @@ import { TokenStorageService } from '../services/token-storage.service';
 function isPublicAuthRequest(request: HttpRequest<unknown>): boolean {
   return (
     request.url === API_CONFIG.endpoints.auth.login ||
-    request.url === API_CONFIG.endpoints.auth.register
+    request.url === API_CONFIG.endpoints.auth.register ||
+    request.url === API_CONFIG.endpoints.auth.forgotPassword ||
+    request.url === API_CONFIG.endpoints.auth.resetPassword
   );
 }
 

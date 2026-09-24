@@ -2,41 +2,25 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { LoginCredentials } from '../../../../core/models/auth.model';
+import { ResetPasswordRequest } from '../../../../core/models/auth.model';
+import { passwordMatchValidator } from '../register-form/register-form.component';
 
 @Component({
-  selector: 'app-login-form',
+  selector: 'app-reset-password-form',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterLink],
   template: `
     <div class="form-card-container">
-      <h2 class="form-title">Realizar login</h2>
-      <p class="form-subtitle">Comece hoje mesmo a transformar suas ideias em realidade.</p>
+      <h2 class="form-title">Nova senha</h2>
+      <p class="form-subtitle">Crie uma nova senha para a sua conta. Ela deve ter no mínimo 8 caracteres.</p>
 
-      <form [formGroup]="loginForm" (ngSubmit)="handleFormSubmit()" class="auth-form">
+      <form [formGroup]="resetPasswordForm" (ngSubmit)="handleFormSubmit()" class="auth-form">
         <div class="field-group">
-          <label for="emailInput" class="field-label">E-mail</label>
-          <div class="input-wrapper" [class.input-error]="isFieldInvalid('email')">
-            <i class="pi pi-envelope input-prefix-icon"></i>
-            <input
-              id="emailInput"
-              type="email"
-              formControlName="email"
-              placeholder="exemplo@email.com"
-              class="form-input"
-            />
-          </div>
-          @if (isFieldInvalid('email')) {
-            <span class="error-message">Informe um e-mail válido.</span>
-          }
-        </div>
-
-        <div class="field-group">
-          <label for="passwordInput" class="field-label">Senha</label>
+          <label for="resetPasswordInput" class="field-label">Nova senha</label>
           <div class="input-wrapper" [class.input-error]="isFieldInvalid('password')">
             <i class="pi pi-lock input-prefix-icon"></i>
             <input
-              id="passwordInput"
+              id="resetPasswordInput"
               [type]="isPasswordVisible ? 'text' : 'password'"
               formControlName="password"
               placeholder="Mínimo 8 caracteres"
@@ -56,21 +40,42 @@ import { LoginCredentials } from '../../../../core/models/auth.model';
           }
         </div>
 
-        <div class="forgot-password-row">
-          <a routerLink="/forgot-password" class="route-link forgot-password-link">Esqueceu a senha?</a>
+        <div class="field-group">
+          <label for="confirmResetPasswordInput" class="field-label">Confirmar nova senha</label>
+          <div class="input-wrapper" [class.input-error]="isFieldInvalid('confirmPassword')">
+            <i class="pi pi-lock input-prefix-icon"></i>
+            <input
+              id="confirmResetPasswordInput"
+              [type]="isConfirmationPasswordVisible ? 'text' : 'password'"
+              formControlName="confirmPassword"
+              placeholder="Repita a nova senha"
+              class="form-input"
+            />
+            <button
+              type="button"
+              (click)="toggleConfirmationPasswordVisibility()"
+              class="icon-toggle-button"
+              aria-label="Alternar visibilidade da confirmação da senha"
+            >
+              <i [class]="isConfirmationPasswordVisible ? 'pi pi-eye-slash' : 'pi pi-eye'"></i>
+            </button>
+          </div>
+          @if (isFieldInvalid('confirmPassword')) {
+            <span class="error-message">As senhas não coincidem.</span>
+          }
         </div>
 
         <button type="submit" [disabled]="isSubmitting" class="submit-button">
           @if (isSubmitting) {
             <i class="pi pi-spin pi-spinner button-spinner"></i>
-            <span>Entrando...</span>
+            <span>Redefinindo...</span>
           } @else {
-            <span>Entrar</span>
+            <span>Redefinir senha</span>
           }
         </button>
 
         <p class="switch-route-text">
-          Não tem uma conta? <a routerLink="/register" class="route-link">Cadastre-Se</a>
+          Lembrou a senha? <a routerLink="/login" class="route-link">Voltar ao login</a>
         </p>
       </form>
     </div>
@@ -215,16 +220,6 @@ import { LoginCredentials } from '../../../../core/models/auth.model';
       font-size: 1.1rem;
     }
 
-    .forgot-password-row {
-      display: flex;
-      justify-content: flex-end;
-      margin-top: -0.75rem;
-    }
-
-    .forgot-password-link {
-      font-size: 0.85rem;
-    }
-
     .switch-route-text {
       text-align: left;
       font-size: 0.875rem;
@@ -244,34 +239,46 @@ import { LoginCredentials } from '../../../../core/models/auth.model';
     }
   `]
 })
-export class LoginFormComponent {
+export class ResetPasswordFormComponent {
   @Input() isSubmitting = false;
-  @Output() submitLoginForm = new EventEmitter<LoginCredentials>();
+  @Input() token = '';
+  @Output() submitResetPasswordForm = new EventEmitter<ResetPasswordRequest>();
 
-  loginForm: FormGroup;
+  resetPasswordForm: FormGroup;
   isPasswordVisible = false;
+  isConfirmationPasswordVisible = false;
 
   constructor(private readonly formBuilder: FormBuilder) {
-    this.loginForm = this.formBuilder.group({
-      email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(8)]]
-    });
+    this.resetPasswordForm = this.formBuilder.group(
+      {
+        password: ['', [Validators.required, Validators.minLength(8)]],
+        confirmPassword: ['', [Validators.required]]
+      },
+      { validators: passwordMatchValidator }
+    );
   }
 
   togglePasswordVisibility(): void {
     this.isPasswordVisible = !this.isPasswordVisible;
   }
 
+  toggleConfirmationPasswordVisibility(): void {
+    this.isConfirmationPasswordVisible = !this.isConfirmationPasswordVisible;
+  }
+
   isFieldInvalid(fieldName: string): boolean {
-    const fieldControl = this.loginForm.get(fieldName);
+    const fieldControl = this.resetPasswordForm.get(fieldName);
     return !!(fieldControl && fieldControl.invalid && (fieldControl.dirty || fieldControl.touched));
   }
 
   handleFormSubmit(): void {
-    if (this.loginForm.valid) {
-      this.submitLoginForm.emit(this.loginForm.value as LoginCredentials);
+    if (this.resetPasswordForm.valid) {
+      this.submitResetPasswordForm.emit({
+        token: this.token,
+        password: this.resetPasswordForm.value.password
+      });
     } else {
-      this.loginForm.markAllAsTouched();
+      this.resetPasswordForm.markAllAsTouched();
     }
   }
 }

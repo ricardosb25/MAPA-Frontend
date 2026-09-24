@@ -25,7 +25,10 @@ export class FeedbackService {
     this.showToast('error', title, message, options);
   }
 
-  showAuthError(httpError: HttpErrorResponse, context: 'login' | 'register'): void {
+  showAuthError(
+    httpError: HttpErrorResponse,
+    context: 'login' | 'register' | 'forgotPassword' | 'resetPassword'
+  ): void {
     if (httpError.status === 0) {
       this.showError(
         'Servidor indisponível',
@@ -39,7 +42,12 @@ export class FeedbackService {
       return;
     }
 
-    this.showRegisterError(httpError);
+    if (context === 'register') {
+      this.showRegisterError(httpError);
+      return;
+    }
+
+    this.showPasswordResetError(httpError, context);
   }
 
   clearAll(): void {
@@ -72,6 +80,20 @@ export class FeedbackService {
     }
 
     this.showError('Erro no cadastro', 'Erro ao cadastrar conta. Tente novamente.');
+  }
+
+  private showPasswordResetError(httpError: HttpErrorResponse, context: 'forgotPassword' | 'resetPassword'): void {
+    if (context === 'forgotPassword') {
+      this.showError('Erro na solicitação', 'Não foi possível processar a solicitação. Tente novamente em instantes.');
+      return;
+    }
+
+    if (httpError.status === 400) {
+      this.showWarning('Link inválido', 'O link de redefinição é inválido ou expirado. Solicite um novo.');
+      return;
+    }
+
+    this.showError('Erro na redefinição', 'Não foi possível redefinir a senha. Tente novamente.');
   }
 
   private showToast(

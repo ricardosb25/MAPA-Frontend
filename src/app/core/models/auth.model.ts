@@ -60,3 +60,16 @@ export function mapLoginResponseToAuth(response: LoginResponseDto): AuthResponse
   };
 }
 
+export interface ForgotPasswordRequest {
+  email: string;
+}
+
+export interface ResetPasswordRequest {
+  token: string;
+  password: string;
+}
+
+export interface MessageResponse {
+  message: string;
+}
+

@@ -4,9 +4,12 @@ import { BehaviorSubject, Observable, distinctUntilChanged, map, tap } from 'rxj
 import { API_CONFIG } from '../config/api.config';
 import {
   AuthResponse,
+  ForgotPasswordRequest,
   LoginCredentials,
   LoginResponseDto,
+  MessageResponse,
   RegisterCredentials,
+  ResetPasswordRequest,
   UserModel,
   mapLoginResponseToAuth,
   mapRegisterRequest
@@ -52,6 +55,14 @@ export class HttpAuthService extends AuthService {
       API_CONFIG.endpoints.auth.register,
       mapRegisterRequest(credentials)
     );
+  }
+
+  override forgotPassword(request: ForgotPasswordRequest): Observable<MessageResponse> {
+    return this.httpClient.post<MessageResponse>(API_CONFIG.endpoints.auth.forgotPassword, request);
+  }
+
+  override resetPassword(request: ResetPasswordRequest): Observable<MessageResponse> {
+    return this.httpClient.post<MessageResponse>(API_CONFIG.endpoints.auth.resetPassword, request);
   }
 
   override getCurrentUser(): Observable<UserModel> {
