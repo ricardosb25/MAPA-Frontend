@@ -84,6 +84,14 @@ export class FeedbackService {
 
   private showPasswordResetError(httpError: HttpErrorResponse, context: 'forgotPassword' | 'resetPassword'): void {
     if (context === 'forgotPassword') {
+      if (httpError.status === 503) {
+        this.showError(
+          'Falha no envio do e-mail',
+          'Não foi possível enviar o e-mail mesmo após as tentativas de reenvio. Entre em contato com o suporte.'
+        );
+        return;
+      }
+
       this.showError('Erro na solicitação', 'Não foi possível processar a solicitação. Tente novamente em instantes.');
       return;
     }
