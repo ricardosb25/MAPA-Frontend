@@ -132,7 +132,7 @@ import { CommonModule } from '@angular/common';
 
     .pagination-size-select {
       height: 34px;
-      padding: 0 8px;
+      padding: 0 28px 0 10px;
       border: 1px solid #cbd5e1;
       border-radius: 8px;
       background-color: #ffffff;
@@ -140,6 +140,24 @@ import { CommonModule } from '@angular/common';
       font-size: 0.8rem;
       font-weight: 600;
       cursor: pointer;
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='14' height='14' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 8px center;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .pagination-size-select:focus {
+      outline: none;
+      border-color: var(--color-primary, #0099ff);
+      box-shadow: 0 0 0 3px rgba(0, 153, 255, 0.15);
+    }
+
+    .pagination-size-select option {
+      background-color: #ffffff;
+      color: #0f172a;
     }
 
     @media (max-width: 640px) {

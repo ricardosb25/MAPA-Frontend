@@ -171,10 +171,9 @@ import { FormBuilder, FormControl, ReactiveFormsModule, Validators } from '@angu
     }
 
     .confirmation-checkbox {
-      width: 16px;
-      height: 16px;
+      width: 18px;
+      height: 18px;
       margin-top: 2px;
-      accent-color: #dc2626;
       cursor: pointer;
     }
 

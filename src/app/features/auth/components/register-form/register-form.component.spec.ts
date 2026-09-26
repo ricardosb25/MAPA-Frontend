@@ -91,4 +91,41 @@ describe('RegisterFormComponent', () => {
     expect(fixture.componentInstance.isTermsModalOpen).toBe(true);
     expect(element.querySelector('app-terms-of-use-modal')).not.toBeNull();
   });
+
+  it('should toggle profile dropdown and select a profile option', () => {
+    const fixture = TestBed.createComponent(RegisterFormComponent);
+    fixture.detectChanges();
+    const component = fixture.componentInstance;
+    const element = fixture.nativeElement as HTMLElement;
+
+    const triggerButton = element.querySelector<HTMLButtonElement>('#profileTypeSelect');
+    expect(triggerButton).not.toBeNull();
+    expect(component.isProfileDropdownOpen).toBe(false);
+
+    triggerButton?.click();
+    fixture.detectChanges();
+    expect(component.isProfileDropdownOpen).toBe(true);
+    expect(element.querySelector('.custom-dropdown-menu')).not.toBeNull();
+
+    const teacherOption = Array.from(element.querySelectorAll<HTMLLIElement>('.custom-dropdown-option'))
+      .find((option) => option.textContent?.includes('Professor'));
+    expect(teacherOption).toBeDefined();
+
+    teacherOption?.click();
+    fixture.detectChanges();
+
+    expect(component.isProfileDropdownOpen).toBe(false);
+    expect(component.registerForm.get('profileType')?.value).toBe(UserProfileType.TEACHER);
+    expect(component.selectedProfileLabel).toBe('Professor');
+  });
+
+  it('should close profile dropdown when clicking outside', () => {
+    const fixture = TestBed.createComponent(RegisterFormComponent);
+    fixture.detectChanges();
+    const component = fixture.componentInstance;
+
+    component.isProfileDropdownOpen = true;
+    component.handleDocumentClick(new MouseEvent('click'));
+    expect(component.isProfileDropdownOpen).toBe(false);
+  });
 });

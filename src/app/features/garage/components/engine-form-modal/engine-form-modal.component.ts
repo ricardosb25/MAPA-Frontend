@@ -405,6 +405,18 @@ export const integerValueValidator: ValidatorFn = (
 
     .form-select {
       cursor: pointer;
+      appearance: none;
+      -webkit-appearance: none;
+      -moz-appearance: none;
+      padding-right: 36px;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='16' height='16' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+    }
+
+    .form-select option {
+      background-color: #ffffff;
+      color: #0f172a;
     }
 
     .error-message {
@@ -443,10 +455,9 @@ export const integerValueValidator: ValidatorFn = (
     }
 
     .confirmation-checkbox {
-      width: 16px;
-      height: 16px;
+      width: 18px;
+      height: 18px;
       margin-top: 2px;
-      accent-color: #0099ff;
       cursor: pointer;
     }
 

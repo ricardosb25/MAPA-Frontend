@@ -2,22 +2,17 @@ import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { AuthService } from '../../../core/services/auth.service';
+import { BrandLogoComponent } from '../brand-logo/brand-logo.component';
 
 @Component({
   selector: 'app-header-navbar',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, BrandLogoComponent],
   template: `
     <header class="navbar-header">
       <div class="navbar-left">
         <div class="brand-group">
-          <div class="brand-icon-badge">
-            <i class="fa-solid fa-gauge-high"></i>
-          </div>
-          <div class="brand-text-container">
-            <span class="brand-main-title">MAPA</span>
-            <span class="brand-sub-title">MOTOR ANALYSIS ACADEMY</span>
-          </div>
+          <app-brand-logo variant="navbar"></app-brand-logo>
         </div>
       </div>
 
@@ -82,39 +77,6 @@ import { AuthService } from '../../../core/services/auth.service';
       display: flex;
       align-items: center;
       gap: 10px;
-    }
-
-    .brand-icon-badge {
-      width: 34px;
-      height: 34px;
-      background-color: #0099ff;
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #ffffff;
-      font-size: 1rem;
-    }
-
-    .brand-text-container {
-      display: flex;
-      align-items: baseline;
-      gap: 6px;
-    }
-
-    .brand-main-title {
-      font-weight: 900;
-      font-size: 1.15rem;
-      letter-spacing: -0.02em;
-      color: #0f172a;
-    }
-
-    .brand-sub-title {
-      font-size: 0.65rem;
-      font-weight: 700;
-      letter-spacing: 0.1em;
-      color: #64748b;
-      text-transform: uppercase;
     }
 
     .navbar-center {
@@ -212,9 +174,6 @@ import { AuthService } from '../../../core/services/auth.service';
         height: auto;
         padding: 12px 16px;
         gap: 12px;
-      }
-      .brand-sub-title {
-        display: none;
       }
     }
   `]
