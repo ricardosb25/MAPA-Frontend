@@ -3,6 +3,11 @@ import { HttpErrorResponse } from '@angular/common/http';
 import { MessageService } from 'primeng/api';
 import { FeedbackSeverity, FeedbackToastOptions } from '../models/feedback.model';
 
+interface ApiErrorPayload {
+  message?: string;
+  fieldErrors?: Array<{ field?: string; message?: string }>;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -75,11 +80,32 @@ export class FeedbackService {
     }
 
     if (httpError.status === 400) {
+      if (this.isTermsAcceptanceRejection(httpError)) {
+        this.showWarning('Aceite dos termos', 'É necessário aceitar os Termos de Uso para concluir o cadastro.');
+        return;
+      }
+
       this.showError('Dados inválidos', 'Verifique os campos e tente novamente.');
       return;
     }
 
     this.showError('Erro no cadastro', 'Erro ao cadastrar conta. Tente novamente.');
+  }
+
+  private isTermsAcceptanceRejection(httpError: HttpErrorResponse): boolean {
+    const apiError = httpError.error as ApiErrorPayload | null;
+    if (!apiError) {
+      return false;
+    }
+
+    const mentionsTerms = (value?: string): boolean =>
+      !!value && value.toLocaleLowerCase('pt-BR').includes('termos');
+
+    return (
+      (apiError.fieldErrors ?? []).some(
+        (fieldError) => fieldError.field === 'acceptedTerms' || mentionsTerms(fieldError.message)
+      ) || mentionsTerms(apiError.message)
+    );
   }
 
   private showPasswordResetError(httpError: HttpErrorResponse, context: 'forgotPassword' | 'resetPassword'): void {

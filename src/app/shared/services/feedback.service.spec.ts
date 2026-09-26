@@ -42,4 +42,23 @@ describe('FeedbackService', () => {
     expect(message.severity).toBe('error');
     expect(message.detail).toBe('Não foi possível processar a solicitação. Tente novamente em instantes.');
   });
+
+  it('should explain the missing terms acceptance when register fails with 400', () => {
+    const addSpy = vi.spyOn(messageService, 'add');
+    const termsError = new HttpErrorResponse({
+      status: 400,
+      statusText: 'Bad Request',
+      error: {
+        message: 'Um ou mais campos da requisição são inválidos',
+        fieldErrors: [{ field: 'acceptedTerms', message: 'É necessário aceitar os Termos de Uso para se cadastrar' }]
+      }
+    });
+
+    feedbackService.showAuthError(termsError, 'register');
+
+    expect(addSpy).toHaveBeenCalledTimes(1);
+    const message = addSpy.mock.calls[0][0];
+    expect(message.severity).toBe('warn');
+    expect(message.summary).toBe('Aceite dos termos');
+  });
 });

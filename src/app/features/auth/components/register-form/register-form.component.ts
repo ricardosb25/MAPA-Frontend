@@ -4,6 +4,7 @@ import { AbstractControl, FormBuilder, FormGroup, ReactiveFormsModule, Validatio
 import { RouterLink } from '@angular/router';
 import { RegisterCredentials } from '../../../../core/models/auth.model';
 import { UserProfileType } from '../../../../core/models/user-profile.enum';
+import { TermsOfUseModalComponent } from '../terms-of-use-modal/terms-of-use-modal.component';
 
 export const passwordMatchValidator: ValidatorFn = (controlGroup: AbstractControl): ValidationErrors | null => {
   const passwordControl = controlGroup.get('password');
@@ -29,7 +30,7 @@ export const passwordMatchValidator: ValidatorFn = (controlGroup: AbstractContro
 @Component({
   selector: 'app-register-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterLink],
+  imports: [CommonModule, ReactiveFormsModule, RouterLink, TermsOfUseModalComponent],
   template: `
     <div class="form-card-container">
       <h2 class="form-title">Criar conta</h2>
@@ -136,6 +137,25 @@ export const passwordMatchValidator: ValidatorFn = (controlGroup: AbstractContro
           }
         </div>
 
+        <div class="terms-consent-group">
+          <div class="terms-consent-row">
+            <input
+              id="acceptedTermsInput"
+              type="checkbox"
+              formControlName="acceptedTerms"
+              class="terms-checkbox"
+            />
+            <label for="acceptedTermsInput" class="terms-consent-label">Li e concordo com os</label>
+            <button type="button" class="terms-link" (click)="openTermsModal()">
+              Termos de Uso e Política de Privacidade
+            </button>
+            <span class="terms-consent-label">do MAPA.</span>
+          </div>
+          @if (isFieldInvalid('acceptedTerms')) {
+            <span class="error-message">É necessário aceitar os Termos de Uso para se cadastrar.</span>
+          }
+        </div>
+
         <button type="submit" [disabled]="isSubmitting" class="submit-button">
           @if (isSubmitting) {
             <i class="pi pi-spin pi-spinner button-spinner"></i>
@@ -149,6 +169,10 @@ export const passwordMatchValidator: ValidatorFn = (controlGroup: AbstractContro
           Já tenho uma conta. <a routerLink="/login" class="route-link">Entrar</a>
         </p>
       </form>
+
+      @if (isTermsModalOpen) {
+        <app-terms-of-use-modal (close)="closeTermsModal()"></app-terms-of-use-modal>
+      }
     </div>
   `,
   styles: [`
@@ -271,6 +295,51 @@ export const passwordMatchValidator: ValidatorFn = (controlGroup: AbstractContro
       margin-top: 0.15rem;
     }
 
+    .terms-consent-group {
+      display: flex;
+      flex-direction: column;
+      gap: 0.35rem;
+      margin-top: 0.25rem;
+    }
+
+    .terms-consent-row {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+    }
+
+    .terms-checkbox {
+      width: 16px;
+      height: 16px;
+      accent-color: #0099ff;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .terms-consent-label {
+      font-size: 0.85rem;
+      color: #334155;
+      cursor: pointer;
+    }
+
+    .terms-link {
+      background: none;
+      border: none;
+      padding: 0;
+      font: inherit;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #0099ff;
+      text-decoration: underline;
+      cursor: pointer;
+      transition: color 0.2s ease;
+    }
+
+    .terms-link:hover {
+      color: #0088e6;
+    }
+
     .submit-button {
       height: 52px;
       background-color: #0099ff;
@@ -331,6 +400,7 @@ export class RegisterFormComponent {
   registerForm: FormGroup;
   isPasswordVisible = false;
   isConfirmPasswordVisible = false;
+  isTermsModalOpen = false;
   readonly profileTypes = UserProfileType;
 
   constructor(private readonly formBuilder: FormBuilder) {
@@ -340,10 +410,19 @@ export class RegisterFormComponent {
         email: ['', [Validators.required, Validators.email]],
         password: ['', [Validators.required, Validators.minLength(8)]],
         confirmPassword: ['', [Validators.required]],
-        profileType: ['', [Validators.required]]
+        profileType: ['', [Validators.required]],
+        acceptedTerms: [false, [Validators.requiredTrue]]
       },
       { validators: passwordMatchValidator }
     );
+  }
+
+  openTermsModal(): void {
+    this.isTermsModalOpen = true;
+  }
+
+  closeTermsModal(): void {
+    this.isTermsModalOpen = false;
   }
 
   togglePasswordVisibility(): void {

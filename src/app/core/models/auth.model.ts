@@ -11,6 +11,7 @@ export interface RegisterCredentials {
   password: string;
   confirmPassword: string;
   profileType: UserProfileType;
+  acceptedTerms: boolean;
 }
 
 export interface RegisterRequestDto {
@@ -18,6 +19,7 @@ export interface RegisterRequestDto {
   email: string;
   password: string;
   role: UserProfileType;
+  acceptedTerms: boolean;
 }
 
 export interface UserModel {
@@ -47,7 +49,8 @@ export function mapRegisterRequest(credentials: RegisterCredentials): RegisterRe
     fullName: credentials.fullName,
     email: credentials.email,
     password: credentials.password,
-    role: credentials.profileType
+    role: credentials.profileType,
+    acceptedTerms: credentials.acceptedTerms === true
   };
 }
 
