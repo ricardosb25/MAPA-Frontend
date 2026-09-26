@@ -1,22 +1,18 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
+import { AuthService } from '../../../core/services/auth.service';
+import { BrandLogoComponent } from '../brand-logo/brand-logo.component';
 
 @Component({
   selector: 'app-header-navbar',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, BrandLogoComponent],
   template: `
     <header class="navbar-header">
       <div class="navbar-left">
         <div class="brand-group">
-          <div class="brand-icon-badge">
-            <i class="fa-solid fa-gauge-high"></i>
-          </div>
-          <div class="brand-text-container">
-            <span class="brand-main-title">MAPA</span>
-            <span class="brand-sub-title">MOTOR ANALYSIS ACADEMY</span>
-          </div>
+          <app-brand-logo variant="navbar"></app-brand-logo>
         </div>
       </div>
 
@@ -49,9 +45,13 @@ import { RouterModule } from '@angular/router';
         </div>
 
         <div class="user-profile-info">
-          <span class="user-name">Ricardo B.</span>
-          <span class="user-role">INSTRUTOR</span>
+          <span class="user-name">{{ (authService.currentUser$ | async)?.fullName ?? 'Visitante' }}</span>
+          <span class="user-role">{{ getRoleLabel((authService.currentUser$ | async)?.role) }}</span>
         </div>
+
+        <button type="button" class="theme-toggle-button" aria-label="Sair" (click)="handleLogout()">
+          <i class="fa-solid fa-right-from-bracket"></i>
+        </button>
       </div>
     </header>
   `,
@@ -77,39 +77,6 @@ import { RouterModule } from '@angular/router';
       display: flex;
       align-items: center;
       gap: 10px;
-    }
-
-    .brand-icon-badge {
-      width: 34px;
-      height: 34px;
-      background-color: #0099ff;
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      color: #ffffff;
-      font-size: 1rem;
-    }
-
-    .brand-text-container {
-      display: flex;
-      align-items: baseline;
-      gap: 6px;
-    }
-
-    .brand-main-title {
-      font-weight: 900;
-      font-size: 1.15rem;
-      letter-spacing: -0.02em;
-      color: #0f172a;
-    }
-
-    .brand-sub-title {
-      font-size: 0.65rem;
-      font-weight: 700;
-      letter-spacing: 0.1em;
-      color: #64748b;
-      text-transform: uppercase;
     }
 
     .navbar-center {
@@ -208,10 +175,33 @@ import { RouterModule } from '@angular/router';
         padding: 12px 16px;
         gap: 12px;
       }
-      .brand-sub-title {
-        display: none;
-      }
     }
   `]
 })
-export class HeaderNavbarComponent {}
+export class HeaderNavbarComponent {
+  constructor(
+    readonly authService: AuthService,
+    private readonly router: Router
+  ) {}
+
+  getRoleLabel(role: string | undefined): string {
+    if (role === 'ADMIN') {
+      return 'ADMINISTRADOR';
+    }
+
+    if (role === 'TEACHER') {
+      return 'PROFESSOR';
+    }
+
+    if (role === 'STUDENT') {
+      return 'ALUNO';
+    }
+
+    return 'VISITANTE';
+  }
+
+  handleLogout(): void {
+    this.authService.logout();
+    void this.router.navigate(['/login']);
+  }
+}

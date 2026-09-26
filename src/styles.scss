@@ -2,6 +2,13 @@
 @import "@fortawesome/fontawesome-free/css/all.min.css";
 @import "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap";
 
+:root {
+  color-scheme: light;
+  --color-primary: #0099ff;
+  --color-primary-hover: #0088e6;
+  --color-on-primary: #ffffff;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -16,3 +23,69 @@ html, body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+select {
+  background-color: #ffffff;
+  color: #0f172a;
+}
+
+option {
+  background-color: #ffffff;
+  color: #0f172a;
+}
+
+input[type='checkbox'] {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  width: 18px;
+  height: 18px;
+  border: 1.5px solid #cbd5e1;
+  border-radius: 4px;
+  background-color: #ffffff;
+  cursor: pointer;
+  display: inline-grid;
+  place-content: center;
+  margin: 0;
+  transition: border-color 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
+  position: relative;
+  flex-shrink: 0;
+
+  &::before {
+    content: "";
+    width: 9px;
+    height: 5px;
+    border-left: 2px solid #ffffff;
+    border-bottom: 2px solid #ffffff;
+    transform: rotate(-45deg) scale(0);
+    transform-origin: center;
+    transition: transform 0.15s ease-in-out;
+    margin-top: -2px;
+  }
+
+  &:hover {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 2px rgba(0, 153, 255, 0.1);
+  }
+
+  &:checked {
+    background-color: var(--color-primary);
+    border-color: var(--color-primary);
+
+    &::before {
+      transform: rotate(-45deg) scale(1);
+    }
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(0, 153, 255, 0.25);
+  }
+
+  &:disabled {
+    background-color: #f1f5f9;
+    border-color: #e2e8f0;
+    cursor: not-allowed;
+  }
+}
+

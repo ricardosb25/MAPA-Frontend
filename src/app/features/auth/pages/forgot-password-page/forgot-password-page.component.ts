@@ -1,28 +1,27 @@
-import { Component, OnDestroy } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Router } from '@angular/router';
 import { AuthService } from '../../../../core/services/auth.service';
-import { RegisterCredentials } from '../../../../core/models/auth.model';
+import { ForgotPasswordRequest } from '../../../../core/models/auth.model';
 import { FeedbackService } from '../../../../shared/services/feedback.service';
 import { InfoSidebarComponent } from '../../../../shared/components/info-sidebar/info-sidebar.component';
-import { RegisterFormComponent } from '../../components/register-form/register-form.component';
+import { ForgotPasswordFormComponent } from '../../components/forgot-password-form/forgot-password-form.component';
 
 @Component({
-  selector: 'app-register-page',
+  selector: 'app-forgot-password-page',
   standalone: true,
-  imports: [CommonModule, InfoSidebarComponent, RegisterFormComponent],
+  imports: [CommonModule, InfoSidebarComponent, ForgotPasswordFormComponent],
   template: `
     <div class="auth-page-layout">
       <div class="sidebar-column">
-        <app-info-sidebar mode="register"></app-info-sidebar>
+        <app-info-sidebar mode="login"></app-info-sidebar>
       </div>
 
       <main class="form-column">
-        <app-register-form
+        <app-forgot-password-form
           [isSubmitting]="isSubmitting"
-          (submitRegisterForm)="onRegisterSubmit($event)"
-        ></app-register-form>
+          (submitForgotPasswordForm)="onForgotPasswordSubmit($event)"
+        ></app-forgot-password-form>
       </main>
     </div>
   `,
@@ -68,42 +67,26 @@ import { RegisterFormComponent } from '../../components/register-form/register-f
     }
   `]
 })
-export class RegisterPageComponent implements OnDestroy {
+export class ForgotPasswordPageComponent {
   isSubmitting = false;
-  private feedbackTimeoutId: ReturnType<typeof setTimeout> | null = null;
 
   constructor(
     private readonly authService: AuthService,
-    private readonly feedbackService: FeedbackService,
-    private readonly router: Router
+    private readonly feedbackService: FeedbackService
   ) {}
 
-  ngOnDestroy(): void {
-    if (this.feedbackTimeoutId) {
-      clearTimeout(this.feedbackTimeoutId);
-    }
-  }
-
-  onRegisterSubmit(credentials: RegisterCredentials): void {
+  onForgotPasswordSubmit(request: ForgotPasswordRequest): void {
     this.isSubmitting = true;
 
-    this.authService.register(credentials).subscribe({
-      next: (createdUser) => {
+    this.authService.forgotPassword(request).subscribe({
+      next: (messageResponse) => {
         this.isSubmitting = false;
-        this.feedbackService.showSuccess(
-          'Conta criada',
-          `Bem-vindo(a), ${createdUser.fullName}. Faça login para continuar.`
-        );
-
-        this.feedbackTimeoutId = setTimeout(() => {
-          this.router.navigate(['/login']);
-        }, 900);
+        this.feedbackService.showSuccess('Solicitação enviada', messageResponse.message, { life: 6000 });
       },
       error: (httpError: HttpErrorResponse) => {
         this.isSubmitting = false;
-        this.feedbackService.showAuthError(httpError, 'register');
+        this.feedbackService.showAuthError(httpError, 'forgotPassword');
       }
     });
   }
 }
-

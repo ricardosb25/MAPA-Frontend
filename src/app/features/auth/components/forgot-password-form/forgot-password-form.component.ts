@@ -2,24 +2,26 @@ import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { RouterLink } from '@angular/router';
-import { LoginCredentials } from '../../../../core/models/auth.model';
+import { ForgotPasswordRequest } from '../../../../core/models/auth.model';
 
 @Component({
-  selector: 'app-login-form',
+  selector: 'app-forgot-password-form',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule, RouterLink],
   template: `
     <div class="form-card-container">
-      <h2 class="form-title">Realizar login</h2>
-      <p class="form-subtitle">Comece hoje mesmo a transformar suas ideias em realidade.</p>
+      <h2 class="form-title">Recuperar senha</h2>
+      <p class="form-subtitle">
+        Informe o e-mail da sua conta. Enviaremos um link para você criar uma nova senha.
+      </p>
 
-      <form [formGroup]="loginForm" (ngSubmit)="handleFormSubmit()" class="auth-form">
+      <form [formGroup]="forgotPasswordForm" (ngSubmit)="handleFormSubmit()" class="auth-form">
         <div class="field-group">
-          <label for="emailInput" class="field-label">E-mail</label>
+          <label for="forgotEmailInput" class="field-label">E-mail</label>
           <div class="input-wrapper" [class.input-error]="isFieldInvalid('email')">
             <i class="pi pi-envelope input-prefix-icon"></i>
             <input
-              id="emailInput"
+              id="forgotEmailInput"
               type="email"
               formControlName="email"
               placeholder="exemplo@email.com"
@@ -31,46 +33,17 @@ import { LoginCredentials } from '../../../../core/models/auth.model';
           }
         </div>
 
-        <div class="field-group">
-          <label for="passwordInput" class="field-label">Senha</label>
-          <div class="input-wrapper" [class.input-error]="isFieldInvalid('password')">
-            <i class="pi pi-lock input-prefix-icon"></i>
-            <input
-              id="passwordInput"
-              [type]="isPasswordVisible ? 'text' : 'password'"
-              formControlName="password"
-              placeholder="Mínimo 8 caracteres"
-              class="form-input"
-            />
-            <button
-              type="button"
-              (click)="togglePasswordVisibility()"
-              class="icon-toggle-button"
-              aria-label="Alternar visibilidade da senha"
-            >
-              <i [class]="isPasswordVisible ? 'pi pi-eye-slash' : 'pi pi-eye'"></i>
-            </button>
-          </div>
-          @if (isFieldInvalid('password')) {
-            <span class="error-message">A senha deve ter no mínimo 8 caracteres.</span>
-          }
-        </div>
-
-        <div class="forgot-password-row">
-          <a routerLink="/forgot-password" class="route-link forgot-password-link">Esqueceu a senha?</a>
-        </div>
-
         <button type="submit" [disabled]="isSubmitting" class="submit-button">
           @if (isSubmitting) {
             <i class="pi pi-spin pi-spinner button-spinner"></i>
-            <span>Entrando...</span>
+            <span>Enviando...</span>
           } @else {
-            <span>Entrar</span>
+            <span>Enviar link</span>
           }
         </button>
 
         <p class="switch-route-text">
-          Não tem uma conta? <a routerLink="/register" class="route-link">Cadastre-Se</a>
+          Lembrou a senha? <a routerLink="/login" class="route-link">Voltar ao login</a>
         </p>
       </form>
     </div>
@@ -158,23 +131,6 @@ import { LoginCredentials } from '../../../../core/models/auth.model';
       color: #94a3b8;
     }
 
-    .icon-toggle-button {
-      background: none;
-      border: none;
-      color: #64748b;
-      cursor: pointer;
-      padding: 0.25rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.1rem;
-      transition: color 0.2s ease;
-    }
-
-    .icon-toggle-button:hover {
-      color: #0f172a;
-    }
-
     .error-message {
       font-size: 0.8rem;
       color: #ef4444;
@@ -215,16 +171,6 @@ import { LoginCredentials } from '../../../../core/models/auth.model';
       font-size: 1.1rem;
     }
 
-    .forgot-password-row {
-      display: flex;
-      justify-content: flex-end;
-      margin-top: -0.75rem;
-    }
-
-    .forgot-password-link {
-      font-size: 0.85rem;
-    }
-
     .switch-route-text {
       text-align: left;
       font-size: 0.875rem;
@@ -244,34 +190,28 @@ import { LoginCredentials } from '../../../../core/models/auth.model';
     }
   `]
 })
-export class LoginFormComponent {
+export class ForgotPasswordFormComponent {
   @Input() isSubmitting = false;
-  @Output() submitLoginForm = new EventEmitter<LoginCredentials>();
+  @Output() submitForgotPasswordForm = new EventEmitter<ForgotPasswordRequest>();
 
-  loginForm: FormGroup;
-  isPasswordVisible = false;
+  forgotPasswordForm: FormGroup;
 
   constructor(private readonly formBuilder: FormBuilder) {
-    this.loginForm = this.formBuilder.group({
-      email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required, Validators.minLength(8)]]
+    this.forgotPasswordForm = this.formBuilder.group({
+      email: ['', [Validators.required, Validators.email]]
     });
   }
 
-  togglePasswordVisibility(): void {
-    this.isPasswordVisible = !this.isPasswordVisible;
-  }
-
   isFieldInvalid(fieldName: string): boolean {
-    const fieldControl = this.loginForm.get(fieldName);
+    const fieldControl = this.forgotPasswordForm.get(fieldName);
     return !!(fieldControl && fieldControl.invalid && (fieldControl.dirty || fieldControl.touched));
   }
 
   handleFormSubmit(): void {
-    if (this.loginForm.valid) {
-      this.submitLoginForm.emit(this.loginForm.value as LoginCredentials);
+    if (this.forgotPasswordForm.valid) {
+      this.submitForgotPasswordForm.emit(this.forgotPasswordForm.value as ForgotPasswordRequest);
     } else {
-      this.loginForm.markAllAsTouched();
+      this.forgotPasswordForm.markAllAsTouched();
     }
   }
 }

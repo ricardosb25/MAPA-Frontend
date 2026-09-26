@@ -69,14 +69,6 @@ export type SidebarMode = 'login' | 'register';
                 <strong>Aluno:</strong> para aqueles que querem aprender sobre motores, mapas e ecu
               </p>
             </div>
-            <div class="info-card description-card">
-              <div class="card-icon-badge">
-                <i class="pi pi-sliders-h"></i>
-              </div>
-              <p class="card-description">
-                <strong>Outro:</strong> para aqueles que não pertencem a alguma instituição/organização e querem aprender por conta propria sobre motores, mapas e ecu
-              </p>
-            </div>
           </div>
         }
       </div>

@@ -1,28 +1,32 @@
 import { Component, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
+import { take } from 'rxjs/operators';
 import { AuthService } from '../../../../core/services/auth.service';
-import { RegisterCredentials } from '../../../../core/models/auth.model';
+import { ResetPasswordRequest } from '../../../../core/models/auth.model';
 import { FeedbackService } from '../../../../shared/services/feedback.service';
 import { InfoSidebarComponent } from '../../../../shared/components/info-sidebar/info-sidebar.component';
-import { RegisterFormComponent } from '../../components/register-form/register-form.component';
+import { ResetPasswordFormComponent } from '../../components/reset-password-form/reset-password-form.component';
 
 @Component({
-  selector: 'app-register-page',
+  selector: 'app-reset-password-page',
   standalone: true,
-  imports: [CommonModule, InfoSidebarComponent, RegisterFormComponent],
+  imports: [CommonModule, InfoSidebarComponent, ResetPasswordFormComponent],
   template: `
     <div class="auth-page-layout">
       <div class="sidebar-column">
-        <app-info-sidebar mode="register"></app-info-sidebar>
+        <app-info-sidebar mode="login"></app-info-sidebar>
       </div>
 
       <main class="form-column">
-        <app-register-form
-          [isSubmitting]="isSubmitting"
-          (submitRegisterForm)="onRegisterSubmit($event)"
-        ></app-register-form>
+        @if (resetToken) {
+          <app-reset-password-form
+            [token]="resetToken"
+            [isSubmitting]="isSubmitting"
+            (submitResetPasswordForm)="onResetPasswordSubmit($event)"
+          ></app-reset-password-form>
+        }
       </main>
     </div>
   `,
@@ -68,15 +72,29 @@ import { RegisterFormComponent } from '../../components/register-form/register-f
     }
   `]
 })
-export class RegisterPageComponent implements OnDestroy {
+export class ResetPasswordPageComponent implements OnDestroy {
   isSubmitting = false;
+  resetToken: string | null = null;
   private feedbackTimeoutId: ReturnType<typeof setTimeout> | null = null;
 
   constructor(
     private readonly authService: AuthService,
     private readonly feedbackService: FeedbackService,
+    private readonly activatedRoute: ActivatedRoute,
     private readonly router: Router
-  ) {}
+  ) {
+    this.activatedRoute.queryParamMap.pipe(take(1)).subscribe((queryParameters) => {
+      this.resetToken = queryParameters.get('token');
+
+      if (!this.resetToken) {
+        this.feedbackService.showError(
+          'Link inválido',
+          'O link de redefinição está ausente ou inválido. Solicite um novo.'
+        );
+        this.router.navigate(['/forgot-password']);
+      }
+    });
+  }
 
   ngOnDestroy(): void {
     if (this.feedbackTimeoutId) {
@@ -84,16 +102,13 @@ export class RegisterPageComponent implements OnDestroy {
     }
   }
 
-  onRegisterSubmit(credentials: RegisterCredentials): void {
+  onResetPasswordSubmit(request: ResetPasswordRequest): void {
     this.isSubmitting = true;
 
-    this.authService.register(credentials).subscribe({
-      next: (createdUser) => {
+    this.authService.resetPassword(request).subscribe({
+      next: (messageResponse) => {
         this.isSubmitting = false;
-        this.feedbackService.showSuccess(
-          'Conta criada',
-          `Bem-vindo(a), ${createdUser.fullName}. Faça login para continuar.`
-        );
+        this.feedbackService.showSuccess('Senha redefinida', messageResponse.message);
 
         this.feedbackTimeoutId = setTimeout(() => {
           this.router.navigate(['/login']);
@@ -101,9 +116,8 @@ export class RegisterPageComponent implements OnDestroy {
       },
       error: (httpError: HttpErrorResponse) => {
         this.isSubmitting = false;
-        this.feedbackService.showAuthError(httpError, 'register');
+        this.feedbackService.showAuthError(httpError, 'resetPassword');
       }
     });
   }
 }
-
