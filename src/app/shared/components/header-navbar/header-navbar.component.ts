@@ -33,6 +33,12 @@ import { BrandLogoComponent } from '../brand-logo/brand-logo.component';
           <i class="fa-solid fa-gauge-high nav-icon"></i>
           <span>Dinamômetro</span>
         </a>
+        @if (authService.isAdmin$ | async) {
+          <a routerLink="/logs" routerLinkActive="active" class="nav-item">
+            <i class="fa-solid fa-clipboard-list nav-icon"></i>
+            <span>Logs</span>
+          </a>
+        }
       </nav>
 
       <div class="navbar-right">

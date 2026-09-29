@@ -6,9 +6,10 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   imports: [CommonModule],
   template: `
-    <nav class="pagination-container" aria-label="Paginação do catálogo de motores">
+    <nav class="pagination-container" [attr.aria-label]="ariaLabel">
       <span class="pagination-summary">
-        {{ totalElements }} {{ totalElements === 1 ? 'motor' : 'motores' }} · página
+        {{ totalElements }}
+        {{ totalElements === 1 ? itemNounSingular : itemNounPlural }} · página
         {{ page + 1 }} de {{ totalPages === 0 ? 1 : totalPages }}
       </span>
 
@@ -177,10 +178,12 @@ export class PaginationControlsComponent {
   @Input({ required: true }) totalPages!: number;
   @Input() hasNext = false;
   @Input() hasPrevious = false;
+  @Input() itemNounSingular = 'motor';
+  @Input() itemNounPlural = 'motores';
+  @Input() ariaLabel = 'Paginação do catálogo de motores';
+  @Input() pageSizeOptions: number[] = [12, 24, 48];
   @Output() pageChange = new EventEmitter<number>();
   @Output() sizeChange = new EventEmitter<number>();
-
-  readonly pageSizeOptions = [12, 24, 48];
 
   goToFirstPage(): void {
     this.goToPage(0);

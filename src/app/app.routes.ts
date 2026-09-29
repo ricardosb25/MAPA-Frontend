@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { adminGuard } from './core/guards/admin.guard';
 import { authGuard } from './core/guards/auth.guard';
 
 export const routes: Routes = [
@@ -33,6 +34,11 @@ export const routes: Routes = [
     path: 'garage',
     canActivate: [authGuard],
     loadComponent: () => import('./features/garage/pages/garage-catalog-page/garage-catalog-page.component').then((module) => module.GarageCatalogPageComponent)
+  },
+  {
+    path: 'logs',
+    canActivate: [authGuard, adminGuard],
+    loadComponent: () => import('./features/logs/pages/logs-page/logs-page.component').then((module) => module.LogsPageComponent)
   },
   {
     path: 'catalog',
