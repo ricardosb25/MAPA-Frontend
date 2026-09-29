@@ -8,9 +8,11 @@ import Aura from '@primeuix/themes/aura';
 import { definePreset } from '@primeuix/themes';
 import { routes } from './app.routes';
 import { authInterceptor } from './core/interceptors/auth.interceptor';
+import { AdminUserService } from './core/services/admin-user.service';
 import { AuditLogService } from './core/services/audit-log.service';
 import { AuthService } from './core/services/auth.service';
 import { EngineService } from './core/services/engine.service';
+import { HttpAdminUserService } from './core/services/http-admin-user.service';
 import { HttpAuditLogService } from './core/services/http-audit-log.service';
 import { HttpAuthService } from './core/services/http-auth.service';
 import { HttpEngineService } from './core/services/http-engine.service';
@@ -47,7 +49,8 @@ export const appConfig: ApplicationConfig = {
     MessageService,
     { provide: AuthService, useClass: HttpAuthService },
     { provide: EngineService, useClass: HttpEngineService },
-    { provide: AuditLogService, useClass: HttpAuditLogService }
+    { provide: AuditLogService, useClass: HttpAuditLogService },
+    { provide: AdminUserService, useClass: HttpAdminUserService }
   ]
 };
 

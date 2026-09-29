@@ -36,6 +36,11 @@ export const routes: Routes = [
     loadComponent: () => import('./features/garage/pages/garage-catalog-page/garage-catalog-page.component').then((module) => module.GarageCatalogPageComponent)
   },
   {
+    path: 'users',
+    canActivate: [authGuard, adminGuard],
+    loadComponent: () => import('./features/users/pages/users-page/users-page.component').then((module) => module.UsersPageComponent)
+  },
+  {
     path: 'logs',
     canActivate: [authGuard, adminGuard],
     loadComponent: () => import('./features/logs/pages/logs-page/logs-page.component').then((module) => module.LogsPageComponent)
