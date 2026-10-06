@@ -99,6 +99,9 @@ export class HttpAuthService extends AuthService {
   override isAdmin(): boolean {
     return this.currentUserSubject.getValue()?.role === UserProfileType.ADMIN;
   }
+  override getRole(): UserProfileType | null {
+    return this.currentUserSubject.getValue()?.role ?? null;
+  }
 
   private persistSession(token: string, authenticatedUser: UserModel, expiresInSeconds?: number): void {
     this.tokenStorage.saveSession(token, authenticatedUser, expiresInSeconds);

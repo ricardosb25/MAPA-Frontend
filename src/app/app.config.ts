@@ -16,6 +16,8 @@ import { HttpAdminUserService } from './core/services/http-admin-user.service';
 import { HttpAuditLogService } from './core/services/http-audit-log.service';
 import { HttpAuthService } from './core/services/http-auth.service';
 import { HttpEngineService } from './core/services/http-engine.service';
+import { HttpClassService } from './core/services/http-class.service';
+import { ClassService } from './core/services/class.service';
 
 const MapaThemePreset = definePreset(Aura, {
   semantic: {
@@ -50,7 +52,8 @@ export const appConfig: ApplicationConfig = {
     { provide: AuthService, useClass: HttpAuthService },
     { provide: EngineService, useClass: HttpEngineService },
     { provide: AuditLogService, useClass: HttpAuditLogService },
-    { provide: AdminUserService, useClass: HttpAdminUserService }
+    { provide: AdminUserService, useClass: HttpAdminUserService },
+    { provide: ClassService, useClass: HttpClassService }
   ]
 };
 

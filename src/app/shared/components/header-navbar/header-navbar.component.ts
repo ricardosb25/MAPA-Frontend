@@ -33,6 +33,18 @@ import { BrandLogoComponent } from '../brand-logo/brand-logo.component';
           <i class="fa-solid fa-gauge-high nav-icon"></i>
           <span>Dinamômetro</span>
         </a>
+        @if ((authService.currentUser$ | async)?.role === 'TEACHER') {
+          <a routerLink="/classes" routerLinkActive="active" class="nav-item">
+            <i class="fa-solid fa-chalkboard-user nav-icon"></i>
+            <span>Turmas</span>
+          </a>
+        }
+        @if ((authService.currentUser$ | async)?.role === 'STUDENT') {
+          <a routerLink="/my-classes" routerLinkActive="active" class="nav-item">
+            <i class="fa-solid fa-chalkboard-user nav-icon"></i>
+            <span>Minhas turmas</span>
+          </a>
+        }
         @if (authService.isAdmin$ | async) {
           <a routerLink="/users" routerLinkActive="active" class="nav-item">
             <i class="fa-solid fa-users nav-icon"></i>

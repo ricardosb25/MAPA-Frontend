@@ -4,6 +4,7 @@ export const API_CONFIG = {
   baseUrl: environment.apiUrl,
   endpoints: {
     motores: `${environment.apiUrl}/motores`,
+    classes: `${environment.apiUrl}/classes`,
     users: `${environment.apiUrl}/users`,
     auditLogs: `${environment.apiUrl}/users/audit-logs`,
     auth: {

@@ -72,10 +72,10 @@ import { FormBuilder, FormControl, ReactiveFormsModule, Validators } from '@angu
           >
             @if (isConfirming) {
               <i class="pi pi-spin pi-spinner"></i>
-              <span>Excluindo...</span>
+              <span>{{ confirmingLabel }}</span>
             } @else {
               <i class="fa-solid fa-trash"></i>
-              <span>Excluir motor</span>
+              <span>{{ confirmButtonLabel }}</span>
             }
           </button>
         </footer>
@@ -262,6 +262,8 @@ export class ConfirmDialogComponent {
   @Input() confirmationLabel = 'Confirmo que desejo prosseguir com esta ação.';
   @Input() isConfirming = false;
   @Input() errorMessage: string | null = null;
+  @Input() confirmButtonLabel = 'Excluir motor';
+  @Input() confirmingLabel = 'Excluindo...';
   @Output() confirm = new EventEmitter<void>();
   @Output() cancel = new EventEmitter<void>();
 

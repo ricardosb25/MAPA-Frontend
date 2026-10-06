@@ -1,6 +1,8 @@
 import { Routes } from '@angular/router';
 import { adminGuard } from './core/guards/admin.guard';
 import { authGuard } from './core/guards/auth.guard';
+import { roleGuard } from './core/guards/role.guard';
+import { UserProfileType } from './core/models/user-profile.enum';
 
 export const routes: Routes = [
   {
@@ -34,6 +36,20 @@ export const routes: Routes = [
     path: 'garage',
     canActivate: [authGuard],
     loadComponent: () => import('./features/garage/pages/garage-catalog-page/garage-catalog-page.component').then((module) => module.GarageCatalogPageComponent)
+  },
+  {
+    path: 'classes',
+    canActivate: [authGuard, roleGuard([UserProfileType.TEACHER])],
+    loadComponent: () =>
+      import('./features/classes/pages/classes-page/classes-page.component').then((module) => module.ClassesPageComponent)
+  },
+  {
+    path: 'my-classes',
+    canActivate: [authGuard, roleGuard([UserProfileType.STUDENT])],
+    loadComponent: () =>
+      import('./features/classes/pages/my-classes-page/my-classes-page.component').then(
+        (module) => module.MyClassesPageComponent
+      )
   },
   {
     path: 'users',
