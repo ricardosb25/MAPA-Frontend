@@ -18,6 +18,8 @@ import { HttpAuthService } from './core/services/http-auth.service';
 import { HttpEngineService } from './core/services/http-engine.service';
 import { HttpClassService } from './core/services/http-class.service';
 import { ClassService } from './core/services/class.service';
+import { EcuMapService } from './core/services/ecu-map.service';
+import { HttpEcuMapService } from './core/services/http-ecu-map.service';
 
 const MapaThemePreset = definePreset(Aura, {
   semantic: {
@@ -53,7 +55,8 @@ export const appConfig: ApplicationConfig = {
     { provide: EngineService, useClass: HttpEngineService },
     { provide: AuditLogService, useClass: HttpAuditLogService },
     { provide: AdminUserService, useClass: HttpAdminUserService },
-    { provide: ClassService, useClass: HttpClassService }
+    { provide: ClassService, useClass: HttpClassService },
+    { provide: EcuMapService, useClass: HttpEcuMapService }
   ]
 };
 

@@ -538,9 +538,15 @@ export class GarageCatalogPageComponent implements OnInit, OnDestroy {
 
     this.hasAppliedInitialSelection = true;
 
-    return this.engineService.selectEngine(firstEngine.id.toString()).pipe(
-      switchMap(() => this.engineService.getEnginesPage(query)),
-      catchError(() => of(enginesPage))
+    return this.engineService.getSelectedEngine().pipe(
+      switchMap((selectedEngine) =>
+        selectedEngine !== null
+          ? this.engineService.getEnginesPage(query)
+          : this.engineService.selectEngine(firstEngine.id.toString()).pipe(
+              switchMap(() => this.engineService.getEnginesPage(query)),
+              catchError(() => of(enginesPage))
+            )
+      )
     );
   }
 

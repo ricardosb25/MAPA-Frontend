@@ -38,6 +38,14 @@ export const routes: Routes = [
     loadComponent: () => import('./features/garage/pages/garage-catalog-page/garage-catalog-page.component').then((module) => module.GarageCatalogPageComponent)
   },
   {
+    path: 'calibration',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/calibration/pages/calibration-page/calibration-page.component').then(
+        (module) => module.CalibrationPageComponent
+      )
+  },
+  {
     path: 'classes',
     canActivate: [authGuard, roleGuard([UserProfileType.TEACHER])],
     loadComponent: () =>

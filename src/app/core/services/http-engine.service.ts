@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpErrorResponse, HttpParams } from '@angular/common/http';
-import { BehaviorSubject, Observable, catchError, map, of, switchMap, tap } from 'rxjs';
+import { BehaviorSubject, Observable, catchError, filter, map, of, switchMap, take, tap } from 'rxjs';
 import { EngineModel, EnginePageQuery, EnginePayload, PageResponse } from '../models/engine.model';
 import { EngineService } from './engine.service';
 import { API_CONFIG } from '../config/api.config';
@@ -11,8 +11,11 @@ import { API_CONFIG } from '../config/api.config';
 export class HttpEngineService implements EngineService {
   private readonly enginesEndpointUrl = API_CONFIG.endpoints.motores;
   private readonly selectedEngineIdSubject = new BehaviorSubject<string | null>(null);
+  private readonly selectionLoadedSubject = new BehaviorSubject<boolean>(false);
 
-  constructor(private readonly httpClient: HttpClient) {}
+  constructor(private readonly httpClient: HttpClient) {
+    this.loadPersistedSelection();
+  }
 
   getEnginesPage(query: EnginePageQuery): Observable<PageResponse<EngineModel>> {
     const queryParams = new HttpParams()
@@ -26,7 +29,8 @@ export class HttpEngineService implements EngineService {
   }
 
   getSelectedEngine(): Observable<EngineModel | null> {
-    return this.selectedEngineIdSubject.pipe(
+    return this.ensureSelectionLoaded().pipe(
+      switchMap(() => this.selectedEngineIdSubject),
       switchMap((selectedEngineId) => {
         if (selectedEngineId === null) {
           return of(null);
@@ -48,10 +52,13 @@ export class HttpEngineService implements EngineService {
   }
 
   selectEngine(engineId: string): Observable<EngineModel> {
-    return this.httpClient.get<EngineModel>(API_CONFIG.buildEngineByIdUrl(engineId)).pipe(
-      map((engineModel) => ({ ...engineModel, isSelected: true })),
-      tap(() => this.selectedEngineIdSubject.next(engineId))
-    );
+    return this.httpClient
+      .put<EngineModel>(API_CONFIG.endpoints.motoresSelecionado, { engineId: Number(engineId) })
+      .pipe(
+        switchMap(() => this.httpClient.get<EngineModel>(API_CONFIG.buildEngineByIdUrl(engineId))),
+        map((engineModel) => ({ ...engineModel, isSelected: true })),
+        tap(() => this.selectedEngineIdSubject.next(engineId))
+      );
   }
 
   createEngine(payload: EnginePayload): Observable<EngineModel> {
@@ -70,6 +77,20 @@ export class HttpEngineService implements EngineService {
         }
       })
     );
+  }
+
+  private loadPersistedSelection(): void {
+    this.httpClient
+      .get<EngineModel | null>(API_CONFIG.endpoints.motoresSelecionado)
+      .pipe(catchError(() => of(null)))
+      .subscribe((selectedEngine) => {
+        this.selectedEngineIdSubject.next(selectedEngine !== null ? String(selectedEngine.id) : null);
+        this.selectionLoadedSubject.next(true);
+      });
+  }
+
+  private ensureSelectionLoaded(): Observable<boolean> {
+    return this.selectionLoadedSubject.pipe(filter((isLoaded) => isLoaded), take(1));
   }
 
   private applySelectionFlag(

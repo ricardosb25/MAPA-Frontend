@@ -25,7 +25,7 @@ import { BrandLogoComponent } from '../brand-logo/brand-logo.component';
           <i class="fa-solid fa-warehouse nav-icon"></i>
           <span>Garagem</span>
         </a>
-        <a routerLink="/calibration" class="nav-item">
+        <a routerLink="/calibration" routerLinkActive="active" class="nav-item">
           <i class="fa-solid fa-sliders nav-icon"></i>
           <span>Calibração</span>
         </a>

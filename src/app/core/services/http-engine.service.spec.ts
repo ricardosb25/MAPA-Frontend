@@ -26,6 +26,10 @@ describe('HttpEngineService', () => {
 
     service = TestBed.inject(HttpEngineService);
     httpTestingController = TestBed.inject(HttpTestingController);
+
+    const persistedSelection = httpTestingController.expectOne(API_CONFIG.endpoints.motoresSelecionado);
+    expect(persistedSelection.request.method).toBe('GET');
+    persistedSelection.flush(null, { status: 204, statusText: 'No Content' });
   });
 
   afterEach(() => {
@@ -100,6 +104,10 @@ describe('HttpEngineService', () => {
       expect(selectedEngine.isSelected).toBe(true);
     });
 
+    const selectionRequest = httpTestingController.expectOne(API_CONFIG.endpoints.motoresSelecionado);
+    expect(selectionRequest.request.method).toBe('PUT');
+    selectionRequest.flush(buildEngine());
+
     httpTestingController.expectOne(API_CONFIG.buildEngineByIdUrl(101)).flush(buildEngine());
 
     service.getEnginesPage(defaultQuery).subscribe((enginesPage) => {
@@ -148,6 +156,7 @@ describe('HttpEngineService', () => {
 
   it('should delete an engine with DELETE and clear the current selection', () => {
     service.selectEngine('101').subscribe();
+    httpTestingController.expectOne(API_CONFIG.endpoints.motoresSelecionado).flush(buildEngine());
     httpTestingController.expectOne(API_CONFIG.buildEngineByIdUrl(101)).flush(buildEngine());
 
     let deletionCompleted = false;
