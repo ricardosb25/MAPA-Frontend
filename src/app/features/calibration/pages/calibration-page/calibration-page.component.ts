@@ -153,11 +153,10 @@ import { ACTIVE_CHALLENGE } from '../../mocks/active-challenge.mock';
                   </button>
                 }
 
-                <button type="button" class="sidebar-button dyno-button" disabled>
+                <a routerLink="/dyno" class="sidebar-button dyno-button">
                   <i class="fa-solid fa-play"></i>
                   <span>Levar ao dinamômetro</span>
-                </button>
-                <span class="dyno-hint">Dinamômetro disponível em breve.</span>
+                </a>
               </div>
 
               @if (activeChallenge && ((authService.currentUser$ | async)?.role === 'STUDENT')) {
@@ -450,6 +449,8 @@ import { ACTIVE_CHALLENGE } from '../../mocks/active-challenge.mock';
       .dyno-button {
         background-color: #0099ff;
         border-color: #0099ff;
+        text-decoration: none;
+        box-sizing: border-box;
       }
 
       .dyno-button:disabled {

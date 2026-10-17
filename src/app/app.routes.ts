@@ -1,4 +1,4 @@
-import { Routes } from '@angular/router';
+﻿import { Routes } from '@angular/router';
 import { adminGuard } from './core/guards/admin.guard';
 import { authGuard } from './core/guards/auth.guard';
 import { roleGuard } from './core/guards/role.guard';
@@ -44,6 +44,12 @@ export const routes: Routes = [
       import('./features/calibration/pages/calibration-page/calibration-page.component').then(
         (module) => module.CalibrationPageComponent
       )
+  },
+  {
+    path: 'dyno',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/dyno/pages/dyno-page/dyno-page.component').then((module) => module.DynoPageComponent)
   },
   {
     path: 'classes',

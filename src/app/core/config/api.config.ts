@@ -1,4 +1,4 @@
-import { environment } from '../../../environments/environment';
+﻿import { environment } from '../../../environments/environment';
 import { EcuMapType } from '../models/ecu-map.model';
 
 export const API_CONFIG = {
@@ -9,6 +9,10 @@ export const API_CONFIG = {
     classes: `${environment.apiUrl}/classes`,
     users: `${environment.apiUrl}/users`,
     auditLogs: `${environment.apiUrl}/users/audit-logs`,
+    dinamometro: {
+      executar: `${environment.apiUrl}/dinamometro/executar`,
+      historico: `${environment.apiUrl}/dinamometro/historico`
+    },
     auth: {
       login: `${environment.apiUrl}/auth/login`,
       register: `${environment.apiUrl}/auth/register`,

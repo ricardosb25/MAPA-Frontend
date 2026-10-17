@@ -29,7 +29,7 @@ import { BrandLogoComponent } from '../brand-logo/brand-logo.component';
           <i class="fa-solid fa-sliders nav-icon"></i>
           <span>Calibração</span>
         </a>
-        <a routerLink="/dyno" class="nav-item">
+        <a routerLink="/dyno" routerLinkActive="active" class="nav-item">
           <i class="fa-solid fa-gauge-high nav-icon"></i>
           <span>Dinamômetro</span>
         </a>

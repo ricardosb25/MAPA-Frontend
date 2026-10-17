@@ -1,4 +1,4 @@
-import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core';
+﻿import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { provideRouter } from '@angular/router';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
@@ -20,6 +20,8 @@ import { HttpClassService } from './core/services/http-class.service';
 import { ClassService } from './core/services/class.service';
 import { EcuMapService } from './core/services/ecu-map.service';
 import { HttpEcuMapService } from './core/services/http-ecu-map.service';
+import { DynoService } from './core/services/dyno.service';
+import { HttpDynoService } from './core/services/http-dyno.service';
 
 const MapaThemePreset = definePreset(Aura, {
   semantic: {
@@ -56,7 +58,8 @@ export const appConfig: ApplicationConfig = {
     { provide: AuditLogService, useClass: HttpAuditLogService },
     { provide: AdminUserService, useClass: HttpAdminUserService },
     { provide: ClassService, useClass: HttpClassService },
-    { provide: EcuMapService, useClass: HttpEcuMapService }
+    { provide: EcuMapService, useClass: HttpEcuMapService },
+    { provide: DynoService, useClass: HttpDynoService }
   ]
 };
 
