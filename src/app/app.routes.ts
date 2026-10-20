@@ -1,4 +1,4 @@
-﻿import { Routes } from '@angular/router';
+import { Routes } from '@angular/router';
 import { adminGuard } from './core/guards/admin.guard';
 import { authGuard } from './core/guards/auth.guard';
 import { roleGuard } from './core/guards/role.guard';
@@ -50,6 +50,22 @@ export const routes: Routes = [
     canActivate: [authGuard],
     loadComponent: () =>
       import('./features/dyno/pages/dyno-page/dyno-page.component').then((module) => module.DynoPageComponent)
+  },
+  {
+    path: 'challenges',
+    canActivate: [authGuard, roleGuard([UserProfileType.TEACHER])],
+    loadComponent: () =>
+      import('./features/challenges/pages/challenges-page/challenges-page.component').then(
+        (module) => module.ChallengesPageComponent
+      )
+  },
+  {
+    path: 'my-challenges',
+    canActivate: [authGuard, roleGuard([UserProfileType.STUDENT])],
+    loadComponent: () =>
+      import('./features/challenges/pages/my-challenges-page/my-challenges-page.component').then(
+        (module) => module.MyChallengesPageComponent
+      )
   },
   {
     path: 'classes',

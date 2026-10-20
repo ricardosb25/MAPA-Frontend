@@ -8,7 +8,9 @@ import { DynoResult } from '../../../../core/models/dyno.model';
 import { EngineModel } from '../../../../core/models/engine.model';
 import { DynoService } from '../../../../core/services/dyno.service';
 import { EngineService } from '../../../../core/services/engine.service';
+import { ChallengeService } from '../../../../core/services/challenge.service';
 import { AuthService } from '../../../../core/services/auth.service';
+import { ChallengeModel } from '../../../../core/models/challenge.model';
 import { UserModel } from '../../../../core/models/auth.model';
 import { UserProfileType } from '../../../../core/models/user-profile.enum';
 
@@ -80,6 +82,39 @@ const buildDynoServiceStub = (result: DynoResult | null, shouldFail = false) => 
   };
 };
 
+const buildChallenge = (completedCriteria: number): ChallengeModel => ({
+  id: 1,
+  title: 'Falta de potência em alta rotação',
+  description: 'Corrija combustível e avanço sem detonação.',
+  difficulty: 'MEDIUM',
+  motorId: 101,
+  motorManufacturer: 'Volkswagen',
+  motorName: 'AP 1.8 8V',
+  classId: 1,
+  className: 'Mecânica Automotiva',
+  classCode: 'MEC-4B',
+  goalPowerCv: 120,
+  requiredEngineStatus: 'INTEGRO',
+  createdAt: '2026-01-01T00:00:00Z',
+  selected: true,
+  attempts: 1,
+  completed: completedCriteria === 2,
+  completedCriteria,
+  criteria: ['Atingir 120 cv de pico', 'Status final: Motor íntegro'],
+  completedStudents: 0,
+  enrolledStudents: 1
+});
+
+const buildChallengeServiceStub = () => {
+  let calls = 0;
+  return {
+    getActiveChallenge: () => {
+      calls++;
+      return of(buildChallenge(calls > 1 ? 2 : 0));
+    }
+  };
+};
+
 const buildAuthServiceStub = () => {
   const currentUser: UserModel = {
     id: '3',
@@ -113,6 +148,7 @@ describe('DynoPageComponent', () => {
         provideRouter([]),
         { provide: EngineService, useValue: buildEngineServiceStub(options.engine) },
         { provide: DynoService, useValue: dynoServiceStub.service },
+        { provide: ChallengeService, useValue: buildChallengeServiceStub() },
         { provide: AuthService, useValue: buildAuthServiceStub() }
       ]
     }).compileComponents();
@@ -188,7 +224,7 @@ describe('DynoPageComponent', () => {
 
     const challengeCard = element.querySelector('.challenge-card');
     expect(challengeCard).not.toBeNull();
-    expect(challengeCard?.querySelector('.progress-label')?.textContent).toContain('3/3 critérios');
+    expect(challengeCard?.querySelector('.progress-label')?.textContent).toContain('2/2 critérios');
   });
 
   it('should show the broken status when the engine fails', async () => {

@@ -1,10 +1,13 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { ButtonModule } from 'primeng/button';
+import { SelectModule } from 'primeng/select';
 
 @Component({
   selector: 'app-pagination-controls',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule, ButtonModule, SelectModule],
   template: `
     <nav class="pagination-container" [attr.aria-label]="ariaLabel">
       <span class="pagination-summary">
@@ -14,59 +17,57 @@ import { CommonModule } from '@angular/common';
       </span>
 
       <div class="pagination-actions">
-        <button
-          type="button"
-          class="pagination-button"
+        <p-button
+          icon="pi pi-angle-double-left"
+          severity="secondary"
+          [outlined]="true"
+          size="small"
+          styleClass="pagination-button"
           [disabled]="!hasPrevious"
-          (click)="goToFirstPage()"
-          aria-label="Primeira página"
-          title="Primeira página"
-        >
-          <i class="pi pi-angle-double-left"></i>
-        </button>
-        <button
-          type="button"
-          class="pagination-button"
+          (onClick)="goToFirstPage()"
+          ariaLabel="Primeira página"
+        ></p-button>
+        <p-button
+          icon="pi pi-angle-left"
+          severity="secondary"
+          [outlined]="true"
+          size="small"
+          styleClass="pagination-button"
           [disabled]="!hasPrevious"
-          (click)="goToPreviousPage()"
-          aria-label="Página anterior"
-          title="Página anterior"
-        >
-          <i class="pi pi-angle-left"></i>
-        </button>
-        <button
-          type="button"
-          class="pagination-button"
+          (onClick)="goToPreviousPage()"
+          ariaLabel="Página anterior"
+        ></p-button>
+        <p-button
+          icon="pi pi-angle-right"
+          severity="secondary"
+          [outlined]="true"
+          size="small"
+          styleClass="pagination-button"
           [disabled]="!hasNext"
-          (click)="goToNextPage()"
-          aria-label="Próxima página"
-          title="Próxima página"
-        >
-          <i class="pi pi-angle-right"></i>
-        </button>
-        <button
-          type="button"
-          class="pagination-button"
+          (onClick)="goToNextPage()"
+          ariaLabel="Próxima página"
+        ></p-button>
+        <p-button
+          icon="pi pi-angle-double-right"
+          severity="secondary"
+          [outlined]="true"
+          size="small"
+          styleClass="pagination-button"
           [disabled]="!hasNext"
-          (click)="goToLastPage()"
-          aria-label="Última página"
-          title="Última página"
-        >
-          <i class="pi pi-angle-double-right"></i>
-        </button>
+          (onClick)="goToLastPage()"
+          ariaLabel="Última página"
+        ></p-button>
       </div>
 
       <label class="pagination-size">
         <span class="pagination-size-label">Itens por página</span>
-        <select class="pagination-size-select" (change)="handleSizeChange($event)">
-          <option
-            *ngFor="let pageSizeOption of pageSizeOptions"
-            [value]="pageSizeOption"
-            [selected]="pageSizeOption === size"
-          >
-            {{ pageSizeOption }}
-          </option>
-        </select>
+        <p-select
+          [options]="pageSizeOptions"
+          [ngModel]="size"
+          (onChange)="handleSizeChange($event.value)"
+          styleClass="pagination-size-select"
+          ariaLabel="Itens por página"
+        ></p-select>
       </label>
     </nav>
   `,
@@ -78,16 +79,17 @@ import { CommonModule } from '@angular/common';
       flex-wrap: wrap;
       gap: 16px;
       margin-top: 24px;
-      padding: 14px 18px;
-      background-color: #f8fafc;
-      border: 1px solid #cbd5e1;
-      border-radius: 12px;
+      padding: 12px 16px;
+      background-color: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
+      box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
     }
 
     .pagination-summary {
-      font-size: 0.8rem;
+      font-size: 0.78rem;
       font-weight: 600;
-      color: #475569;
+      color: #64748b;
     }
 
     .pagination-actions {
@@ -96,69 +98,59 @@ import { CommonModule } from '@angular/common';
       gap: 6px;
     }
 
-    .pagination-button {
-      width: 34px;
-      height: 34px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border: 1px solid #cbd5e1;
-      border-radius: 8px;
-      background-color: #ffffff;
+    :host ::ng-deep .pagination-button.p-button {
+      width: 32px;
+      height: 32px;
+      padding: 0;
       color: #475569;
-      cursor: pointer;
-      font-size: 0.85rem;
-      transition: background-color 0.2s ease, color 0.2s ease;
+      border-color: #cbd5e1;
+      background-color: #ffffff;
+      border-radius: 4px;
+      box-shadow: none;
     }
 
-    .pagination-button:hover:not(:disabled) {
-      background-color: #0099ff;
+    :host ::ng-deep .pagination-button.p-button:not(:disabled):hover {
+      background-color: #eef8ff;
       border-color: #0099ff;
-      color: #ffffff;
+      color: #065ca0;
     }
 
-    .pagination-button:disabled {
-      opacity: 0.45;
-      cursor: not-allowed;
+    :host ::ng-deep .pagination-button.p-button:disabled {
+      background-color: #f8fafc;
+      border-color: #e2e8f0;
+      color: #cbd5e1;
+      opacity: 1;
     }
 
     .pagination-size {
       display: flex;
       align-items: center;
       gap: 8px;
-      font-size: 0.8rem;
+      font-size: 0.78rem;
       font-weight: 600;
-      color: #475569;
+      color: #64748b;
     }
 
-    .pagination-size-select {
-      height: 34px;
-      padding: 0 28px 0 10px;
+    :host ::ng-deep .pagination-size-select {
+      width: 82px;
+    }
+
+    :host ::ng-deep .pagination-size-select.p-select {
       border: 1px solid #cbd5e1;
-      border-radius: 8px;
-      background-color: #ffffff;
-      color: #0f172a;
-      font-size: 0.8rem;
-      font-weight: 600;
-      cursor: pointer;
-      appearance: none;
-      -webkit-appearance: none;
-      -moz-appearance: none;
-      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' width='14' height='14' fill='none' stroke='%2364748b' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
-      background-repeat: no-repeat;
-      background-position: right 8px center;
-      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+      border-radius: 4px;
+      background: #ffffff;
+      box-shadow: none;
     }
 
-    .pagination-size-select:focus {
-      outline: none;
-      border-color: var(--color-primary, #0099ff);
-      box-shadow: 0 0 0 3px rgba(0, 153, 255, 0.15);
+    :host ::ng-deep .pagination-size-select.p-select:not(.p-disabled):hover {
+      border-color: #0099ff;
     }
 
-    .pagination-size-select option {
-      background-color: #ffffff;
+    :host ::ng-deep .pagination-size-select .p-select-label {
+      font-size: 0.78rem;
+      font-weight: 700;
       color: #0f172a;
+      padding: 0.42rem 0.55rem;
     }
 
     @media (max-width: 640px) {
@@ -201,9 +193,8 @@ export class PaginationControlsComponent {
     this.goToPage(this.totalPages - 1);
   }
 
-  handleSizeChange(changeEvent: Event): void {
-    const sizeSelectElement = changeEvent.target as HTMLSelectElement;
-    this.sizeChange.emit(Number(sizeSelectElement.value));
+  handleSizeChange(size: number): void {
+    this.sizeChange.emit(Number(size));
   }
 
   private goToPage(targetPage: number): void {

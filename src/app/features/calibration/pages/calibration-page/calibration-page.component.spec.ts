@@ -6,7 +6,9 @@ import { CalibrationPageComponent } from './calibration-page.component';
 import { AuthService } from '../../../../core/services/auth.service';
 import { EcuMapService } from '../../../../core/services/ecu-map.service';
 import { EngineService } from '../../../../core/services/engine.service';
+import { ChallengeService } from '../../../../core/services/challenge.service';
 import { EcuMapGrid, EcuMapType } from '../../../../core/models/ecu-map.model';
+import { ChallengeModel } from '../../../../core/models/challenge.model';
 import { EngineModel } from '../../../../core/models/engine.model';
 import { UserModel } from '../../../../core/models/auth.model';
 import { UserProfileType } from '../../../../core/models/user-profile.enum';
@@ -70,6 +72,33 @@ const buildEngineServiceStub = (engine: EngineModel | null) => ({
   deleteEngine: () => of(undefined)
 });
 
+const buildChallenge = (): ChallengeModel => ({
+  id: 1,
+  title: 'Falta de potência em alta rotação',
+  description: 'Corrija combustível e avanço sem detonação.',
+  difficulty: 'MEDIUM',
+  motorId: 101,
+  motorManufacturer: 'Volkswagen',
+  motorName: 'AP 1.8 8V',
+  classId: 1,
+  className: 'Mecânica Automotiva',
+  classCode: 'MEC-4B',
+  goalPowerCv: 120,
+  requiredEngineStatus: 'INTEGRO',
+  createdAt: '2026-01-01T00:00:00Z',
+  selected: true,
+  attempts: 0,
+  completed: false,
+  completedCriteria: 0,
+  criteria: ['Atingir 120 cv de pico', 'Status final: Motor íntegro'],
+  completedStudents: 0,
+  enrolledStudents: 1
+});
+
+const buildChallengeServiceStub = (role: UserProfileType) => ({
+  getActiveChallenge: () => of(role === UserProfileType.STUDENT ? buildChallenge() : null)
+});
+
 const buildEcuMapServiceStub = () => {
   const restoreCalls: { engineId: string | number; mapType: EcuMapType }[] = [];
   const updateCalls: { engineId: string | number; mapType: EcuMapType; value: number }[] = [];
@@ -123,6 +152,7 @@ describe('CalibrationPageComponent', () => {
         provideRouter([]),
         { provide: EngineService, useValue: buildEngineServiceStub(options.engine) },
         { provide: EcuMapService, useValue: ecuMapServiceStub.service },
+        { provide: ChallengeService, useValue: buildChallengeServiceStub(options.role) },
         { provide: AuthService, useValue: buildAuthServiceStub(options.role) }
       ]
     }).compileComponents();

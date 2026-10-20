@@ -7,12 +7,12 @@ import { DynoResult } from '../../../../core/models/dyno.model';
 import { EngineModel } from '../../../../core/models/engine.model';
 import { DynoService } from '../../../../core/services/dyno.service';
 import { EngineService } from '../../../../core/services/engine.service';
+import { ChallengeService } from '../../../../core/services/challenge.service';
+import { ChallengeModel } from '../../../../core/models/challenge.model';
 import { HeaderNavbarComponent } from '../../../../shared/components/header-navbar/header-navbar.component';
 import { ActiveChallengeCardComponent } from '../../../calibration/components/active-challenge-card/active-challenge-card.component';
-import { ActiveChallenge } from '../../../calibration/mocks/active-challenge.mock';
 import { DynoChartComponent } from '../../components/dyno-chart/dyno-chart.component';
 import { EngineHealthComponent } from '../../components/engine-health/engine-health.component';
-import { ACTIVE_DYNO_CHALLENGE, DynoChallenge } from '../../mocks/dyno-challenge.mock';
 
 @Component({
   selector: 'app-dyno-page',
@@ -73,10 +73,10 @@ import { ACTIVE_DYNO_CHALLENGE, DynoChallenge } from '../../mocks/dyno-challenge
                         @if (result(); as currentResult) { {{ currentResult.picoTorque.toFixed(1) }} kgfm } @else { — }
                       </span>
                     </div>
-                    @if (challengeMetaCv !== null) {
+                    @if (challenge(); as activeChallenge) {
                       <div class="stat-block">
                         <span class="stat-label">META DO DESAFIO</span>
-                        <span class="stat-value stat-goal">{{ challengeMetaCv }} cv</span>
+                        <span class="stat-value stat-goal">{{ activeChallenge.goalPowerCv }} cv</span>
                       </div>
                     }
                   </div>
@@ -122,6 +122,7 @@ import { ACTIVE_DYNO_CHALLENGE, DynoChallenge } from '../../mocks/dyno-challenge
           </section>
         }
       </main>
+
 
       @if (feedbackMessage()) {
         <div class="feedback-toast" [class.feedback-success]="isSuccess()" [class.feedback-error]="!isSuccess()">
@@ -400,19 +401,19 @@ export class DynoPageComponent implements OnInit, OnDestroy {
   readonly isRunning = signal(false);
   readonly feedbackMessage = signal('');
   readonly isSuccess = signal(false);
-  readonly challenge = signal<ActiveChallenge | null>(DynoPageComponent.toActiveChallenge(ACTIVE_DYNO_CHALLENGE, 0));
-
-  readonly challengeMetaCv = DynoPageComponent.extractGoalPowerCv(ACTIVE_DYNO_CHALLENGE);
+  readonly challenge = signal<ChallengeModel | null>(null);
 
   private feedbackTimeoutId: ReturnType<typeof setTimeout> | null = null;
   private readonly subscriptions: Subscription[] = [];
 
   constructor(
     private readonly dynoService: DynoService,
-    private readonly engineService: EngineService
+    private readonly engineService: EngineService,
+    private readonly challengeService: ChallengeService
   ) {}
 
   ngOnInit(): void {
+    this.loadActiveChallenge();
     this.subscriptions.push(
       this.engineService.getSelectedEngine().subscribe({
         next: (selectedEngine) => {
@@ -440,7 +441,7 @@ export class DynoPageComponent implements OnInit, OnDestroy {
     this.dynoService.runSimulation().subscribe({
       next: (dynoResult) => {
         this.result.set(dynoResult);
-        this.recomputeChallenge(dynoResult);
+        this.loadActiveChallenge(); // Recarrega o desafio para atualizar os critérios atingidos
         this.isRunning.set(false);
         this.showFeedback('Passada concluída. Curvas atualizadas no gráfico.', true);
       },
@@ -451,44 +452,11 @@ export class DynoPageComponent implements OnInit, OnDestroy {
     });
   }
 
-  private recomputeChallenge(dynoResult: DynoResult): void {
-    const activeChallenge = ACTIVE_DYNO_CHALLENGE;
-    if (activeChallenge === null) {
-      return;
-    }
-
-    const completedCriteria = activeChallenge.criteria.filter((criterion) =>
-      criterion.isMet({ picoPotencia: dynoResult.picoPotencia, statusFinal: dynoResult.statusFinal })
-    ).length;
-
-    this.challenge.set(DynoPageComponent.toActiveChallenge(activeChallenge, completedCriteria));
-  }
-
-  private static toActiveChallenge(activeChallenge: DynoChallenge | null, completedCriteria: number): ActiveChallenge | null {
-    if (activeChallenge === null) {
-      return null;
-    }
-
-    return {
-      title: activeChallenge.title,
-      description: activeChallenge.description,
-      criteria: activeChallenge.criteria.map((criterion) => criterion.label),
-      completedCriteria
-    };
-  }
-
-  private static extractGoalPowerCv(activeChallenge: DynoChallenge | null): number | null {
-    if (activeChallenge === null) {
-      return null;
-    }
-
-    const goalCriterion = activeChallenge.criteria.find((criterion) => criterion.label.includes('cv de pico'));
-    if (goalCriterion === undefined) {
-      return null;
-    }
-
-    const parsedGoal = Number.parseFloat(goalCriterion.label.replace(',', '.'));
-    return Number.isNaN(parsedGoal) ? null : parsedGoal;
+  private loadActiveChallenge(): void {
+    this.challengeService.getActiveChallenge().subscribe({
+      next: (challenge) => this.challenge.set(challenge),
+      error: () => this.challenge.set(null)
+    });
   }
 
   private buildErrorMessage(error: HttpErrorResponse, fallbackMessage: string): string {

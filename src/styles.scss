@@ -7,6 +7,24 @@
   --color-primary: #0099ff;
   --color-primary-hover: #0088e6;
   --color-on-primary: #ffffff;
+
+  --mapa-blue-900: #0b4d80;
+  --mapa-blue-700: #065ca0;
+  --mapa-blue-600: #0072c7;
+  --mapa-blue-500: #0099ff;
+  --mapa-blue-200: #bce4ff;
+  --mapa-blue-100: #d9efff;
+  --mapa-blue-50: #eef8ff;
+
+  --mapa-white: #ffffff;
+  --mapa-gray-50: #f8fafc;
+  --mapa-gray-100: #f1f5f9;
+  --mapa-gray-200: #e2e8f0;
+  --mapa-gray-300: #cbd5e1;
+  --mapa-gray-500: #64748b;
+  --mapa-gray-600: #475569;
+  --mapa-gray-700: #334155;
+  --mapa-ink: #0f172a;
 }
 
 * {
@@ -87,5 +105,168 @@ input[type='checkbox'] {
     border-color: #e2e8f0;
     cursor: not-allowed;
   }
+}
+
+.challenge-toast .p-toast-message-success,
+.challenge-toast .p-toast-message-info {
+  background: var(--mapa-blue-50);
+  border: 1px solid var(--mapa-blue-200);
+  color: var(--mapa-blue-700);
+}
+
+.challenge-toast .p-toast-message-error,
+.challenge-toast .p-toast-message-warn {
+  background: var(--mapa-gray-100);
+  border: 1px solid var(--mapa-gray-300);
+  color: var(--mapa-ink);
+}
+
+.challenge-toast .p-toast-message-success .p-toast-message-icon,
+.challenge-toast .p-toast-message-info .p-toast-message-icon {
+  color: var(--mapa-blue-600);
+}
+
+.challenge-toast .p-toast-message-error .p-toast-message-icon,
+.challenge-toast .p-toast-message-warn .p-toast-message-icon {
+  color: var(--mapa-gray-700);
+}
+
+.challenge-difficulty-tag.p-tag {
+  padding: 0.22rem 0.5rem;
+  border: 1px solid var(--mapa-gray-200);
+  border-radius: 6px;
+  font-size: 0.64rem;
+  font-weight: 800;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+}
+
+.challenge-difficulty-tag.p-tag-success {
+  background: #f0fdf4;
+  border-color: #bbf7d0;
+  color: #15803d;
+}
+
+.challenge-difficulty-tag.p-tag-warn {
+  background: #fffbeb;
+  border-color: #fde68a;
+  color: #b45309;
+}
+
+.challenge-difficulty-tag.p-tag-danger {
+  background: #fef2f2;
+  border-color: #fecaca;
+  color: #b91c1c;
+}
+
+.challenge-status-tag.p-tag,
+.challenge-criteria-tag.p-tag {
+  padding: 0.2rem 0.48rem;
+  border: 1px solid var(--mapa-gray-200);
+  border-radius: 6px;
+  font-size: 0.68rem;
+  font-weight: 700;
+}
+
+.challenge-status-tag.p-tag-info,
+.challenge-criteria-tag.p-tag-info {
+  background: var(--mapa-blue-50);
+  border-color: var(--mapa-blue-200);
+  color: var(--mapa-blue-700);
+}
+
+.challenge-status-tag.p-tag-secondary,
+.challenge-criteria-tag.p-tag-secondary {
+  background: var(--mapa-gray-50);
+  border-color: var(--mapa-gray-200);
+  color: var(--mapa-gray-500);
+}
+
+.challenge-dialog.p-dialog {
+  background: #ffffff;
+  color: var(--mapa-ink);
+  border: 1px solid var(--mapa-gray-200);
+  border-radius: 12px;
+  box-shadow: 0 18px 40px -24px rgba(15, 23, 42, 0.3);
+}
+
+.challenge-dialog .p-dialog-header {
+  padding: 1rem 1.25rem;
+  border-bottom: 1px solid var(--mapa-gray-200);
+}
+
+.challenge-dialog .p-dialog-content {
+  background: #ffffff;
+  padding: 1.25rem;
+}
+
+.challenge-dialog .p-inputtext,
+.challenge-dialog .p-textarea,
+.challenge-dialog .p-select,
+.challenge-dialog .p-inputnumber-input {
+  background: #ffffff;
+  color: var(--mapa-ink);
+  border-color: var(--mapa-gray-300);
+  border-radius: 10px;
+  box-shadow: none;
+}
+
+.challenge-dialog .p-inputtext:enabled:focus,
+.challenge-dialog .p-textarea:enabled:focus,
+.challenge-dialog .p-inputnumber-input:enabled:focus,
+.challenge-dialog .p-select:not(.p-disabled).p-focus {
+  border-color: var(--mapa-blue-500);
+  box-shadow: 0 0 0 2px rgba(0, 153, 255, 0.14);
+}
+
+.challenge-dialog .p-datatable .p-datatable-thead > tr > th {
+  background: var(--mapa-gray-50);
+  border-color: var(--mapa-gray-200);
+  color: var(--mapa-gray-600);
+  font-size: 0.78rem;
+  font-weight: 700;
+}
+
+.challenge-dialog .p-datatable .p-datatable-tbody > tr > td {
+  border-color: var(--mapa-gray-100);
+  color: var(--mapa-gray-700);
+  font-size: 0.82rem;
+}
+
+.challenge-dialog .p-datatable .p-datatable-tbody > tr:hover {
+  background: var(--mapa-gray-50);
+}
+
+.challenge-dialog .p-paginator {
+  border-top: 1px solid var(--mapa-gray-200);
+  background: #ffffff;
+}
+
+.challenge-confirm-dialog.p-dialog {
+  border: 1px solid var(--mapa-gray-200);
+  border-radius: 12px;
+}
+
+.challenge-confirm-dialog .p-confirmdialog-icon {
+  color: var(--mapa-blue-600);
+}
+
+.challenge-confirm-dialog .p-confirmdialog-message {
+  color: var(--mapa-gray-700);
+}
+
+.challenge-confirm-dialog .p-button {
+  border-radius: 10px;
+  font-weight: 800;
+  box-shadow: none;
+}
+
+.challenge-confirm-dialog .p-confirmdialog-reject-button {
+  color: var(--mapa-gray-500);
+}
+
+.challenge-confirm-dialog .p-confirmdialog-reject-button:not(:disabled):hover {
+  background: var(--mapa-gray-100);
+  color: var(--mapa-ink);
 }
 

@@ -1,4 +1,4 @@
-﻿import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core';
+import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 import { provideRouter } from '@angular/router';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
@@ -22,6 +22,8 @@ import { EcuMapService } from './core/services/ecu-map.service';
 import { HttpEcuMapService } from './core/services/http-ecu-map.service';
 import { DynoService } from './core/services/dyno.service';
 import { HttpDynoService } from './core/services/http-dyno.service';
+import { ChallengeService } from './core/services/challenge.service';
+import { HttpChallengeService } from './core/services/http-challenge.service';
 
 const MapaThemePreset = definePreset(Aura, {
   semantic: {
@@ -50,7 +52,7 @@ export const appConfig: ApplicationConfig = {
     provideBrowserGlobalErrorListeners(),
     provideRouter(routes),
     provideAnimationsAsync(),
-    providePrimeNG({ theme: { preset: MapaThemePreset } }),
+    providePrimeNG({ theme: { preset: MapaThemePreset, options: { darkModeSelector: 'none' } } }),
     provideHttpClient(withInterceptors([authInterceptor])),
     MessageService,
     { provide: AuthService, useClass: HttpAuthService },
@@ -59,7 +61,8 @@ export const appConfig: ApplicationConfig = {
     { provide: AdminUserService, useClass: HttpAdminUserService },
     { provide: ClassService, useClass: HttpClassService },
     { provide: EcuMapService, useClass: HttpEcuMapService },
-    { provide: DynoService, useClass: HttpDynoService }
+    { provide: DynoService, useClass: HttpDynoService },
+    { provide: ChallengeService, useClass: HttpChallengeService }
   ]
 };
 

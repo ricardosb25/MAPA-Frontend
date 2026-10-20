@@ -11,7 +11,8 @@ import { EngineService } from '../../../../core/services/engine.service';
 import { HeaderNavbarComponent } from '../../../../shared/components/header-navbar/header-navbar.component';
 import { ActiveChallengeCardComponent } from '../../components/active-challenge-card/active-challenge-card.component';
 import { EcuMapGridComponent } from '../../components/ecu-map-grid/ecu-map-grid.component';
-import { ACTIVE_CHALLENGE } from '../../mocks/active-challenge.mock';
+import { ChallengeService } from '../../../../core/services/challenge.service';
+import { ChallengeModel } from '../../../../core/models/challenge.model';
 
 @Component({
   selector: 'app-calibration-page',
@@ -159,13 +160,14 @@ import { ACTIVE_CHALLENGE } from '../../mocks/active-challenge.mock';
                 </a>
               </div>
 
-              @if (activeChallenge && ((authService.currentUser$ | async)?.role === 'STUDENT')) {
-                <app-active-challenge-card [challenge]="activeChallenge"></app-active-challenge-card>
+              @if (activeChallenge(); as challenge) {
+                <app-active-challenge-card [challenge]="challenge"></app-active-challenge-card>
               }
             </aside>
           </section>
         }
       </main>
+
 
       @if (feedbackMessage()) {
         <div class="feedback-toast" [class.feedback-success]="isSuccess()" [class.feedback-error]="!isSuccess()">
@@ -551,9 +553,9 @@ import { ACTIVE_CHALLENGE } from '../../mocks/active-challenge.mock';
 export class CalibrationPageComponent implements OnInit, OnDestroy {
   readonly authService: AuthService;
   readonly mapTitles = ECU_MAP_TITLES;
-  readonly activeChallenge = ACTIVE_CHALLENGE;
 
   readonly engine = signal<EngineModel | null>(null);
+  readonly activeChallenge = signal<ChallengeModel | null>(null);
   readonly maps = signal<EcuMapGrid[]>([]);
   readonly activeMapType = signal<EcuMapType>('FUEL');
   readonly isLoading = signal(true);
@@ -571,12 +573,14 @@ export class CalibrationPageComponent implements OnInit, OnDestroy {
   constructor(
     authService: AuthService,
     private readonly engineService: EngineService,
-    private readonly ecuMapService: EcuMapService
+    private readonly ecuMapService: EcuMapService,
+    private readonly challengeService: ChallengeService
   ) {
     this.authService = authService;
   }
 
   ngOnInit(): void {
+    this.loadActiveChallenge();
     this.engineSubscription = this.engineService.getSelectedEngine().subscribe({
       next: (selectedEngine) => {
         this.engine.set(selectedEngine);
@@ -660,6 +664,13 @@ export class CalibrationPageComponent implements OnInit, OnDestroy {
         this.isRestoring.set(false);
         this.showFeedback(this.buildErrorMessage(error, 'Não foi possível restaurar o mapa.'), false);
       }
+    });
+  }
+
+  private loadActiveChallenge(): void {
+    this.challengeService.getActiveChallenge().subscribe({
+      next: (challenge) => this.activeChallenge.set(challenge),
+      error: () => this.activeChallenge.set(null)
     });
   }
 

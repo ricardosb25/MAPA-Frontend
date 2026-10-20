@@ -1,15 +1,20 @@
 import { Component, Input } from '@angular/core';
-import { ActiveChallenge } from '../../mocks/active-challenge.mock';
+import { TagModule } from 'primeng/tag';
+import { ProgressBarModule } from 'primeng/progressbar';
+import { ChallengeModel } from '../../../../core/models/challenge.model';
 
 @Component({
   selector: 'app-active-challenge-card',
   standalone: true,
+  imports: [TagModule, ProgressBarModule],
   template: `
     <section class="challenge-card" aria-labelledby="challengeTitle">
-      <span class="challenge-tag">
-        <i class="fa-solid fa-bullseye challenge-tag-icon"></i>
-        DESAFIO ATIVO
-      </span>
+      <p-tag
+        value="DESAFIO ATIVO"
+        icon="pi pi-flag"
+        severity="info"
+        styleClass="challenge-tag"
+      ></p-tag>
 
       <h2 class="challenge-title" id="challengeTitle">{{ challenge.title }}</h2>
       <p class="challenge-description">{{ challenge.description }}</p>
@@ -23,72 +28,70 @@ import { ActiveChallenge } from '../../mocks/active-challenge.mock';
         }
       </ul>
 
-      <div class="progress-track">
-        <div
-          class="progress-fill"
-          [style.width.%]="progressPercentage"
-        ></div>
-      </div>
+      <p-progressbar
+        [value]="progressPercentage"
+        [showValue]="false"
+        styleClass="challenge-progress"
+      ></p-progressbar>
       <span class="progress-label">{{ challenge.completedCriteria }}/{{ challenge.criteria.length }} critérios</span>
     </section>
   `,
   styles: [
     `
       .challenge-card {
-        background-color: #f8fafc;
-        border: 1px solid #cbd5e1;
+        background-color: #ffffff;
+        border: 1px solid #e2e8f0;
         border-radius: 12px;
-        padding: 24px;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+        padding: 18px;
+        box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
       }
 
-      .challenge-tag {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        font-size: 0.7rem;
-        font-weight: 700;
-        letter-spacing: 0.12em;
-        color: #0099ff;
+      :host ::ng-deep .challenge-tag.p-tag {
+        display: inline-flex;
+        margin-bottom: 12px;
+        padding: 0.24rem 0.5rem;
+        font-size: 0.62rem;
+        font-weight: 800;
+        letter-spacing: 0.14em;
         text-transform: uppercase;
-        margin-bottom: 14px;
-      }
-
-      .challenge-tag-icon {
-        font-size: 0.8rem;
+        border-radius: 6px;
+        background: #eef8ff;
+        border: 1px solid #bce4ff;
+        color: #065ca0;
       }
 
       .challenge-title {
-        margin: 0 0 10px 0;
-        font-size: 1.2rem;
+        margin: 0 0 8px 0;
+        font-size: 1.05rem;
         font-weight: 800;
         color: #0f172a;
         line-height: 1.3;
+        letter-spacing: -0.01em;
       }
 
       .challenge-description {
-        margin: 0 0 18px 0;
-        font-size: 0.85rem;
+        margin: 0 0 14px 0;
+        font-size: 0.82rem;
         line-height: 1.5;
         color: #475569;
       }
 
       .criteria-list {
         list-style: none;
-        margin: 0 0 18px 0;
+        margin: 0 0 14px 0;
         padding: 0;
         display: flex;
         flex-direction: column;
-        gap: 10px;
+        gap: 9px;
       }
 
       .criteria-item {
         display: flex;
         align-items: center;
-        gap: 10px;
-        font-size: 0.825rem;
+        gap: 9px;
+        font-size: 0.8rem;
         font-weight: 600;
-        color: #334155;
+        color: #475569;
       }
 
       .criteria-dot {
@@ -96,47 +99,49 @@ import { ActiveChallenge } from '../../mocks/active-challenge.mock';
         height: 14px;
         min-width: 14px;
         border-radius: 50%;
-        background-color: #475569;
-        transition: background-color 0.2s ease;
+        background-color: #ffffff;
+        border: 2px solid #cbd5e1;
+        box-sizing: border-box;
+        transition: background-color 0.2s ease, border-color 0.2s ease;
       }
 
       .criteria-item.criteria-done {
-        color: #166534;
+        color: #065ca0;
+        font-weight: 700;
       }
 
       .criteria-item.criteria-done .criteria-dot {
-        background-color: #22c55e;
-      }
-
-      .progress-track {
-        height: 8px;
-        border-radius: 999px;
-        background-color: #e2e8f0;
-        overflow: hidden;
-      }
-
-      .progress-fill {
-        height: 100%;
-        border-radius: 999px;
         background-color: #0099ff;
-        transition: width 0.3s ease;
+        border-color: #0099ff;
+      }
+
+      :host ::ng-deep .challenge-progress {
+        height: 6px;
+        border-radius: 3px;
+        background: #e2e8f0;
+      }
+
+      :host ::ng-deep .challenge-progress .p-progressbar-value {
+        background: #0099ff;
+        border-radius: 3px;
       }
 
       .progress-label {
         display: block;
-        margin-top: 8px;
-        font-size: 0.75rem;
+        margin-top: 7px;
+        font-size: 0.7rem;
         font-weight: 700;
         color: #64748b;
+        letter-spacing: 0.03em;
       }
     `
   ]
 })
 export class ActiveChallengeCardComponent {
-  @Input({ required: true }) challenge!: ActiveChallenge;
+  @Input({ required: true }) challenge!: ChallengeModel;
 
   get progressPercentage(): number {
-    if (this.challenge.criteria.length === 0) {
+    if (!this.challenge || !this.challenge.criteria || this.challenge.criteria.length === 0) {
       return 0;
     }
 

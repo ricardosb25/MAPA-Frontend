@@ -38,11 +38,19 @@ import { BrandLogoComponent } from '../brand-logo/brand-logo.component';
             <i class="fa-solid fa-chalkboard-user nav-icon"></i>
             <span>Turmas</span>
           </a>
+          <a routerLink="/challenges" routerLinkActive="active" class="nav-item">
+            <i class="fa-solid fa-bullseye nav-icon"></i>
+            <span>Desafios</span>
+          </a>
         }
         @if ((authService.currentUser$ | async)?.role === 'STUDENT') {
           <a routerLink="/my-classes" routerLinkActive="active" class="nav-item">
             <i class="fa-solid fa-chalkboard-user nav-icon"></i>
             <span>Minhas turmas</span>
+          </a>
+          <a routerLink="/my-challenges" routerLinkActive="active" class="nav-item">
+            <i class="fa-solid fa-bullseye nav-icon"></i>
+            <span>Meus Desafios</span>
           </a>
         }
         @if (authService.isAdmin$ | async) {
