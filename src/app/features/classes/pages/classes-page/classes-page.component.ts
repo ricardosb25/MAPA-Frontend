@@ -180,7 +180,7 @@ import { ConfirmDialogComponent } from '../../../garage/components/confirm-dialo
                     <h2 class="detail-title">{{ schoolClass.name }}</h2>
                     <span class="detail-meta"
                       >{{ shiftLabel(schoolClass.shift) }} · Prof.
-                      {{ schoolClass.professorName }}</span
+                      {{ schoolClass.teacherName }}</span
                     >
                   </div>
                   <div class="detail-actions">

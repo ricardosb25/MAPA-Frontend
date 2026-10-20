@@ -23,24 +23,24 @@ describe('HttpDynoService', () => {
     httpTestingController.verify();
   });
 
-  const buildResult = (statusFinal: DynoResult['statusFinal'] = 'INTEGRO'): DynoResult => ({
-    rpmEixoX: [1000, 1250],
-    curvaPotencia: [30.5, 41.2],
-    curvaTorque: [11.5, 12.1],
-    curvaAfr: [13.8, 14.0],
-    statusFinal,
-    picoPotencia: 131.5,
-    picoTorque: 15.7
+  const buildResult = (finalStatus: DynoResult['finalStatus'] = 'INTEGRO'): DynoResult => ({
+    rpmAxis: [1000, 1250],
+    powerCurve: [30.5, 41.2],
+    torqueCurve: [11.5, 12.1],
+    afrCurve: [13.8, 14.0],
+    finalStatus,
+    peakPower: 131.5,
+    peakTorque: 15.7
   });
 
   const buildTest = (id: number): DynoTest => ({
     id,
     motorId: 101,
-    potenciaMaxima: 131.5,
-    torqueMaximo: 15.7,
-    afrMedio: 14.1,
-    statusFinal: 'INTEGRO',
-    dataTeste: '2026-10-16T10:00:00Z'
+    maxPower: 131.5,
+    maxTorque: 15.7,
+    averageAfr: 14.1,
+    finalStatus: 'INTEGRO',
+    testedAt: '2026-10-16T10:00:00Z'
   });
 
   it('should POST the simulation to the executar endpoint', () => {
@@ -60,7 +60,7 @@ describe('HttpDynoService', () => {
     const expectedResult = buildResult('QUEBRADO_DETONACAO');
 
     service.runSimulation().subscribe((result) => {
-      expect(result.statusFinal).toBe('QUEBRADO_DETONACAO');
+      expect(result.finalStatus).toBe('QUEBRADO_DETONACAO');
     });
 
     const request = httpTestingController.expectOne(API_CONFIG.endpoints.dinamometro.executar);

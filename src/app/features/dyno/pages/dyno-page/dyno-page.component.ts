@@ -64,13 +64,13 @@ import { EngineHealthComponent } from '../../components/engine-health/engine-hea
                     <div class="stat-block">
                       <span class="stat-label">POTÊNCIA DE PICO</span>
                       <span class="stat-value stat-power">
-                        @if (result(); as currentResult) { {{ currentResult.picoPotencia.toFixed(1) }} cv } @else { — }
+                        @if (result(); as currentResult) { {{ currentResult.peakPower.toFixed(1) }} cv } @else { — }
                       </span>
                     </div>
                     <div class="stat-block">
                       <span class="stat-label">TORQUE DE PICO</span>
                       <span class="stat-value stat-torque">
-                        @if (result(); as currentResult) { {{ currentResult.picoTorque.toFixed(1) }} kgfm } @else { — }
+                        @if (result(); as currentResult) { {{ currentResult.peakTorque.toFixed(1) }} kgfm } @else { — }
                       </span>
                     </div>
                     @if (challenge(); as activeChallenge) {
@@ -94,10 +94,10 @@ import { EngineHealthComponent } from '../../components/engine-health/engine-hea
 
                 @if (result(); as currentResult) {
                   <app-dyno-chart
-                    [rpmAxis]="currentResult.rpmEixoX"
-                    [powerCurve]="currentResult.curvaPotencia"
-                    [torqueCurve]="currentResult.curvaTorque"
-                    [afrCurve]="currentResult.curvaAfr"
+                    [rpmAxis]="currentResult.rpmAxis"
+                    [powerCurve]="currentResult.powerCurve"
+                    [torqueCurve]="currentResult.torqueCurve"
+                    [afrCurve]="currentResult.afrCurve"
                   ></app-dyno-chart>
                 } @else {
                   <div class="chart-placeholder">

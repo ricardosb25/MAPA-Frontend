@@ -12,7 +12,7 @@ export interface ClassModel {
   name: string;
   code: string;
   shift: Shift;
-  professorName: string;
+  teacherName: string;
   studentCount: number;
   createdAt: string;
 }

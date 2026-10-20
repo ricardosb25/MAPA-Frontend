@@ -113,7 +113,7 @@ import { PaginationControlsComponent } from '../../../../shared/components/pagin
 
                     <h2 class="class-card-title">{{ schoolClass.name }}</h2>
                     <p class="class-card-meta">
-                      Prof. {{ schoolClass.professorName }} · {{ shiftLabel(schoolClass.shift) }}
+                      Prof. {{ schoolClass.teacherName }} · {{ shiftLabel(schoolClass.shift) }}
                     </p>
                     <p class="class-card-count">
                       {{ schoolClass.studentCount }} aluno(s) matriculado(s)

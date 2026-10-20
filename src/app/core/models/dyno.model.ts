@@ -1,23 +1,23 @@
 ﻿export type EngineStatus = 'INTEGRO' | 'QUEBRADO_POBRE' | 'QUEBRADO_DETONACAO' | 'OVERREV';
 
 export interface DynoResult {
-  rpmEixoX: number[];
-  curvaPotencia: number[];
-  curvaTorque: number[];
-  curvaAfr: number[];
-  statusFinal: EngineStatus;
-  picoPotencia: number;
-  picoTorque: number;
+  rpmAxis: number[];
+  powerCurve: number[];
+  torqueCurve: number[];
+  afrCurve: number[];
+  finalStatus: EngineStatus;
+  peakPower: number;
+  peakTorque: number;
 }
 
 export interface DynoTest {
   id: number;
   motorId: number;
-  potenciaMaxima: number;
-  torqueMaximo: number;
-  afrMedio: number;
-  statusFinal: EngineStatus;
-  dataTeste: string;
+  maxPower: number;
+  maxTorque: number;
+  averageAfr: number;
+  finalStatus: EngineStatus;
+  testedAt: string;
 }
 
 export const ENGINE_STATUS_LABELS: Record<EngineStatus, string> = {

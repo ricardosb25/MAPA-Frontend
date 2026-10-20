@@ -21,7 +21,7 @@ import { DynoResult, EngineStatus, ENGINE_STATUS_LABELS } from '../../../../core
           <div class="health-details">
             <span class="health-status">{{ statusLabel }}</span>
             <span class="health-message">{{ statusMessage }}</span>
-            @if (result.statusFinal !== 'INTEGRO') {
+            @if (result.finalStatus !== 'INTEGRO') {
               <span class="health-rpm">Interrupção em {{ lastSimulatedRpm }} RPM.</span>
             }
           </div>
@@ -30,11 +30,11 @@ import { DynoResult, EngineStatus, ENGINE_STATUS_LABELS } from '../../../../core
         <div class="health-metrics">
           <div class="metric">
             <span class="metric-label">PICO DE POTÊNCIA</span>
-            <span class="metric-value metric-power">{{ result.picoPotencia.toFixed(1) }} cv</span>
+            <span class="metric-value metric-power">{{ result.peakPower.toFixed(1) }} cv</span>
           </div>
           <div class="metric">
             <span class="metric-label">PICO DE TORQUE</span>
-            <span class="metric-value metric-torque">{{ result.picoTorque.toFixed(1) }} kgfm</span>
+            <span class="metric-value metric-torque">{{ result.peakTorque.toFixed(1) }} kgfm</span>
           </div>
           <div class="metric">
             <span class="metric-label">AFR MÉDIO</span>
@@ -154,21 +154,21 @@ export class EngineHealthComponent {
     if (this.result === null) {
       return '';
     }
-    return ENGINE_STATUS_LABELS[this.result.statusFinal];
+    return ENGINE_STATUS_LABELS[this.result.finalStatus];
   }
 
   get statusIcon(): string {
-    return this.result?.statusFinal === 'INTEGRO'
+    return this.result?.finalStatus === 'INTEGRO'
       ? 'fa-solid fa-circle-check'
       : 'fa-solid fa-circle-xmark';
   }
 
   get alertClass(): string {
-    return this.result?.statusFinal === 'INTEGRO' ? 'health-ok' : 'health-broken';
+    return this.result?.finalStatus === 'INTEGRO' ? 'health-ok' : 'health-broken';
   }
 
   get statusMessage(): string {
-    switch (this.result?.statusFinal) {
+    switch (this.result?.finalStatus) {
       case 'INTEGRO':
         return 'A puxada percorreu toda a faixa de rotação sem violar os limites físicos do motor.';
       case 'QUEBRADO_POBRE':
@@ -183,16 +183,16 @@ export class EngineHealthComponent {
   }
 
   get lastSimulatedRpm(): number {
-    if (this.result === null || this.result.rpmEixoX.length === 0) {
+    if (this.result === null || this.result.rpmAxis.length === 0) {
       return 0;
     }
-    return this.result.rpmEixoX[this.result.rpmEixoX.length - 1];
+    return this.result.rpmAxis[this.result.rpmAxis.length - 1];
   }
 
   get averageAfr(): number {
-    if (this.result === null || this.result.curvaAfr.length === 0) {
+    if (this.result === null || this.result.afrCurve.length === 0) {
       return 0;
     }
-    return this.result.curvaAfr.reduce((total, afr) => total + afr, 0) / this.result.curvaAfr.length;
+    return this.result.afrCurve.reduce((total, afr) => total + afr, 0) / this.result.afrCurve.length;
   }
 }

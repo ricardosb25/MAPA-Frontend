@@ -15,7 +15,7 @@ const buildClass = (overrides: Partial<ClassModel> = {}): ClassModel => ({
   name: 'Turma A',
   code: 'TUR-1A',
   shift: 'EVENING',
-  professorName: 'Ricardo Bissaco',
+  teacherName: 'Ricardo Bissaco',
   studentCount: 2,
   createdAt: '2026-02-01T00:00:00Z',
   ...overrides,

@@ -37,7 +37,7 @@ describe('HttpClassService', () => {
     name: 'Eletronica Embarcada 2A',
     code: 'AUT-2A',
     shift: 'AFTERNOON',
-    professorName: 'Helena Duarte',
+    teacherName: 'Prof. Dr. Eng. Fulano',
     studentCount: 2,
     createdAt: '2026-01-10T00:00:00Z',
     ...overrides,

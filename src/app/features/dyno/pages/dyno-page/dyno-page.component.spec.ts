@@ -29,14 +29,14 @@ const buildEngine = (overrides: Partial<EngineModel> = {}): EngineModel => ({
   ...overrides
 });
 
-const buildResult = (statusFinal: DynoResult['statusFinal'] = 'INTEGRO'): DynoResult => ({
-  rpmEixoX: [1000, 1250, 1500],
-  curvaPotencia: [30.5, 41.2, 52.0],
-  curvaTorque: [11.5, 12.1, 12.4],
-  curvaAfr: [13.8, 14.0, 14.2],
-  statusFinal,
-  picoPotencia: statusFinal === 'INTEGRO' ? 131.5 : 60.0,
-  picoTorque: 15.7
+const buildResult = (finalStatus: DynoResult['finalStatus'] = 'INTEGRO'): DynoResult => ({
+  rpmAxis: [1000, 1250, 1500],
+  powerCurve: [30.5, 41.2, 52.0],
+  torqueCurve: [11.5, 12.1, 12.4],
+  afrCurve: [13.8, 14.0, 14.2],
+  finalStatus,
+  peakPower: finalStatus === 'INTEGRO' ? 131.5 : 60.0,
+  peakTorque: 15.7
 });
 
 const buildEngineServiceStub = (engine: EngineModel | null) => ({
