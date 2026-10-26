@@ -10,6 +10,7 @@ import { EngineService } from '../../../../core/services/engine.service';
 import { ChallengeService } from '../../../../core/services/challenge.service';
 import { ChallengeModel } from '../../../../core/models/challenge.model';
 import { HeaderNavbarComponent } from '../../../../shared/components/header-navbar/header-navbar.component';
+import { LoadingComponent } from '../../../../shared/components/loading/loading.component';
 import { ActiveChallengeCardComponent } from '../../../calibration/components/active-challenge-card/active-challenge-card.component';
 import { DynoChartComponent } from '../../components/dyno-chart/dyno-chart.component';
 import { EngineHealthComponent } from '../../components/engine-health/engine-health.component';
@@ -21,6 +22,7 @@ import { EngineHealthComponent } from '../../components/engine-health/engine-hea
     CommonModule,
     RouterModule,
     HeaderNavbarComponent,
+    LoadingComponent,
     ActiveChallengeCardComponent,
     DynoChartComponent,
     EngineHealthComponent
@@ -38,11 +40,14 @@ import { EngineHealthComponent } from '../../components/engine-health/engine-hea
               {{ selectedEngine.manufacturer }} {{ selectedEngine.name }} — aceleração total da marcha-lenta ao corte
               de {{ selectedEngine.rpmCutoff }} rpm.
             </p>
-          } @else {
+          } @else if (!isLoading()) {
             <p class="page-subtitle">Selecione um motor no catálogo para executar o teste de bancada.</p>
           }
         </section>
 
+        @if (isLoading()) {
+          <app-loading variant="page" message="Carregando dados do dinamômetro..."></app-loading>
+        } @else {
         @if (engine() === null) {
           <section class="empty-state">
             <i class="fa-solid fa-gauge-high empty-state-icon"></i>
@@ -120,6 +125,7 @@ import { EngineHealthComponent } from '../../components/engine-health/engine-hea
               }
             </aside>
           </section>
+        }
         }
       </main>
 
@@ -397,6 +403,7 @@ import { EngineHealthComponent } from '../../components/engine-health/engine-hea
 export class DynoPageComponent implements OnInit, OnDestroy {
   private static readonly FEEDBACK_TIMEOUT_MILLISECONDS = 4500;
   readonly engine = signal<EngineModel | null>(null);
+  readonly isLoading = signal(true);
   readonly result = signal<DynoResult | null>(null);
   readonly isRunning = signal(false);
   readonly feedbackMessage = signal('');
@@ -417,12 +424,16 @@ export class DynoPageComponent implements OnInit, OnDestroy {
     this.subscriptions.push(
       this.engineService.getSelectedEngine().subscribe({
         next: (selectedEngine) => {
+          this.isLoading.set(false);
           this.engine.set(selectedEngine);
           if (selectedEngine === null) {
             this.result.set(null);
           }
         },
-        error: () => this.engine.set(null)
+        error: () => {
+          this.isLoading.set(false);
+          this.engine.set(null);
+        }
       })
     );
   }

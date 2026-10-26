@@ -34,6 +34,7 @@ import {
 } from '../../../../core/models/class.model';
 import { ClassService } from '../../../../core/services/class.service';
 import { HeaderNavbarComponent } from '../../../../shared/components/header-navbar/header-navbar.component';
+import { LoadingComponent } from '../../../../shared/components/loading/loading.component';
 import { PaginationControlsComponent } from '../../../../shared/components/pagination-controls/pagination-controls.component';
 import { ConfirmDialogComponent } from '../../../garage/components/confirm-dialog/confirm-dialog.component';
 
@@ -44,6 +45,7 @@ import { ConfirmDialogComponent } from '../../../garage/components/confirm-dialo
     CommonModule,
     ReactiveFormsModule,
     HeaderNavbarComponent,
+    LoadingComponent,
     PaginationControlsComponent,
     ConfirmDialogComponent,
   ],
@@ -169,6 +171,8 @@ import { ConfirmDialogComponent } from '../../../garage/components/confirm-dialo
                   </p>
                 </div>
               }
+            } @else {
+              <app-loading message="Carregando turmas..."></app-loading>
             }
           </div>
           <div class="detail-column">
@@ -288,6 +292,8 @@ import { ConfirmDialogComponent } from '../../../garage/components/confirm-dialo
                   }
                 </div>
               </div>
+            } @else if (isLoadingDetail) {
+              <app-loading message="Carregando detalhes da turma..."></app-loading>
             } @else {
               <div class="detail-placeholder">
                 <i class="fa-solid fa-chalkboard-user empty-state-icon"></i>

@@ -11,6 +11,7 @@ import {
 import { AuthService } from '../../../../core/services/auth.service';
 import { EngineService } from '../../../../core/services/engine.service';
 import { HeaderNavbarComponent } from '../../../../shared/components/header-navbar/header-navbar.component';
+import { LoadingComponent } from '../../../../shared/components/loading/loading.component';
 import { PaginationControlsComponent } from '../../../../shared/components/pagination-controls/pagination-controls.component';
 import { EngineCardComponent } from '../../components/engine-card/engine-card.component';
 import { EngineFormModalComponent } from '../../components/engine-form-modal/engine-form-modal.component';
@@ -22,6 +23,7 @@ import { ConfirmDialogComponent } from '../../components/confirm-dialog/confirm-
   imports: [
     CommonModule,
     HeaderNavbarComponent,
+    LoadingComponent,
     PaginationControlsComponent,
     EngineCardComponent,
     EngineFormModalComponent,
@@ -82,6 +84,8 @@ import { ConfirmDialogComponent } from '../../components/confirm-dialog/confirm-
               (pageChange)="handlePageChange($event)"
               (sizeChange)="handleSizeChange($event)"
             ></app-pagination-controls>
+          } @else {
+            <app-loading message="Carregando motores..."></app-loading>
           }
         </section>
       </main>

@@ -3,14 +3,14 @@ import { CommonModule } from '@angular/common';
 import { DialogModule } from 'primeng/dialog';
 import { TableModule } from 'primeng/table';
 import { TagModule } from 'primeng/tag';
-import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { ChallengeModel, ChallengePerformanceModel, ChallengeStudentProgressModel } from '../../../../core/models/challenge.model';
 import { ChallengeService } from '../../../../core/services/challenge.service';
+import { LoadingComponent } from '../../../../shared/components/loading/loading.component';
 
 @Component({
   selector: 'app-challenge-performance-modal',
   standalone: true,
-  imports: [CommonModule, DialogModule, TableModule, TagModule, ProgressSpinnerModule],
+  imports: [CommonModule, DialogModule, TableModule, TagModule, LoadingComponent],
   template: `
     <p-dialog 
       [header]="'Desempenho: ' + challenge?.title" 
@@ -23,13 +23,7 @@ import { ChallengeService } from '../../../../core/services/challenge.service';
       (onHide)="handleClose()"
     >
       @if (loading()) {
-        <div class="spinner-container">
-          <p-progressSpinner
-            styleClass="performance-spinner"
-            strokeWidth="4"
-            animationDuration="1s"
-          ></p-progressSpinner>
-        </div>
+        <app-loading variant="inline" message="Carregando desempenho..."></app-loading>
       } @else {
         <p-table [value]="performance()?.students || []" [rows]="10" [paginator]="true" styleClass="p-datatable-sm">
           <ng-template pTemplate="header">
@@ -80,17 +74,6 @@ import { ChallengeService } from '../../../../core/services/challenge.service';
     </p-dialog>
   `,
   styles: [`
-    :host ::ng-deep .performance-spinner {
-      width: 40px;
-      height: 40px;
-    }
-
-    .spinner-container {
-      display: flex;
-      justify-content: center;
-      padding: 2rem;
-    }
-
     .col-center {
       text-align: center;
     }

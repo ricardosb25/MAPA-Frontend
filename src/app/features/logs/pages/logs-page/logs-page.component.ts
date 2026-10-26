@@ -17,12 +17,13 @@ import { AuditLogLevel, AuditLogModel, AuditLogQuery } from '../../../../core/mo
 import { PageResponse } from '../../../../core/models/pagination.model';
 import { AuditLogService } from '../../../../core/services/audit-log.service';
 import { HeaderNavbarComponent } from '../../../../shared/components/header-navbar/header-navbar.component';
+import { LoadingComponent } from '../../../../shared/components/loading/loading.component';
 import { PaginationControlsComponent } from '../../../../shared/components/pagination-controls/pagination-controls.component';
 
 @Component({
   selector: 'app-logs-page',
   standalone: true,
-  imports: [CommonModule, HeaderNavbarComponent, PaginationControlsComponent],
+  imports: [CommonModule, HeaderNavbarComponent, LoadingComponent, PaginationControlsComponent],
   template: `
     <div class="page-layout">
       <app-header-navbar></app-header-navbar>
@@ -123,6 +124,8 @@ import { PaginationControlsComponent } from '../../../../shared/components/pagin
                 </p>
               </div>
             }
+          } @else {
+            <app-loading message="Carregando registros..."></app-loading>
           }
         </section>
       </main>

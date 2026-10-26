@@ -6,13 +6,13 @@ import { ChallengeService } from '../../../../core/services/challenge.service';
 import { ChallengeModel, ChallengeQuery, ChallengeDifficulty } from '../../../../core/models/challenge.model';
 import { PageResponse } from '../../../../core/models/pagination.model';
 import { HeaderNavbarComponent } from '../../../../shared/components/header-navbar/header-navbar.component';
+import { LoadingComponent } from '../../../../shared/components/loading/loading.component';
 import { PaginationControlsComponent } from '../../../../shared/components/pagination-controls/pagination-controls.component';
 import { StudentChallengeCardComponent } from '../../components/student-challenge-card/student-challenge-card.component';
 import { InputTextModule } from 'primeng/inputtext';
 import { SelectModule } from 'primeng/select';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
-import { ProgressSpinnerModule } from 'primeng/progressspinner';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 
@@ -23,13 +23,13 @@ import { ToastModule } from 'primeng/toast';
     CommonModule,
     FormsModule,
     HeaderNavbarComponent,
+    LoadingComponent,
     PaginationControlsComponent,
     StudentChallengeCardComponent,
     InputTextModule,
     SelectModule,
     IconFieldModule,
     InputIconModule,
-    ProgressSpinnerModule,
     ToastModule
   ],
   template: `
@@ -68,13 +68,7 @@ import { ToastModule } from 'primeng/toast';
         </section>
 
         @if (loading()) {
-          <div class="loading-state">
-            <p-progressSpinner
-              styleClass="loading-spinner"
-              strokeWidth="4"
-              animationDuration="1s"
-            ></p-progressSpinner>
-          </div>
+          <app-loading variant="page" message="Carregando desafios..."></app-loading>
         } @else {
           @if (challengesPage()?.content?.length) {
             <div class="challenges-grid">
@@ -203,18 +197,6 @@ import { ToastModule } from 'primeng/toast';
       grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
       gap: 24px;
       margin-bottom: 24px;
-    }
-
-    .loading-state {
-      display: flex;
-      justify-content: center;
-      padding: 5rem;
-      color: #0099ff;
-    }
-
-    :host ::ng-deep .loading-spinner {
-      width: 44px;
-      height: 44px;
     }
 
     .empty-state {

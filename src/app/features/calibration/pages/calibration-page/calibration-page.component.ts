@@ -9,6 +9,7 @@ import { AuthService } from '../../../../core/services/auth.service';
 import { EcuMapService } from '../../../../core/services/ecu-map.service';
 import { EngineService } from '../../../../core/services/engine.service';
 import { HeaderNavbarComponent } from '../../../../shared/components/header-navbar/header-navbar.component';
+import { LoadingComponent } from '../../../../shared/components/loading/loading.component';
 import { ActiveChallengeCardComponent } from '../../components/active-challenge-card/active-challenge-card.component';
 import { EcuMapGridComponent } from '../../components/ecu-map-grid/ecu-map-grid.component';
 import { ChallengeService } from '../../../../core/services/challenge.service';
@@ -17,7 +18,14 @@ import { ChallengeModel } from '../../../../core/models/challenge.model';
 @Component({
   selector: 'app-calibration-page',
   standalone: true,
-  imports: [CommonModule, RouterModule, HeaderNavbarComponent, EcuMapGridComponent, ActiveChallengeCardComponent],
+  imports: [
+    CommonModule,
+    RouterModule,
+    HeaderNavbarComponent,
+    LoadingComponent,
+    EcuMapGridComponent,
+    ActiveChallengeCardComponent
+  ],
   template: `
     <div class="page-layout">
       <app-header-navbar></app-header-navbar>
@@ -41,10 +49,7 @@ import { ChallengeModel } from '../../../../core/models/challenge.model';
         </section>
 
         @if (isLoading()) {
-          <section class="loading-state">
-            <i class="fa-solid fa-circle-notch fa-spin loading-icon"></i>
-            <span>Carregando mapas da ECU...</span>
-          </section>
+          <app-loading message="Carregando mapas da ECU..."></app-loading>
         }
 
         @if (!isLoading() && engine() === null) {
@@ -238,23 +243,6 @@ import { ChallengeModel } from '../../../../core/models/challenge.model';
         font-size: 0.95rem;
         color: #475569;
         line-height: 1.5;
-      }
-
-      .loading-state {
-        display: flex;
-        align-items: center;
-        gap: 10px;
-        padding: 32px;
-        background-color: #f8fafc;
-        border: 1px solid #cbd5e1;
-        border-radius: 12px;
-        color: #475569;
-        font-weight: 600;
-        font-size: 0.9rem;
-      }
-
-      .loading-icon {
-        color: #0099ff;
       }
 
       .empty-state {
