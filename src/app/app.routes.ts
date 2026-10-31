@@ -48,8 +48,9 @@ export const routes: Routes = [
   },
   {
     path: 'dashboard',
-    redirectTo: 'home',
-    pathMatch: 'full'
+    canActivate: [authGuard, roleGuard([UserProfileType.TEACHER])],
+    loadComponent: () => import('./features/dashboard/pages/teacher-dashboard-page/teacher-dashboard-page.component')
+      .then((dashboardModule) => dashboardModule.TeacherDashboardPageComponent)
   },
   {
     path: 'garage',

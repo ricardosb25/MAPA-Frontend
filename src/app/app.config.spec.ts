@@ -9,6 +9,8 @@ import { HttpAdminUserService } from './core/services/http-admin-user.service';
 import { HttpAuditLogService } from './core/services/http-audit-log.service';
 import { HttpAuthService } from './core/services/http-auth.service';
 import { HttpEngineService } from './core/services/http-engine.service';
+import { TeacherDashboardService } from './core/services/teacher-dashboard.service';
+import { HttpTeacherDashboardService } from './core/services/http-teacher-dashboard.service';
 
 describe('appConfig', () => {
   const configureRootTestBed = async () => {
@@ -22,5 +24,6 @@ describe('appConfig', () => {
     expect(TestBed.inject(EngineService)).toBeInstanceOf(HttpEngineService);
     expect(TestBed.inject(AuditLogService)).toBeInstanceOf(HttpAuditLogService);
     expect(TestBed.inject(AdminUserService)).toBeInstanceOf(HttpAdminUserService);
+    expect(TestBed.inject(TeacherDashboardService)).toBeInstanceOf(HttpTeacherDashboardService);
   });
 });

@@ -34,6 +34,10 @@ import { BrandLogoComponent } from '../brand-logo/brand-logo.component';
           <span>Dinamômetro</span>
         </a>
         @if ((authService.currentUser$ | async)?.role === 'TEACHER') {
+          <a routerLink="/dashboard" routerLinkActive="active" class="nav-item">
+            <i class="fa-solid fa-chart-column nav-icon" aria-hidden="true"></i>
+            <span>Desempenho</span>
+          </a>
           <a routerLink="/classes" routerLinkActive="active" class="nav-item">
             <i class="fa-solid fa-chalkboard-user nav-icon"></i>
             <span>Turmas</span>
@@ -203,6 +207,11 @@ import { BrandLogoComponent } from '../brand-logo/brand-logo.component';
     }
 
     @media (max-width: 992px) {
+      .navbar-center {
+        flex-wrap: wrap;
+        width: 100%;
+      }
+
       .navbar-header {
         flex-wrap: wrap;
         height: auto;

@@ -4,6 +4,7 @@ import { EcuMapType } from '../models/ecu-map.model';
 export const API_CONFIG = {
   baseUrl: environment.apiUrl,
   endpoints: {
+    teacherDashboard: `${environment.apiUrl}/teacher/dashboard`,
     accountSettings: `${environment.apiUrl}/account/settings`,
     adminSettings: `${environment.apiUrl}/admin/settings`,
     motores: `${environment.apiUrl}/motores`,

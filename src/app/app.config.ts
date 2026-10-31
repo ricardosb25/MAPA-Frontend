@@ -11,6 +11,8 @@ import { AccountSettingsService } from './core/services/account-settings.service
 import { HttpAccountSettingsService } from './core/services/http-account-settings.service';
 import { BaseRestorationService } from './core/services/base-restoration.service';
 import { HttpBaseRestorationService } from './core/services/http-base-restoration.service';
+import { TeacherDashboardService } from './core/services/teacher-dashboard.service';
+import { HttpTeacherDashboardService } from './core/services/http-teacher-dashboard.service';
 import { authInterceptor } from './core/interceptors/auth.interceptor';
 import { AdminUserService } from './core/services/admin-user.service';
 import { AuditLogService } from './core/services/audit-log.service';
@@ -53,6 +55,7 @@ const MapaThemePreset = definePreset(Aura, {
 
 export const appConfig: ApplicationConfig = {
   providers: [
+    { provide: TeacherDashboardService, useClass: HttpTeacherDashboardService },
     { provide: AccountSettingsService, useClass: HttpAccountSettingsService },
     { provide: BaseRestorationService, useClass: HttpBaseRestorationService },
     provideBrowserGlobalErrorListeners(),
