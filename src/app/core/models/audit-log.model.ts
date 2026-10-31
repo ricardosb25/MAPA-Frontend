@@ -7,6 +7,8 @@ export type AuditLogAction =
   | 'PASSWORD_RESET'
   | 'EMAIL_CHANGED'
   | 'PASSWORD_CHANGED'
+  | 'MOTOR_BASE_RESTORED'
+  | 'ECU_MAP_BASE_RESTORED'
   | 'TERMS_ACCEPTED';
 
 export interface AuditLogModel {

@@ -5,6 +5,7 @@ export const API_CONFIG = {
   baseUrl: environment.apiUrl,
   endpoints: {
     accountSettings: `${environment.apiUrl}/account/settings`,
+    adminSettings: `${environment.apiUrl}/admin/settings`,
     motores: `${environment.apiUrl}/motores`,
     motoresSelecionado: `${environment.apiUrl}/motores/selecionado`,
     classes: `${environment.apiUrl}/classes`,

@@ -9,31 +9,80 @@ import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
 import { MessageModule } from 'primeng/message';
+import { DialogModule } from 'primeng/dialog';
 import { AccountSettings } from '../../../../core/models/account-settings.model';
 import { AccountSettingsService } from '../../../../core/services/account-settings.service';
+import { BaseRestorationService } from '../../../../core/services/base-restoration.service';
+import { UserProfileType } from '../../../../core/models/user-profile.enum';
 import { AuthService } from '../../../../core/services/auth.service';
 import { FeedbackService } from '../../../../shared/services/feedback.service';
 import { HeaderNavbarComponent } from '../../../../shared/components/header-navbar/header-navbar.component';
+import { LoadingComponent } from '../../../../shared/components/loading/loading.component';
 
 @Component({
   selector: 'app-settings-page',
   imports: [DatePipe, ReactiveFormsModule, ButtonModule, InputTextModule, PasswordModule,
-    MessageModule, HeaderNavbarComponent],
+    MessageModule, DialogModule, HeaderNavbarComponent, LoadingComponent],
   template: `
 <app-header-navbar />
 <main class="settings-shell">
   <header class="page-heading">
-    <span class="eyebrow">MINHA CONTA</span>
+    <span class="eyebrow">{{ isAdmin() ? 'ADMINISTRAÇÃO' : 'MINHA CONTA' }}</span>
     <h1>Configurações</h1>
-    <p>Gerencie seus dados de acesso ao MAPA.</p>
+    <p>{{ isAdmin() ? 'Gerencie as bases de dados padrão do MAPA.' : 'Gerencie seus dados de acesso ao MAPA.' }}</p>
   </header>
 
-  @if (isLoading()) {
-    <p-message severity="info" role="status">Carregando suas configurações…</p-message>
-  } @else if (loadError()) {
+  @if (isAdmin()) {
+    <aside class="policy-note">
+      <i class="pi pi-database" aria-hidden="true"></i>
+      <div><strong>Restauração das bases</strong>
+        <p>Cada restauração apaga os dados atuais da base escolhida e carrega os dados padrão.
+          A operação é registrada nos logs de auditoria.</p></div>
+    </aside>
+    <div class="settings-grid">
+      <section class="settings-card" aria-labelledby="restore-motors-title">
+        <div class="card-heading"><span class="section-number">01</span>
+          <div><h2 id="restore-motors-title">Base de motores</h2><p>Recrie o catálogo com os motores padrão.</p></div>
+        </div>
+        <p class="restore-description">Apaga os motores atuais, os ajustes vinculados e a seleção de motor de todos os usuários.
+          Desafios vinculados impedem a restauração e precisam ser removidos antes.</p>
+        <p-button label="Restaurar base de motores" icon="pi pi-refresh" severity="danger"
+          [disabled]="restoringBase() !== null" (onClick)="requestRestoration('motors')" />
+      </section>
+      <section class="settings-card" aria-labelledby="restore-maps-title">
+        <div class="card-heading"><span class="section-number">02</span>
+          <div><h2 id="restore-maps-title">Base de mapas</h2><p>Recrie os mapas de combustível e ignição.</p></div>
+        </div>
+        <p class="restore-description">Apaga os mapas de fábrica atuais e todos os ajustes personalizados dos usuários,
+          substituindo a base pelos mapas padrão.</p>
+        <p-button label="Restaurar base de mapas" icon="pi pi-refresh" severity="danger"
+          [disabled]="restoringBase() !== null" (onClick)="requestRestoration('maps')" />
+      </section>
+    </div>
+    @if (restorationError()) { <p-message severity="error">{{ restorationError() }}</p-message> }
+    <p-dialog header="Confirmar restauração" [visible]="pendingRestoration() !== null"
+      (visibleChange)="handleRestorationVisibility($event)" [modal]="true" [closable]="restoringBase() === null"
+      [closeOnEscape]="restoringBase() === null" [style]="{ width: 'min(92vw, 520px)' }">
+      <p class="restore-description">{{ restorationConfirmation() }}</p>
+      <p class="restore-description"><strong>Essa ação não pode ser desfeita pela aplicação.</strong></p>
+      @if (restoringBase()) {
+        <app-loading variant="inline"
+          [message]="restoringBase() === 'motors' ? 'Restaurando base de motores...' : 'Restaurando base de mapas...'" />
+      }
+      <div class="confirmation-actions">
+        <p-button label="Cancelar" severity="secondary" [outlined]="true"
+          [disabled]="restoringBase() !== null" (onClick)="cancelRestoration()" />
+        <p-button label="Apagar e restaurar" severity="danger" icon="pi pi-refresh"
+          [disabled]="restoringBase() !== null"
+          (onClick)="confirmRestoration()" />
+      </div>
+    </p-dialog>
+  } @else if (canManageAccount() && isLoading()) {
+    <app-loading variant="page" message="Carregando suas configurações..." />
+  } @else if (canManageAccount() && loadError()) {
     <p-message severity="error">{{ loadError() }}</p-message>
     <p-button label="Tentar novamente" icon="pi pi-refresh" (onClick)="loadSettings()" />
-  } @else {
+  } @else if (canManageAccount()) {
     <aside class="policy-note">
       <i class="pi pi-shield" aria-hidden="true"></i>
       <div><strong>Seus dados, com segurança.</strong>
@@ -70,8 +119,11 @@ import { HeaderNavbarComponent } from '../../../../shared/components/header-navb
             }
           </fieldset>
           @if (emailError()) { <p-message severity="error">{{ emailError() }}</p-message> }
+          @if (savingField() === 'email') {
+            <app-loading variant="inline" message="Atualizando e-mail..." />
+          }
           <p-button type="submit" label="Atualizar e-mail" icon="pi pi-envelope"
-            [loading]="savingField() === 'email'" [disabled]="!canChangeEmail() || savingField() !== null" />
+            [disabled]="!canChangeEmail() || savingField() !== null" />
         </form>
       </section>
 
@@ -106,8 +158,11 @@ import { HeaderNavbarComponent } from '../../../../shared/components/header-navb
             }
           </fieldset>
           @if (passwordError()) { <p-message severity="error">{{ passwordError() }}</p-message> }
+          @if (savingField() === 'password') {
+            <app-loading variant="inline" message="Atualizando senha..." />
+          }
           <p-button type="submit" label="Atualizar senha" icon="pi pi-lock"
-            [loading]="savingField() === 'password'" [disabled]="!canChangePassword() || savingField() !== null" />
+            [disabled]="!canChangePassword() || savingField() !== null" />
         </form>
       </section>
     </div>
@@ -144,17 +199,31 @@ small { font-size: .75rem; color: #64748b; line-height: 1.5; }
 p-message { display: block; margin-bottom: 16px; }
 form p-message { margin-bottom: 0; }
 .audit-note { display: flex; align-items: baseline; gap: 8px; color: #64748b; font-size: .78rem; line-height: 1.7; margin: 24px 0 0; }
+.restore-description { color: #475569; font-size: .875rem; line-height: 1.7; margin: 0 0 24px; }
+.confirmation-actions { display: flex; justify-content: flex-end; gap: 12px; flex-wrap: wrap; }
 @media (max-width: 760px) { .settings-grid { grid-template-columns: 1fr; } .settings-shell { padding: 28px 16px; } .settings-card { padding: 22px; } }
   `]
 })
 export class SettingsPageComponent {
   private readonly settingsService = inject(AccountSettingsService);
+  private readonly restorationService = inject(BaseRestorationService);
   private readonly authService = inject(AuthService);
   private readonly feedbackService = inject(FeedbackService);
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
   private readonly formBuilder = inject(NonNullableFormBuilder);
   private readonly currentTime = toSignal(timer(0, 60000).pipe(map(() => Date.now())), { initialValue: Date.now() });
+  private readonly currentUser = toSignal(this.authService.currentUser$);
+
+  readonly isAdmin = computed(() => this.currentUser()?.role === UserProfileType.ADMIN);
+  readonly canManageAccount = computed(() => this.currentUser()?.role === UserProfileType.STUDENT
+    || this.currentUser()?.role === UserProfileType.TEACHER);
+  readonly pendingRestoration = signal<'motors' | 'maps' | null>(null);
+  readonly restoringBase = signal<'motors' | 'maps' | null>(null);
+  readonly restorationError = signal('');
+  readonly restorationConfirmation = computed(() => this.pendingRestoration() === 'motors'
+    ? 'Todos os motores, ajustes vinculados e seleções serão apagados. O catálogo será recriado com os motores padrão.'
+    : 'Todos os mapas de fábrica e ajustes personalizados serão apagados. A base será recriada com os mapas padrão.');
 
   readonly settings = signal<AccountSettings | null>(null);
   readonly isLoading = signal(true);
@@ -176,10 +245,46 @@ export class SettingsPageComponent {
   });
 
   constructor() {
-    this.loadSettings();
+    if (this.canManageAccount()) this.loadSettings();
+  }
+
+  requestRestoration(base: 'motors' | 'maps'): void {
+    if (!this.isAdmin() || this.restoringBase()) return;
+    this.restorationError.set('');
+    this.pendingRestoration.set(base);
+  }
+
+  cancelRestoration(): void {
+    if (!this.restoringBase()) this.pendingRestoration.set(null);
+  }
+
+  handleRestorationVisibility(visible: boolean): void {
+    if (!visible) this.cancelRestoration();
+  }
+
+  confirmRestoration(): void {
+    const base = this.pendingRestoration();
+    if (!this.isAdmin() || !base || this.restoringBase()) return;
+    this.restoringBase.set(base);
+    const restorationRequest = base === 'motors'
+      ? this.restorationService.restoreMotors() : this.restorationService.restoreMaps();
+    restorationRequest.pipe(
+      takeUntilDestroyed(this.destroyRef),
+      finalize(() => this.restoringBase.set(null))
+    ).subscribe({
+      next: (response) => {
+        this.pendingRestoration.set(null);
+        this.feedbackService.showSuccess('Base restaurada', response.message);
+      },
+      error: (httpError: HttpErrorResponse) => {
+        this.pendingRestoration.set(null);
+        this.restorationError.set(this.errorMessage(httpError));
+      }
+    });
   }
 
   loadSettings(): void {
+    if (!this.canManageAccount()) return;
     this.isLoading.set(true);
     this.loadError.set('');
     this.settingsService.getSettings().pipe(
@@ -192,7 +297,7 @@ export class SettingsPageComponent {
   }
 
   saveEmail(): void {
-    if (this.savingField() || !this.canChangeEmail()) return;
+    if (!this.canManageAccount() || this.savingField() || !this.canChangeEmail()) return;
     this.emailError.set('');
     this.emailForm.markAllAsTouched();
     if (this.emailForm.invalid) return;
@@ -213,7 +318,7 @@ export class SettingsPageComponent {
   }
 
   savePassword(): void {
-    if (this.savingField() || !this.canChangePassword()) return;
+    if (!this.canManageAccount() || this.savingField() || !this.canChangePassword()) return;
     this.passwordError.set('');
     this.passwordForm.markAllAsTouched();
     if (this.passwordForm.invalid) return;
