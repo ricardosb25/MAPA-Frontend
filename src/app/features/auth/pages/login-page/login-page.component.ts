@@ -96,7 +96,7 @@ export class LoginPageComponent implements OnDestroy {
         );
 
         this.feedbackTimeoutId = setTimeout(() => {
-          this.router.navigate(['/garage']);
+          this.router.navigate(['/home']);
         }, 600);
       },
       error: (httpError: HttpErrorResponse) => {

@@ -17,7 +17,7 @@ import { BrandLogoComponent } from '../brand-logo/brand-logo.component';
       </div>
 
       <nav class="navbar-center">
-        <a routerLink="/dashboard" class="nav-item">
+        <a routerLink="/home" routerLinkActive="active" class="nav-item">
           <i class="fa-solid fa-border-all nav-icon"></i>
           <span>Painel</span>
         </a>
@@ -66,6 +66,10 @@ import { BrandLogoComponent } from '../brand-logo/brand-logo.component';
       </nav>
 
       <div class="navbar-right">
+        <a routerLink="/settings" routerLinkActive="active" class="theme-toggle-button"
+           aria-label="Configurações da conta" title="Configurações da conta">
+          <i class="fa-solid fa-gear" aria-hidden="true"></i>
+        </a>
         <button type="button" class="theme-toggle-button" aria-label="Toggle theme">
           <i class="fa-regular fa-sun"></i>
         </button>

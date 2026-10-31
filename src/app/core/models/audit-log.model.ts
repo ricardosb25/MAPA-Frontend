@@ -5,6 +5,8 @@ export type AuditLogAction =
   | 'USER_UPDATED'
   | 'USER_ANONYMIZED'
   | 'PASSWORD_RESET'
+  | 'EMAIL_CHANGED'
+  | 'PASSWORD_CHANGED'
   | 'TERMS_ACCEPTED';
 
 export interface AuditLogModel {

@@ -6,6 +6,12 @@ import { UserProfileType } from './core/models/user-profile.enum';
 
 export const routes: Routes = [
   {
+    path: 'settings',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/settings/pages/settings-page/settings-page.component')
+      .then((settingsModule) => settingsModule.SettingsPageComponent)
+  },
+  {
     path: '',
     redirectTo: 'login',
     pathMatch: 'full'
@@ -31,6 +37,19 @@ export const routes: Routes = [
       import('./features/auth/pages/reset-password-page/reset-password-page.component').then(
         (module) => module.ResetPasswordPageComponent
       )
+  },
+  {
+    path: 'home',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/home/pages/home-page/home-page.component').then(
+        (module) => module.HomePageComponent
+      )
+  },
+  {
+    path: 'dashboard',
+    redirectTo: 'home',
+    pathMatch: 'full'
   },
   {
     path: 'garage',
