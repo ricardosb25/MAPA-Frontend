@@ -47,8 +47,8 @@ import { DynoResult, EngineStatus, ENGINE_STATUS_LABELS } from '../../../../core
   styles: [
     `
       .health-card {
-        background-color: #f8fafc;
-        border: 1px solid #cbd5e1;
+        background-color: var(--mapa-gray-50);
+        border: 1px solid var(--mapa-gray-300);
         border-radius: 12px;
         padding: 24px;
         box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
@@ -60,7 +60,7 @@ import { DynoResult, EngineStatus, ENGINE_STATUS_LABELS } from '../../../../core
         font-size: 0.7rem;
         font-weight: 700;
         letter-spacing: 0.12em;
-        color: #64748b;
+        color: var(--mapa-gray-500);
         margin-bottom: 14px;
       }
 
@@ -105,7 +105,7 @@ import { DynoResult, EngineStatus, ENGINE_STATUS_LABELS } from '../../../../core
 
       .health-message {
         font-weight: 500;
-        color: #475569;
+        color: var(--mapa-gray-600);
       }
 
       .health-rpm {
@@ -127,18 +127,18 @@ import { DynoResult, EngineStatus, ENGINE_STATUS_LABELS } from '../../../../core
         font-size: 0.65rem;
         font-weight: 700;
         letter-spacing: 0.1em;
-        color: #64748b;
+        color: var(--mapa-gray-500);
         margin-bottom: 4px;
       }
 
       .metric-value {
         font-size: 1.1rem;
         font-weight: 800;
-        color: #0f172a;
+        color: var(--mapa-ink);
       }
 
       .metric-power {
-        color: #0099ff;
+        color: var(--mapa-blue-500);
       }
 
       .metric-torque {

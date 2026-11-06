@@ -10,7 +10,7 @@ import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
 import { MessageModule } from 'primeng/message';
-import { DialogModule } from 'primeng/dialog';
+import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog.component';
 import { AccountSettings } from '../../../../core/models/account-settings.model';
 import { AccountSettingsService } from '../../../../core/services/account-settings.service';
 import { BaseRestorationService } from '../../../../core/services/base-restoration.service';
@@ -23,13 +23,13 @@ import { LoadingComponent } from '../../../../shared/components/loading/loading.
 @Component({
   selector: 'app-settings-page',
   imports: [DatePipe, ReactiveFormsModule, ButtonModule, InputTextModule, PasswordModule,
-    MessageModule, DialogModule, HeaderNavbarComponent, LoadingComponent],
+    MessageModule, ConfirmDialogComponent, HeaderNavbarComponent, LoadingComponent],
   template: `
 <app-header-navbar />
 <main class="settings-shell">
   <header class="page-heading">
     <span class="eyebrow">{{ isAdmin() ? 'ADMINISTRAÇÃO' : 'MINHA CONTA' }}</span>
-    <h1>Configurações</h1>
+    <h1 class="mapa-page-title">Configurações</h1>
     <p>{{ isAdmin() ? 'Gerencie as bases de dados padrão do MAPA.' : 'Gerencie seus dados de acesso ao MAPA.' }}</p>
   </header>
 
@@ -61,23 +61,12 @@ import { LoadingComponent } from '../../../../shared/components/loading/loading.
       </section>
     </div>
     @if (restorationError()) { <p-message severity="error">{{ restorationError() }}</p-message> }
-    <p-dialog header="Confirmar restauração" [visible]="pendingRestoration() !== null"
-      (visibleChange)="handleRestorationVisibility($event)" [modal]="true" [closable]="restoringBase() === null"
-      [closeOnEscape]="restoringBase() === null" [style]="{ width: 'min(92vw, 520px)' }">
-      <p class="restore-description">{{ restorationConfirmation() }}</p>
-      <p class="restore-description"><strong>Essa ação não pode ser desfeita pela aplicação.</strong></p>
-      @if (restoringBase()) {
-        <app-loading variant="inline"
-          [message]="restoringBase() === 'motors' ? 'Restaurando base de motores...' : 'Restaurando base de mapas...'" />
-      }
-      <div class="confirmation-actions">
-        <p-button label="Cancelar" severity="secondary" [outlined]="true"
-          [disabled]="restoringBase() !== null" (onClick)="cancelRestoration()" />
-        <p-button label="Apagar e restaurar" severity="danger" icon="pi pi-refresh"
-          [disabled]="restoringBase() !== null"
-          (onClick)="confirmRestoration()" />
-      </div>
-    </p-dialog>
+    @if (pendingRestoration()) {
+      <app-confirm-dialog title="Confirmar restauração" [message]="restorationConfirmation() + ' Essa ação não pode ser desfeita pela aplicação.'"
+        confirmButtonLabel="Apagar e restaurar" confirmIcon="pi pi-refresh" [confirmationRequired]="false"
+        [isConfirming]="restoringBase() !== null" confirmingLabel="Restaurando base..."
+        (confirm)="confirmRestoration()" (cancel)="cancelRestoration()" />
+    }
   } @else if (canManageAccount() && isLoading()) {
     <app-loading variant="page" message="Carregando suas configurações..." />
   } @else if (canManageAccount() && loadError()) {
@@ -176,32 +165,30 @@ import { LoadingComponent } from '../../../../shared/components/loading/loading.
 :host { display: block; min-height: 100vh; }
 .settings-shell { max-width: 1120px; margin: 0 auto; padding: 40px 24px 56px; }
 .eyebrow, .section-number { font-family: 'Courier New', monospace; font-weight: 700; letter-spacing: .1em; }
-.eyebrow { color: #0072c7; font-size: .72rem; }
-h1 { margin: 8px 0; font-size: 2rem; letter-spacing: -.04em; color: #0f172a; }
-.page-heading p, .card-heading p { margin: 0; color: #64748b; font-size: .9rem; line-height: 1.6; }
-.policy-note { display: flex; gap: 16px; margin: 28px 0; padding: 20px; border: 1px solid #bce4ff; border-radius: 12px; background: #eef8ff; color: #0b4d80; }
+.eyebrow { color: var(--mapa-blue-700); font-size: .72rem; }
+.page-heading p, .card-heading p { margin: 0; color: var(--mapa-gray-500); font-size: .9rem; line-height: 1.6; }
+.policy-note { display: flex; gap: 16px; margin: 28px 0; padding: 20px; border: 1px solid var(--mapa-blue-200); border-radius: 12px; background: var(--mapa-blue-50); color: var(--mapa-blue-900); }
 .policy-note > i { font-size: 1.4rem; padding-top: 2px; }
 .policy-note p { margin: 6px 0 0; font-size: .85rem; line-height: 1.7; }
 .settings-grid { display: grid; grid-template-columns: 1fr 1fr; align-items: start; gap: 24px; }
-.settings-card { padding: 28px; border: 1px solid #cbd5e1; border-radius: 12px; background: #f8fafc; box-shadow: 0 1px 3px rgb(0 0 0 / 5%); min-width: 0; }
-.card-heading { display: flex; align-items: flex-start; gap: 14px; padding-bottom: 22px; margin-bottom: 22px; border-bottom: 1px solid #e2e8f0; }
-.section-number { padding: 8px; background: #d9efff; color: #0072c7; border-radius: 6px; font-size: .8rem; }
-h2 { margin: 0 0 4px; font-size: 1.15rem; color: #0f172a; }
+.settings-card { padding: 28px; border: 1px solid var(--mapa-gray-300); border-radius: 12px; background: var(--mapa-gray-50); box-shadow: 0 1px 3px rgb(0 0 0 / 5%); min-width: 0; }
+.card-heading { display: flex; align-items: flex-start; gap: 14px; padding-bottom: 22px; margin-bottom: 22px; border-bottom: 1px solid var(--mapa-gray-200); }
+.section-number { padding: 8px; background: var(--mapa-blue-100); color: var(--mapa-blue-700); border-radius: 6px; font-size: .8rem; }
+h2 { margin: 0 0 4px; font-size: 1.15rem; color: var(--mapa-ink); }
 .current-email { display: grid; gap: 6px; margin-bottom: 22px; overflow-wrap: anywhere; }
-.current-email span { color: #64748b; font-size: .65rem; font-weight: 700; letter-spacing: .08em; }
-.current-email strong { font-size: .9rem; color: #334155; }
+.current-email span { color: var(--mapa-gray-500); font-size: .65rem; font-weight: 700; letter-spacing: .08em; }
+.current-email strong { font-size: .9rem; color: var(--mapa-gray-700); }
 form { display: grid; gap: 20px; }
 fieldset { display: grid; gap: 10px; padding: 0; margin: 0; border: 0; min-width: 0; }
 fieldset:disabled { opacity: .65; }
-label { font-size: .85rem; font-weight: 700; color: #334155; margin-top: 8px; }
+label { font-size: .85rem; font-weight: 700; color: var(--mapa-gray-700); margin-top: 8px; }
 input { width: 100%; }
-small { font-size: .75rem; color: #64748b; line-height: 1.5; }
+small { font-size: .75rem; color: var(--mapa-gray-500); line-height: 1.5; }
 .field-error { color: #b91c1c; }
 p-message { display: block; margin-bottom: 16px; }
 form p-message { margin-bottom: 0; }
-.audit-note { display: flex; align-items: baseline; gap: 8px; color: #64748b; font-size: .78rem; line-height: 1.7; margin: 24px 0 0; }
-.restore-description { color: #475569; font-size: .875rem; line-height: 1.7; margin: 0 0 24px; }
-.confirmation-actions { display: flex; justify-content: flex-end; gap: 12px; flex-wrap: wrap; }
+.audit-note { display: flex; align-items: baseline; gap: 8px; color: var(--mapa-gray-500); font-size: .78rem; line-height: 1.7; margin: 24px 0 0; }
+.restore-description { color: var(--mapa-gray-600); font-size: .875rem; line-height: 1.7; margin: 0 0 24px; }
 @media (max-width: 760px) { .settings-grid { grid-template-columns: 1fr; } .settings-shell { padding: 28px 16px; } .settings-card { padding: 22px; } }
   `]
 })
@@ -257,10 +244,6 @@ export class SettingsPageComponent {
 
   cancelRestoration(): void {
     if (!this.restoringBase()) this.pendingRestoration.set(null);
-  }
-
-  handleRestorationVisibility(visible: boolean): void {
-    if (!visible) this.cancelRestoration();
   }
 
   confirmRestoration(): void {

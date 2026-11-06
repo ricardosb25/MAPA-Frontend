@@ -90,8 +90,8 @@ import { CardModule } from 'primeng/card';
   `,
   styles: [`
     :host ::ng-deep .challenge-card.p-card {
-      background: #ffffff;
-      border: 1px solid #e2e8f0;
+      background: var(--mapa-white);
+      border: 1px solid var(--mapa-gray-200);
       border-radius: 12px;
       padding: 18px;
       display: flex;
@@ -110,7 +110,7 @@ import { CardModule } from 'primeng/card';
     }
 
     :host ::ng-deep .challenge-card.selected {
-      border-color: #0099ff;
+      border-color: var(--mapa-blue-500);
       box-shadow: 0 0 0 3px rgba(0, 153, 255, 0.15);
     }
 
@@ -157,9 +157,9 @@ import { CardModule } from 'primeng/card';
       display: grid;
       place-items: center;
       font-size: 1rem;
-      color: #0072c7;
-      background: #eef8ff;
-      border: 1px solid #d9efff;
+      color: var(--mapa-blue-700);
+      background: var(--mapa-blue-50);
+      border: 1px solid var(--mapa-blue-100);
       border-radius: 10px;
     }
 
@@ -167,14 +167,14 @@ import { CardModule } from 'primeng/card';
       margin: 0;
       font-size: 1rem;
       font-weight: 800;
-      color: #0f172a;
+      color: var(--mapa-ink);
       line-height: 1.25;
       letter-spacing: -0.01em;
     }
 
     .motor-info {
       font-size: 0.68rem;
-      color: #64748b;
+      color: var(--mapa-gray-500);
       font-weight: 700;
       letter-spacing: 0.06em;
       text-transform: uppercase;
@@ -184,25 +184,25 @@ import { CardModule } from 'primeng/card';
     .challenge-description {
       margin: 0 0 12px 0;
       font-size: 0.84rem;
-      color: #475569;
+      color: var(--mapa-gray-600);
       line-height: 1.5;
     }
 
     .goal-box {
-      background: #f8fafc;
+      background: var(--mapa-gray-50);
       padding: 10px 12px;
       border-radius: 10px;
       display: flex;
       flex-direction: column;
       align-items: center;
       margin-bottom: 12px;
-      border: 1px solid #e2e8f0;
+      border: 1px solid var(--mapa-gray-200);
     }
 
     .goal-label {
       font-size: 0.63rem;
       font-weight: 800;
-      color: #64748b;
+      color: var(--mapa-gray-500);
       letter-spacing: 0.08em;
       font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", monospace;
     }
@@ -210,7 +210,7 @@ import { CardModule } from 'primeng/card';
     .goal-value {
       font-size: 1.15rem;
       font-weight: 800;
-      color: #0f172a;
+      color: var(--mapa-ink);
       letter-spacing: -0.02em;
     }
 
@@ -224,11 +224,11 @@ import { CardModule } from 'primeng/card';
     :host ::ng-deep .criteria-progress {
       height: 6px;
       border-radius: 3px;
-      background: #e2e8f0;
+      background: var(--mapa-gray-200);
     }
 
     :host ::ng-deep .criteria-progress .p-progressbar-value {
-      background: #0099ff;
+      background: var(--mapa-blue-500);
       border-radius: 3px;
     }
 
@@ -237,21 +237,21 @@ import { CardModule } from 'primeng/card';
       align-items: center;
       gap: 7px;
       font-size: 0.82rem;
-      color: #64748b;
+      color: var(--mapa-gray-500);
     }
 
     .criterion-item i {
       font-size: 0.82rem;
-      color: #cbd5e1;
+      color: var(--mapa-gray-300);
     }
 
     .criterion-item.met {
-      color: #0f172a;
+      color: var(--mapa-ink);
       font-weight: 700;
     }
 
     .criterion-item.met i {
-      color: #0099ff;
+      color: var(--mapa-blue-500);
     }
 
     .card-footer {
@@ -274,15 +274,15 @@ import { CardModule } from 'primeng/card';
     }
 
     :host ::ng-deep .challenge-secondary-button.p-button {
-      color: #065ca0;
-      border-color: #bce4ff;
-      background: #ffffff;
+      color: var(--mapa-blue-800);
+      border-color: var(--mapa-blue-200);
+      background: var(--mapa-white);
     }
 
     :host ::ng-deep .challenge-secondary-button.p-button:not(:disabled):hover {
-      color: #065ca0;
-      border-color: #0099ff;
-      background: #eef8ff;
+      color: var(--mapa-blue-800);
+      border-color: var(--mapa-blue-500);
+      background: var(--mapa-blue-50);
     }
 
     .completed-badge {
@@ -290,13 +290,13 @@ import { CardModule } from 'primeng/card';
       align-items: center;
       justify-content: center;
       gap: 8px;
-      color: #065ca0;
+      color: var(--mapa-blue-800);
       font-weight: 800;
       font-size: 0.75rem;
       letter-spacing: 0.04em;
       padding: 9px;
-      background: #eef8ff;
-      border: 1px solid #bce4ff;
+      background: var(--mapa-blue-50);
+      border: 1px solid var(--mapa-blue-200);
       border-radius: 6px;
     }
 
@@ -305,7 +305,7 @@ import { CardModule } from 'primeng/card';
       align-items: center;
       justify-content: center;
       gap: 7px;
-      color: #0072c7;
+      color: var(--mapa-blue-700);
       font-weight: 800;
       font-size: 0.72rem;
       letter-spacing: 0.06em;

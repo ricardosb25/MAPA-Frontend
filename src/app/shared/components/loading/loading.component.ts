@@ -37,10 +37,10 @@ export type LoadingVariant = 'page' | 'section' | 'inline';
         justify-content: center;
         gap: 12px;
         padding: 48px 24px;
-        background-color: #f8fafc;
-        border: 1px dashed #cbd5e1;
+        background-color: var(--mapa-gray-50);
+        border: 1px dashed var(--mapa-gray-300);
         border-radius: 12px;
-        color: #0099ff;
+        color: var(--mapa-blue-500);
       }
 
       .loading-container.loading-page {
@@ -61,7 +61,7 @@ export type LoadingVariant = 'page' | 'section' | 'inline';
       .loading-message {
         font-size: 0.875rem;
         font-weight: 600;
-        color: #475569;
+        color: var(--mapa-gray-600);
         text-align: center;
       }
 

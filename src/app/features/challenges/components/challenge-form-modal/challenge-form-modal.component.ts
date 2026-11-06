@@ -198,7 +198,7 @@ import { map } from 'rxjs';
       font-weight: 700;
       letter-spacing: 0.08em;
       text-transform: uppercase;
-      color: #475569;
+      color: var(--mapa-gray-600);
       margin-bottom: 6px;
     }
 
@@ -236,7 +236,7 @@ import { map } from 'rxjs';
     .field-hint {
       display: block;
       margin-top: 4px;
-      color: #64748b;
+      color: var(--mapa-gray-500);
       line-height: 1.4;
     }
 
@@ -246,7 +246,7 @@ import { map } from 'rxjs';
       gap: 0.5rem;
       margin-top: 0.5rem;
       padding-top: 1rem;
-      border-top: 1px solid #f1f5f9;
+      border-top: 1px solid var(--mapa-gray-100);
     }
 
     @media (max-width: 640px) {

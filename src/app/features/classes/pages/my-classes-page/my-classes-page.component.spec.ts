@@ -1,4 +1,5 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { FeedbackService } from '../../../../shared/services/feedback.service';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { of } from 'rxjs';
@@ -9,6 +10,9 @@ import { PageResponse } from '../../../../core/models/pagination.model';
 import { ClassDetailModel, ClassModel, ClassQuery } from '../../../../core/models/class.model';
 import { UserProfileType } from '../../../../core/models/user-profile.enum';
 import { UserModel } from '../../../../core/models/auth.model';
+
+const feedbackService = { showSuccess: vi.fn(), showError: vi.fn() };
+beforeEach(() => vi.clearAllMocks());
 
 const buildClass = (overrides: Partial<ClassModel> = {}): ClassModel => ({
   id: 1,
@@ -110,7 +114,7 @@ describe('MyClassesPageComponent', () => {
     );
     await TestBed.configureTestingModule({
       imports: [MyClassesPageComponent],
-      providers: [
+      providers: [{ provide: FeedbackService, useValue: feedbackService }, 
         provideRouter([]),
         { provide: ClassService, useValue: classServiceStub.service },
         { provide: AuthService, useValue: buildAuthServiceStub() },
@@ -163,7 +167,7 @@ describe('MyClassesPageComponent', () => {
     fixture.detectChanges();
 
     expect(classServiceStub.receivedJoinCodes).toEqual(['AUT-2A']);
-    expect(element.querySelector('.feedback-toast')?.textContent).toContain('Você entrou na turma');
+    expect(feedbackService.showSuccess).toHaveBeenCalledWith('Sucesso', expect.stringContaining('Você entrou na turma'));
   });
 
   it('should ask for the class code when the join form is submitted empty', async () => {
@@ -191,7 +195,7 @@ describe('MyClassesPageComponent', () => {
     fixture.detectChanges();
 
     expect(classServiceStub.receivedLeaveIds).toEqual([1]);
-    expect(element.querySelector('.feedback-toast')?.textContent).toContain('Você saiu da turma');
+    expect(feedbackService.showSuccess).toHaveBeenCalledWith('Sucesso', expect.stringContaining('Você saiu da turma'));
   });
 
   it('should show the empty state when the student is not enrolled in any class', async () => {
@@ -200,7 +204,7 @@ describe('MyClassesPageComponent', () => {
     const element = fixture.nativeElement as HTMLElement;
 
     expect(element.querySelector('.classes-grid')).toBeNull();
-    expect(element.querySelector('.empty-state-title')?.textContent).toContain(
+    expect(element.querySelector('app-empty-state h2')?.textContent).toContain(
       'Você ainda não participa',
     );
   });

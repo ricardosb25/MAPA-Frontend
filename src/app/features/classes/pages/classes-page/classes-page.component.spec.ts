@@ -1,4 +1,5 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { FeedbackService } from '../../../../shared/services/feedback.service';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { of } from 'rxjs';
@@ -14,6 +15,9 @@ import {
 } from '../../../../core/models/class.model';
 import { UserProfileType } from '../../../../core/models/user-profile.enum';
 import { UserModel } from '../../../../core/models/auth.model';
+
+const feedbackService = { showSuccess: vi.fn(), showError: vi.fn() };
+beforeEach(() => vi.clearAllMocks());
 
 const buildClass = (overrides: Partial<ClassModel> = {}): ClassModel => ({
   id: 1,
@@ -121,7 +125,7 @@ describe('ClassesPageComponent', () => {
     const classServiceStub = buildClassServiceStub(teacherClasses, detail ?? buildClassDetail());
     await TestBed.configureTestingModule({
       imports: [ClassesPageComponent],
-      providers: [
+      providers: [{ provide: FeedbackService, useValue: feedbackService }, 
         provideRouter([]),
         { provide: ClassService, useValue: classServiceStub.service },
         { provide: AuthService, useValue: buildAuthServiceStub() },
@@ -207,7 +211,7 @@ describe('ClassesPageComponent', () => {
     expect(classServiceStub.receivedCreatePayloads).toEqual([
       { name: 'Turma Nova', shift: 'AFTERNOON' },
     ]);
-    expect(element.querySelector('.feedback-toast')?.textContent).toContain('criada com o código');
+    expect(feedbackService.showSuccess).toHaveBeenCalledWith('Sucesso', expect.stringContaining('criada com o código'));
   });
 
   it('should ask for the name of the class when the create form is submitted empty', async () => {
@@ -242,16 +246,18 @@ describe('ClassesPageComponent', () => {
     expect(element.querySelector('.dialog-message')?.textContent).toContain('TUR-1A');
 
     const confirmationCheckbox = element.querySelector(
-      '.confirmation-checkbox',
+      'app-confirm-dialog input[type="checkbox"]',
     ) as HTMLInputElement;
     confirmationCheckbox.click();
     fixture.detectChanges();
 
-    (element.querySelector('.danger-button') as HTMLButtonElement).click();
+    const regenerateButton = [...element.querySelectorAll<HTMLButtonElement>('app-confirm-dialog button')]
+      .find((button) => button.textContent?.includes('Gerar novo código'));
+    regenerateButton!.click();
     fixture.detectChanges();
 
     expect(classServiceStub.receivedRegeneratedIds).toEqual([1]);
-    expect(element.querySelector('.feedback-toast')?.textContent).toContain('Novo código gerado');
+    expect(feedbackService.showSuccess).toHaveBeenCalledWith('Sucesso', expect.stringContaining('Novo código gerado'));
   });
 
   it('should keep the filters when the page size changes', async () => {

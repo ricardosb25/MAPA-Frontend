@@ -1,4 +1,5 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { FeedbackService } from '../../../../shared/services/feedback.service';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { of } from 'rxjs';
@@ -9,6 +10,9 @@ import { AuditLogModel, AuditLogQuery } from '../../../../core/models/audit-log.
 import { PageResponse } from '../../../../core/models/pagination.model';
 import { UserModel } from '../../../../core/models/auth.model';
 import { UserProfileType } from '../../../../core/models/user-profile.enum';
+
+const feedbackService = { showSuccess: vi.fn(), showError: vi.fn() };
+beforeEach(() => vi.clearAllMocks());
 
 const buildLog = (overrides: Partial<AuditLogModel> = {}): AuditLogModel => ({
   id: 1,
@@ -87,7 +91,7 @@ describe('LogsPageComponent', () => {
     const auditLogServiceStub = buildAuditLogServiceStub(auditLogs);
     await TestBed.configureTestingModule({
       imports: [LogsPageComponent],
-      providers: [
+      providers: [{ provide: FeedbackService, useValue: feedbackService }, 
         provideRouter([]),
         { provide: AuditLogService, useValue: auditLogServiceStub.service },
         { provide: AuthService, useValue: buildAuthServiceStub(UserProfileType.ADMIN) }
@@ -113,7 +117,7 @@ describe('LogsPageComponent', () => {
     const fixture = await createPageFixture();
     const element = fixture.nativeElement as HTMLElement;
 
-    expect(element.querySelector('.page-title')?.textContent).toContain('Logs salvos');
+    expect(element.querySelector('.mapa-page-title')?.textContent).toContain('Logs salvos');
 
     const rows = element.querySelectorAll('.logs-table tbody tr');
     expect(rows.length).toBe(2);
@@ -136,7 +140,7 @@ describe('LogsPageComponent', () => {
     const element = fixture.nativeElement as HTMLElement;
 
     expect(element.querySelector('.empty-state')).not.toBeNull();
-    expect(element.querySelector('.empty-state-title')?.textContent).toContain(
+    expect(element.querySelector('app-empty-state h2')?.textContent).toContain(
       'Nenhum log encontrado'
     );
     expect(element.querySelector('.logs-table')).toBeNull();

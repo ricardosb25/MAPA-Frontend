@@ -93,8 +93,8 @@ import { ChipModule } from 'primeng/chip';
   `,
   styles: [`
     :host ::ng-deep .challenge-card.p-card {
-      background: #ffffff;
-      border: 1px solid #e2e8f0;
+      background: var(--mapa-white);
+      border: 1px solid var(--mapa-gray-200);
       border-radius: 12px;
       padding: 18px;
       display: flex;
@@ -149,9 +149,9 @@ import { ChipModule } from 'primeng/chip';
       display: grid;
       place-items: center;
       font-size: 1rem;
-      color: #0072c7;
-      background: #eef8ff;
-      border: 1px solid #d9efff;
+      color: var(--mapa-blue-700);
+      background: var(--mapa-blue-50);
+      border: 1px solid var(--mapa-blue-100);
       border-radius: 10px;
     }
 
@@ -159,14 +159,14 @@ import { ChipModule } from 'primeng/chip';
       margin: 0;
       font-size: 1rem;
       font-weight: 800;
-      color: #0f172a;
+      color: var(--mapa-ink);
       line-height: 1.25;
       letter-spacing: -0.01em;
     }
 
     .motor-info {
       font-size: 0.68rem;
-      color: #64748b;
+      color: var(--mapa-gray-500);
       font-weight: 700;
       letter-spacing: 0.06em;
       text-transform: uppercase;
@@ -176,7 +176,7 @@ import { ChipModule } from 'primeng/chip';
     .challenge-description {
       margin: 0;
       font-size: 0.84rem;
-      color: #475569;
+      color: var(--mapa-gray-600);
       line-height: 1.5;
       display: -webkit-box;
       -webkit-line-clamp: 2;
@@ -195,9 +195,9 @@ import { ChipModule } from 'primeng/chip';
 
     :host ::ng-deep .class-badge.p-chip,
     :host ::ng-deep .stats-chip.p-chip {
-      color: #475569;
-      background: #f8fafc;
-      border: 1px solid #e2e8f0;
+      color: var(--mapa-gray-600);
+      background: var(--mapa-gray-50);
+      border: 1px solid var(--mapa-gray-200);
       padding: 4px 7px;
       border-radius: 6px;
       font-size: 0.68rem;
@@ -219,7 +219,7 @@ import { ChipModule } from 'primeng/chip';
     :host ::ng-deep .class-badge.p-chip .p-chip-icon,
     :host ::ng-deep .stats-chip.p-chip .p-chip-icon {
       font-size: 0.62rem;
-      color: #0072c7;
+      color: var(--mapa-blue-700);
     }
 
     .card-footer {
@@ -229,7 +229,7 @@ import { ChipModule } from 'primeng/chip';
       align-items: center;
       gap: 8px;
       padding-top: 12px;
-      border-top: 1px solid #f1f5f9;
+      border-top: 1px solid var(--mapa-gray-100);
     }
 
     .action-buttons {
@@ -240,7 +240,7 @@ import { ChipModule } from 'primeng/chip';
     :host ::ng-deep .performance-link.p-button {
       padding: 0.35rem 0.4rem;
       margin-left: -0.4rem;
-      color: #0072c7;
+      color: var(--mapa-blue-700);
       font-size: 0.78rem;
       font-weight: 800;
       gap: 0.35rem;
@@ -248,8 +248,8 @@ import { ChipModule } from 'primeng/chip';
     }
 
     :host ::ng-deep .performance-link.p-button:not(:disabled):hover {
-      background: #eef8ff;
-      color: #065ca0;
+      background: var(--mapa-blue-50);
+      color: var(--mapa-blue-800);
     }
 
     :host ::ng-deep .performance-link.p-button .p-button-icon {
@@ -261,7 +261,7 @@ import { ChipModule } from 'primeng/chip';
       height: 30px;
       padding: 0;
       border-radius: 6px;
-      color: #64748b;
+      color: var(--mapa-gray-500);
       background: transparent;
     }
 
@@ -270,8 +270,8 @@ import { ChipModule } from 'primeng/chip';
     }
 
     :host ::ng-deep .card-icon-button.p-button:not(:disabled):hover {
-      background: #f1f5f9;
-      color: #0f172a;
+      background: var(--mapa-gray-100);
+      color: var(--mapa-ink);
     }
   `]
 })

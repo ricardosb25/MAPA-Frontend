@@ -80,8 +80,8 @@ import { SelectModule } from 'primeng/select';
       gap: 16px;
       margin-top: 24px;
       padding: 12px 16px;
-      background-color: #ffffff;
-      border: 1px solid #e2e8f0;
+      background-color: var(--mapa-white);
+      border: 1px solid var(--mapa-gray-200);
       border-radius: 6px;
       box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
     }
@@ -89,7 +89,7 @@ import { SelectModule } from 'primeng/select';
     .pagination-summary {
       font-size: 0.78rem;
       font-weight: 600;
-      color: #64748b;
+      color: var(--mapa-gray-500);
     }
 
     .pagination-actions {
@@ -102,23 +102,23 @@ import { SelectModule } from 'primeng/select';
       width: 32px;
       height: 32px;
       padding: 0;
-      color: #475569;
-      border-color: #cbd5e1;
-      background-color: #ffffff;
+      color: var(--mapa-gray-600);
+      border-color: var(--mapa-gray-300);
+      background-color: var(--mapa-white);
       border-radius: 4px;
       box-shadow: none;
     }
 
     :host ::ng-deep .pagination-button.p-button:not(:disabled):hover {
-      background-color: #eef8ff;
-      border-color: #0099ff;
-      color: #065ca0;
+      background-color: var(--mapa-blue-50);
+      border-color: var(--mapa-blue-500);
+      color: var(--mapa-blue-800);
     }
 
     :host ::ng-deep .pagination-button.p-button:disabled {
-      background-color: #f8fafc;
-      border-color: #e2e8f0;
-      color: #cbd5e1;
+      background-color: var(--mapa-gray-50);
+      border-color: var(--mapa-gray-200);
+      color: var(--mapa-gray-300);
       opacity: 1;
     }
 
@@ -128,7 +128,7 @@ import { SelectModule } from 'primeng/select';
       gap: 8px;
       font-size: 0.78rem;
       font-weight: 600;
-      color: #64748b;
+      color: var(--mapa-gray-500);
     }
 
     :host ::ng-deep .pagination-size-select {
@@ -136,20 +136,20 @@ import { SelectModule } from 'primeng/select';
     }
 
     :host ::ng-deep .pagination-size-select.p-select {
-      border: 1px solid #cbd5e1;
+      border: 1px solid var(--mapa-gray-300);
       border-radius: 4px;
-      background: #ffffff;
+      background: var(--mapa-white);
       box-shadow: none;
     }
 
     :host ::ng-deep .pagination-size-select.p-select:not(.p-disabled):hover {
-      border-color: #0099ff;
+      border-color: var(--mapa-blue-500);
     }
 
     :host ::ng-deep .pagination-size-select .p-select-label {
       font-size: 0.78rem;
       font-weight: 700;
-      color: #0f172a;
+      color: var(--mapa-ink);
       padding: 0.42rem 0.55rem;
     }
 
@@ -170,9 +170,9 @@ export class PaginationControlsComponent {
   @Input({ required: true }) totalPages!: number;
   @Input() hasNext = false;
   @Input() hasPrevious = false;
-  @Input() itemNounSingular = 'motor';
-  @Input() itemNounPlural = 'motores';
-  @Input() ariaLabel = 'Paginação do catálogo de motores';
+  @Input() itemNounSingular = 'item';
+  @Input() itemNounPlural = 'itens';
+  @Input() ariaLabel = 'Paginação';
   @Input() pageSizeOptions: number[] = [12, 24, 48];
   @Output() pageChange = new EventEmitter<number>();
   @Output() sizeChange = new EventEmitter<number>();

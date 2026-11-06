@@ -1,3 +1,4 @@
+import { EmptyStateComponent } from '../../../../shared/components/empty-state/empty-state.component';
 import { Component, OnInit, signal, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -15,15 +16,13 @@ import { InputTextModule } from 'primeng/inputtext';
 import { SelectModule } from 'primeng/select';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
-import { MessageService } from 'primeng/api';
-import { ToastModule } from 'primeng/toast';
-import { ConfirmDialogModule } from 'primeng/confirmdialog';
-import { ConfirmationService } from 'primeng/api';
+import { FeedbackService } from '../../../../shared/services/feedback.service';
+import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-challenges-page',
   standalone: true,
-  imports: [
+  imports: [EmptyStateComponent, 
     CommonModule,
     FormsModule,
     HeaderNavbarComponent,
@@ -37,22 +36,24 @@ import { ConfirmationService } from 'primeng/api';
     SelectModule,
     IconFieldModule,
     InputIconModule,
-    ToastModule,
-    ConfirmDialogModule
+    ConfirmDialogComponent
   ],
-  providers: [ConfirmationService],
   template: `
     <div class="page-layout">
       <app-header-navbar></app-header-navbar>
-      <p-toast styleClass="challenge-toast"></p-toast>
-      <p-confirmDialog styleClass="challenge-confirm-dialog"></p-confirmDialog>
+      @if (challengeBeingDeleted(); as challenge) {
+        <app-confirm-dialog title="Excluir desafio" [message]="'Deseja excluir o desafio ' + challenge.title + '?'"
+          confirmButtonLabel="Excluir desafio" confirmingLabel="Excluindo desafio..." [confirmationRequired]="false"
+          [isConfirming]="deletingChallenge()" [errorMessage]="deletionError()"
+          (confirm)="handleConfirmDelete()" (cancel)="handleCancelDelete()" />
+      }
 
-      <main class="content-container">
+      <main class="mapa-page-container">
         <section class="page-header">
           <div class="header-content">
             <div class="page-header-text">
               <span class="category-tag">PROFESSOR</span>
-              <h1 class="page-title">Desafios</h1>
+              <h1 class="mapa-page-title">Desafios</h1>
               <p class="page-subtitle">Crie tarefas de calibração e atribua às turmas.</p>
             </div>
             <p-button
@@ -100,7 +101,7 @@ import { ConfirmationService } from 'primeng/api';
               }
             </div>
 
-            <app-pagination-controls
+            <app-pagination-controls itemNounSingular="desafio" itemNounPlural="desafios" ariaLabel="Paginação dos desafios"
               [page]="query().page"
               [size]="query().size"
               [totalElements]="challengesPage()?.totalElements || 0"
@@ -111,18 +112,13 @@ import { ConfirmationService } from 'primeng/api';
               (sizeChange)="handleSizeChange($event)"
             ></app-pagination-controls>
           } @else {
-            <div class="empty-state">
-              <i class="fa-solid fa-bullseye empty-icon"></i>
-              <h3>Nenhum desafio encontrado</h3>
-              <p>Comece criando o seu primeiro desafio de calibração.</p>
-              <p-button
+            <app-empty-state icon="fa-solid fa-bullseye" title="Nenhum desafio encontrado" description="Comece criando o seu primeiro desafio de calibração."><p-button
                 label="Criar Desafio"
                 icon="pi pi-plus"
                 [outlined]="true"
                 styleClass="challenge-secondary-button"
                 (onClick)="openCreateModal()"
-              ></p-button>
-            </div>
+              ></p-button></app-empty-state>
           }
         }
       </main>
@@ -147,17 +143,9 @@ import { ConfirmationService } from 'primeng/api';
   styles: [`
     .page-layout {
       min-height: 100vh;
-      background-color: #e5e7eb;
+      background-color: var(--mapa-page-background);
       display: flex;
       flex-direction: column;
-    }
-
-    .content-container {
-      max-width: 1320px;
-      width: 100%;
-      margin: 0 auto;
-      padding: 32px 24px 64px;
-      box-sizing: border-box;
     }
 
     .page-header {
@@ -176,23 +164,15 @@ import { ConfirmationService } from 'primeng/api';
       font-size: 0.7rem;
       font-weight: 700;
       letter-spacing: 0.12em;
-      color: #64748b;
+      color: var(--mapa-gray-500);
       text-transform: uppercase;
       margin-bottom: 6px;
-    }
-
-    .page-title {
-      margin: 0 0 8px 0;
-      font-size: 2.25rem;
-      font-weight: 800;
-      color: #0f172a;
-      letter-spacing: -0.03em;
     }
 
     .page-subtitle {
       margin: 0;
       font-size: 0.95rem;
-      color: #475569;
+      color: var(--mapa-gray-600);
     }
 
     .filters-bar {
@@ -200,8 +180,8 @@ import { ConfirmationService } from 'primeng/api';
       align-items: center;
       gap: 12px;
       margin-bottom: 24px;
-      background-color: #ffffff;
-      border: 1px solid #e2e8f0;
+      background-color: var(--mapa-white);
+      border: 1px solid var(--mapa-gray-200);
       border-radius: 12px;
       padding: 14px 16px;
       box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
@@ -215,12 +195,12 @@ import { ConfirmationService } from 'primeng/api';
       width: 100%;
       height: 42px;
       border-radius: 10px;
-      border-color: #cbd5e1;
+      border-color: var(--mapa-gray-300);
       box-shadow: none;
     }
 
     :host ::ng-deep .search-field .p-inputtext:enabled:focus {
-      border-color: #0099ff;
+      border-color: var(--mapa-blue-500);
       box-shadow: 0 0 0 3px rgba(0, 153, 255, 0.15);
     }
 
@@ -231,13 +211,13 @@ import { ConfirmationService } from 'primeng/api';
     :host ::ng-deep .filter-dropdown.p-select {
       min-width: 190px;
       height: 42px;
-      border: 1px solid #cbd5e1;
+      border: 1px solid var(--mapa-gray-300);
       border-radius: 10px;
       box-shadow: none;
     }
 
     :host ::ng-deep .filter-dropdown.p-select:not(.p-disabled):hover {
-      border-color: #0099ff;
+      border-color: var(--mapa-blue-500);
     }
 
     :host ::ng-deep .challenge-primary-button.p-button {
@@ -254,15 +234,15 @@ import { ConfirmationService } from 'primeng/api';
       border-radius: 10px;
       font-weight: 700;
       box-shadow: none;
-      color: #065ca0;
-      border-color: #bce4ff;
-      background: #ffffff;
+      color: var(--mapa-blue-800);
+      border-color: var(--mapa-blue-200);
+      background: var(--mapa-white);
     }
 
     :host ::ng-deep .challenge-secondary-button.p-button:not(:disabled):hover {
-      color: #065ca0;
-      border-color: #0099ff;
-      background: #eef8ff;
+      color: var(--mapa-blue-800);
+      border-color: var(--mapa-blue-500);
+      background: var(--mapa-blue-50);
     }
 
     .challenges-grid {
@@ -272,44 +252,8 @@ import { ConfirmationService } from 'primeng/api';
       margin-bottom: 24px;
     }
 
-    .empty-state {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      padding: 56px 24px;
-      background-color: #f8fafc;
-      border: 1px dashed #cbd5e1;
-      border-radius: 12px;
-      text-align: center;
-    }
-
-    .empty-state h3 {
-      margin: 0;
-      font-size: 1rem;
-      font-weight: 800;
-      color: #0f172a;
-    }
-
-    .empty-state p {
-      margin: 0;
-      font-size: 0.875rem;
-      color: #475569;
-    }
-
-    .empty-icon {
-      font-size: 1.75rem;
-      color: #94a3b8;
-      margin-bottom: 6px;
-    }
-
-    :host ::ng-deep .empty-state .challenge-secondary-button.p-button {
-      margin-top: 12px;
-    }
-
     @media (max-width: 768px) {
-      .content-container {
+      .mapa-page-container {
         padding: 20px 16px 40px;
       }
       .header-content {
@@ -317,7 +261,7 @@ import { ConfirmationService } from 'primeng/api';
         align-items: flex-start;
         gap: 16px;
       }
-      .page-title {
+      .mapa-page-title {
         font-size: 1.75rem;
       }
       .filters-bar {
@@ -354,11 +298,13 @@ export class ChallengesPageComponent implements OnInit {
   showFormModal = signal(false);
   showPerformanceModal = signal(false);
   selectedChallenge = signal<ChallengeModel | null>(null);
+  readonly challengeBeingDeleted = signal<ChallengeModel | null>(null);
+  readonly deletingChallenge = signal(false);
+  readonly deletionError = signal('');
 
   constructor(
     private readonly challengeService: ChallengeService,
-    private readonly messageService: MessageService,
-    private readonly confirmationService: ConfirmationService
+    private readonly feedbackService: FeedbackService,
   ) {
     effect(() => {
       this.loadChallenges();
@@ -383,11 +329,7 @@ export class ChallengesPageComponent implements OnInit {
       },
       error: () => {
         this.loading.set(false);
-        this.messageService.add({ 
-          severity: 'error', 
-          summary: 'Erro', 
-          detail: 'Não foi possível carregar os desafios.' 
-        });
+        this.feedbackService.showError('Erro', 'Não foi possível carregar os desafios.');
       }
     });
   }
@@ -433,48 +375,39 @@ export class ChallengesPageComponent implements OnInit {
         this.submitting.set(false);
         this.closeFormModal();
         this.loadChallenges();
-        this.messageService.add({ 
-          severity: 'success', 
-          summary: 'Sucesso', 
-          detail: `Desafio ${challenge ? 'atualizado' : 'criado'} com sucesso.` 
-        });
+        this.feedbackService.showSuccess('Sucesso', `Desafio ${challenge ? 'atualizado' : 'criado'} com sucesso.`);
       },
       error: () => {
         this.submitting.set(false);
-        this.messageService.add({ 
-          severity: 'error', 
-          summary: 'Erro', 
-          detail: 'Erro ao salvar o desafio.' 
-        });
+        this.feedbackService.showError('Erro', 'Erro ao salvar o desafio.');
       }
     });
   }
 
   confirmDelete(challenge: ChallengeModel): void {
-    this.confirmationService.confirm({
-      message: `Tem certeza que deseja excluir o desafio "${challenge.title}"?`,
-      header: 'Confirmar Exclusão',
-      icon: 'pi pi-exclamation-triangle',
-      acceptLabel: 'Excluir',
-      rejectLabel: 'Cancelar',
-      accept: () => {
-        this.challengeService.deleteChallenge(challenge.id).subscribe({
-          next: () => {
-            this.loadChallenges();
-            this.messageService.add({ 
-              severity: 'success', 
-              summary: 'Sucesso', 
-              detail: 'Desafio excluído com sucesso.' 
-            });
-          },
-          error: () => {
-            this.messageService.add({ 
-              severity: 'error', 
-              summary: 'Erro', 
-              detail: 'Erro ao excluir o desafio.' 
-            });
-          }
-        });
+    this.deletionError.set('');
+    this.challengeBeingDeleted.set(challenge);
+  }
+
+  handleCancelDelete(): void {
+    if (!this.deletingChallenge()) this.challengeBeingDeleted.set(null);
+  }
+
+  handleConfirmDelete(): void {
+    const challenge = this.challengeBeingDeleted();
+    if (!challenge || this.deletingChallenge()) return;
+    this.deletingChallenge.set(true);
+    this.deletionError.set('');
+    this.challengeService.deleteChallenge(challenge.id).subscribe({
+      next: () => {
+        this.deletingChallenge.set(false);
+        this.challengeBeingDeleted.set(null);
+        this.loadChallenges();
+        this.feedbackService.showSuccess('Sucesso', 'Desafio excluído com sucesso.');
+      },
+      error: () => {
+        this.deletingChallenge.set(false);
+        this.deletionError.set('Erro ao excluir o desafio. Tente novamente.');
       }
     });
   }

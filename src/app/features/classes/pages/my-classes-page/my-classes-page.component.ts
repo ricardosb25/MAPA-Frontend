@@ -1,4 +1,6 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { EmptyStateComponent } from '../../../../shared/components/empty-state/empty-state.component';
+import { FeedbackService } from '../../../../shared/services/feedback.service';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import {
@@ -31,16 +33,16 @@ import { PaginationControlsComponent } from '../../../../shared/components/pagin
 @Component({
   selector: 'app-my-classes-page',
   standalone: true,
-  imports: [CommonModule, FormsModule, HeaderNavbarComponent, LoadingComponent, PaginationControlsComponent],
+  imports: [EmptyStateComponent, CommonModule, FormsModule, HeaderNavbarComponent, LoadingComponent, PaginationControlsComponent],
   template: `
     <div class="page-layout">
       <app-header-navbar></app-header-navbar>
 
-      <main class="content-container">
+      <main class="mapa-page-container">
         <section class="page-header">
           <div class="page-header-text">
             <span class="category-tag">ALUNO</span>
-            <h1 class="page-title">Minhas turmas</h1>
+            <h1 class="mapa-page-title">Minhas turmas</h1>
             <p class="page-subtitle">Turmas das quais você participa.</p>
           </div>
         </section>
@@ -144,54 +146,30 @@ import { PaginationControlsComponent } from '../../../../shared/components/pagin
                 [totalPages]="classesPage.totalPages"
                 [hasNext]="classesPage.hasNext"
                 [hasPrevious]="classesPage.hasPrevious"
-                itemNounSingular="schoolClass"
-                itemNounPlural="school_classes"
+                itemNounSingular="turma"
+                itemNounPlural="turmas"
                 ariaLabel="Paginação das minhas turmas"
                 [pageSizeOptions]="pageSizeOptions"
                 (pageChange)="handlePageChange($event)"
                 (sizeChange)="handleSizeChange($event)"
               ></app-pagination-controls>
             } @else {
-              <div class="empty-state">
-                <i class="fa-solid fa-chalkboard-user empty-state-icon"></i>
-                <p class="empty-state-title">Você ainda não participa de nenhuma turma.</p>
-                <p class="empty-state-text">
-                  Peça o código ao professor e use o campo acima para entrar na turma.
-                </p>
-              </div>
+              <app-empty-state icon="fa-solid fa-chalkboard-user" title="Você ainda não participa de nenhuma turma." description="Peça o código ao professor e use o campo acima para entrar na turma."></app-empty-state>
             }
           } @else {
             <app-loading message="Carregando turmas..."></app-loading>
           }
         </section>
       </main>
-
-      @if (feedbackMessage) {
-        <div
-          class="feedback-toast"
-          [class.feedback-success]="isSuccess"
-          [class.feedback-error]="!isSuccess"
-        >
-          {{ feedbackMessage }}
-        </div>
-      }
     </div>
   `,
   styles: [
     `
       .page-layout {
         min-height: 100vh;
-        background-color: #e5e7eb;
+        background-color: var(--mapa-page-background);
         display: flex;
         flex-direction: column;
-      }
-
-      .content-container {
-        max-width: 1320px;
-        width: 100%;
-        margin: 0 auto;
-        padding: 32px 24px 64px 24px;
-        box-sizing: border-box;
       }
 
       .page-header {
@@ -203,28 +181,20 @@ import { PaginationControlsComponent } from '../../../../shared/components/pagin
         font-size: 0.7rem;
         font-weight: 700;
         letter-spacing: 0.12em;
-        color: #64748b;
+        color: var(--mapa-gray-500);
         text-transform: uppercase;
         margin-bottom: 6px;
-      }
-
-      .page-title {
-        margin: 0 0 8px 0;
-        font-size: 2.25rem;
-        font-weight: 800;
-        color: #0f172a;
-        letter-spacing: -0.03em;
       }
 
       .page-subtitle {
         margin: 0;
         font-size: 0.95rem;
-        color: #475569;
+        color: var(--mapa-gray-600);
       }
 
       .join-card {
-        background-color: #ffffff;
-        border: 1px solid #e2e8f0;
+        background-color: var(--mapa-white);
+        border: 1px solid var(--mapa-gray-200);
         border-radius: 12px;
         padding: 18px;
         margin-bottom: 20px;
@@ -255,19 +225,19 @@ import { PaginationControlsComponent } from '../../../../shared/components/pagin
         width: 100%;
         height: 44px;
         padding: 0 14px 0 40px;
-        border: 1px solid #cbd5e1;
+        border: 1px solid var(--mapa-gray-300);
         border-radius: 10px;
         font-size: 0.9rem;
         font-weight: 600;
-        color: #0f172a;
-        background-color: #ffffff;
+        color: var(--mapa-ink);
+        background-color: var(--mapa-white);
         box-sizing: border-box;
         text-transform: uppercase;
       }
 
       .join-input:focus {
         outline: none;
-        border-color: #0099ff;
+        border-color: var(--mapa-blue-500);
         box-shadow: 0 0 0 3px rgba(0, 153, 255, 0.15);
       }
 
@@ -276,8 +246,8 @@ import { PaginationControlsComponent } from '../../../../shared/components/pagin
         padding: 0 22px;
         border: none;
         border-radius: 10px;
-        background-color: #0099ff;
-        color: #ffffff;
+        background-color: var(--mapa-blue-500);
+        color: var(--mapa-white);
         font-size: 0.875rem;
         font-weight: 700;
         cursor: pointer;
@@ -290,7 +260,7 @@ import { PaginationControlsComponent } from '../../../../shared/components/pagin
       }
 
       .primary-button:hover:not(:disabled) {
-        background-color: #0088e6;
+        background-color: var(--mapa-blue-600);
       }
 
       .primary-button:disabled {
@@ -316,8 +286,8 @@ import { PaginationControlsComponent } from '../../../../shared/components/pagin
         display: flex;
         gap: 12px;
         align-items: center;
-        background-color: #ffffff;
-        border: 1px solid #e2e8f0;
+        background-color: var(--mapa-white);
+        border: 1px solid var(--mapa-gray-200);
         border-radius: 12px;
         padding: 14px 16px;
         margin-bottom: 24px;
@@ -342,27 +312,27 @@ import { PaginationControlsComponent } from '../../../../shared/components/pagin
         width: 100%;
         height: 42px;
         padding: 0 14px 0 40px;
-        border: 1px solid #cbd5e1;
+        border: 1px solid var(--mapa-gray-300);
         border-radius: 10px;
         font-size: 0.875rem;
-        color: #0f172a;
-        background-color: #ffffff;
+        color: var(--mapa-ink);
+        background-color: var(--mapa-white);
         box-sizing: border-box;
       }
 
       .search-input:focus {
         outline: none;
-        border-color: #0099ff;
+        border-color: var(--mapa-blue-500);
         box-shadow: 0 0 0 3px rgba(0, 153, 255, 0.15);
       }
 
       .shift-select {
         height: 42px;
         padding: 0 34px 0 12px;
-        border: 1px solid #cbd5e1;
+        border: 1px solid var(--mapa-gray-300);
         border-radius: 10px;
-        background-color: #ffffff;
-        color: #334155;
+        background-color: var(--mapa-white);
+        color: var(--mapa-gray-700);
         font-size: 0.85rem;
         font-weight: 600;
         cursor: pointer;
@@ -374,7 +344,7 @@ import { PaginationControlsComponent } from '../../../../shared/components/pagin
 
       .shift-select:focus {
         outline: none;
-        border-color: #0099ff;
+        border-color: var(--mapa-blue-500);
         box-shadow: 0 0 0 3px rgba(0, 153, 255, 0.15);
       }
       .classes-grid {
@@ -391,8 +361,8 @@ import { PaginationControlsComponent } from '../../../../shared/components/pagin
       .class-card {
         display: flex;
         flex-direction: column;
-        background-color: #ffffff;
-        border: 1px solid #e2e8f0;
+        background-color: var(--mapa-white);
+        border: 1px solid var(--mapa-gray-200);
         border-radius: 12px;
         padding: 20px;
         box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
@@ -413,7 +383,7 @@ import { PaginationControlsComponent } from '../../../../shared/components/pagin
         height: 38px;
         border-radius: 10px;
         background-color: #e0f2fe;
-        color: #0099ff;
+        color: var(--mapa-blue-500);
         font-size: 1rem;
       }
 
@@ -432,19 +402,19 @@ import { PaginationControlsComponent } from '../../../../shared/components/pagin
         margin: 0 0 8px 0;
         font-size: 1.15rem;
         font-weight: 800;
-        color: #0f172a;
+        color: var(--mapa-ink);
       }
 
       .class-card-meta {
         margin: 0 0 4px 0;
         font-size: 0.85rem;
-        color: #475569;
+        color: var(--mapa-gray-600);
       }
 
       .class-card-count {
         margin: 0 0 16px 0;
         font-size: 0.8rem;
-        color: #64748b;
+        color: var(--mapa-gray-500);
       }
 
       .leave-button {
@@ -473,79 +443,12 @@ import { PaginationControlsComponent } from '../../../../shared/components/pagin
         cursor: not-allowed;
       }
 
-      .empty-state {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 6px;
-        padding: 56px 24px;
-        background-color: #f8fafc;
-        border: 1px dashed #cbd5e1;
-        border-radius: 12px;
-        text-align: center;
-      }
-
-      .empty-state-icon {
-        font-size: 1.75rem;
-        color: #94a3b8;
-        margin-bottom: 6px;
-      }
-
-      .empty-state-title {
-        margin: 0;
-        font-size: 1rem;
-        font-weight: 800;
-        color: #0f172a;
-      }
-
-      .empty-state-text {
-        margin: 0;
-        font-size: 0.875rem;
-        color: #475569;
-      }
-
-      .feedback-toast {
-        position: fixed;
-        bottom: 2rem;
-        right: 2rem;
-        max-width: 420px;
-        padding: 1rem 1.5rem;
-        background-color: #1e293b;
-        color: #ffffff;
-        border-radius: 12px;
-        font-size: 0.9rem;
-        font-weight: 500;
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-        animation: slideIn 0.3s ease;
-        z-index: 1100;
-      }
-
-      .feedback-toast.feedback-success {
-        background-color: #10b981;
-      }
-
-      .feedback-toast.feedback-error {
-        background-color: #dc2626;
-      }
-
-      @keyframes slideIn {
-        from {
-          opacity: 0;
-          transform: translateY(10px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-
       @media (max-width: 640px) {
-        .content-container {
+        .mapa-page-container {
           padding: 20px 16px 40px 16px;
         }
 
-        .page-title {
+        .mapa-page-title {
           font-size: 1.75rem;
         }
 
@@ -554,20 +457,14 @@ import { PaginationControlsComponent } from '../../../../shared/components/pagin
           flex-direction: column;
           align-items: stretch;
         }
-
-        .feedback-toast {
-          left: 16px;
-          right: 16px;
-          bottom: 16px;
-        }
       }
     `,
   ],
 })
 export class MyClassesPageComponent implements OnInit, OnDestroy {
+  private readonly feedbackService = inject(FeedbackService);
   private static readonly DEFAULT_PAGE_SIZE = 8;
   private static readonly SEARCH_DEBOUNCE_MILLISECONDS = 300;
-  private static readonly FEEDBACK_TIMEOUT_MILLISECONDS = 4000;
 
   readonly pageSizeOptions: number[] = [8, 16, 32];
   readonly shiftOptions = SHIFT_OPTIONS;
@@ -584,9 +481,6 @@ export class MyClassesPageComponent implements OnInit, OnDestroy {
 
   leavingClassId: number | null = null;
 
-  feedbackMessage = '';
-  isSuccess = false;
-
   private readonly pageQuerySubject = new BehaviorSubject<ClassQuery>({
     search: '',
     shift: null,
@@ -596,7 +490,6 @@ export class MyClassesPageComponent implements OnInit, OnDestroy {
   });
   private readonly searchInputSubject = new Subject<string>();
   private searchSubscription: Subscription | null = null;
-  private feedbackTimeoutId: ReturnType<typeof setTimeout> | null = null;
 
   constructor(private readonly classService: ClassService) {
     this.myClassesPage$ = this.pageQuerySubject.pipe(
@@ -625,7 +518,6 @@ export class MyClassesPageComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.searchSubscription?.unsubscribe();
-    this.clearFeedbackTimeout();
   }
 
   handleJoinCodeInput(inputEvent: Event): void {
@@ -754,21 +646,8 @@ export class MyClassesPageComponent implements OnInit, OnDestroy {
   }
 
   private showFeedback(message: string, isSuccess: boolean): void {
-    this.feedbackMessage = message;
-    this.isSuccess = isSuccess;
-    this.clearFeedbackTimeout();
-
-    this.feedbackTimeoutId = setTimeout(() => {
-      this.feedbackMessage = '';
-      this.feedbackTimeoutId = null;
-    }, MyClassesPageComponent.FEEDBACK_TIMEOUT_MILLISECONDS);
+    if (isSuccess) this.feedbackService.showSuccess('Sucesso', message);
+    else this.feedbackService.showError('Erro', message);
   }
 
-  private clearFeedbackTimeout(): void {
-    if (this.feedbackTimeoutId === null) {
-      return;
-    }
-    clearTimeout(this.feedbackTimeoutId);
-    this.feedbackTimeoutId = null;
-  }
 }

@@ -5,68 +5,21 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../../../core/services/auth.service';
 import { LoginCredentials } from '../../../../core/models/auth.model';
 import { FeedbackService } from '../../../../shared/services/feedback.service';
-import { InfoSidebarComponent } from '../../../../shared/components/info-sidebar/info-sidebar.component';
+import { AuthLayoutComponent } from '../../../../shared/components/auth-layout/auth-layout.component';
 import { LoginFormComponent } from '../../components/login-form/login-form.component';
 
 @Component({
   selector: 'app-login-page',
   standalone: true,
-  imports: [CommonModule, InfoSidebarComponent, LoginFormComponent],
+  imports: [AuthLayoutComponent, LoginFormComponent],
   template: `
-    <div class="auth-page-layout">
-      <div class="sidebar-column">
-        <app-info-sidebar mode="login"></app-info-sidebar>
-      </div>
-
-      <main class="form-column">
+    <app-auth-layout mode="login">
         <app-login-form
           [isSubmitting]="isSubmitting"
           (submitLoginForm)="onLoginSubmit($event)"
         ></app-login-form>
-      </main>
-    </div>
-  `,
-  styles: [`
-    .auth-page-layout {
-      display: flex;
-      min-height: 100vh;
-      width: 100%;
-      background-color: #e5e7eb;
-      box-sizing: border-box;
-    }
-
-    .sidebar-column {
-      flex: 1;
-      max-width: 580px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      padding: 2.5rem;
-    }
-
-    .form-column {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 2.5rem;
-      position: relative;
-    }
-
-    @media (max-width: 991px) {
-      .auth-page-layout {
-        flex-direction: column;
-      }
-      .sidebar-column {
-        max-width: 100%;
-        padding: 1.5rem;
-      }
-      .form-column {
-        padding: 1.5rem;
-      }
-    }
-  `]
+      </app-auth-layout>
+  `
 })
 export class LoginPageComponent implements OnDestroy {
   isSubmitting = false;

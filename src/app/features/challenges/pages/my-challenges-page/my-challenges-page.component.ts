@@ -1,3 +1,4 @@
+import { EmptyStateComponent } from '../../../../shared/components/empty-state/empty-state.component';
 import { Component, OnInit, signal, effect } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -13,13 +14,12 @@ import { InputTextModule } from 'primeng/inputtext';
 import { SelectModule } from 'primeng/select';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
-import { MessageService } from 'primeng/api';
-import { ToastModule } from 'primeng/toast';
+import { FeedbackService } from '../../../../shared/services/feedback.service';
 
 @Component({
   selector: 'app-my-challenges-page',
   standalone: true,
-  imports: [
+  imports: [EmptyStateComponent, 
     CommonModule,
     FormsModule,
     HeaderNavbarComponent,
@@ -30,18 +30,16 @@ import { ToastModule } from 'primeng/toast';
     SelectModule,
     IconFieldModule,
     InputIconModule,
-    ToastModule
   ],
   template: `
     <div class="page-layout">
       <app-header-navbar></app-header-navbar>
-      <p-toast styleClass="challenge-toast"></p-toast>
 
-      <main class="content-container">
+      <main class="mapa-page-container">
         <section class="page-header">
           <div class="page-header-text">
             <span class="category-tag">ALUNO</span>
-            <h1 class="page-title">Meus Desafios</h1>
+            <h1 class="mapa-page-title">Meus Desafios</h1>
             <p class="page-subtitle">Escolha um desafio ativo e comece a calibrar.</p>
           </div>
         </section>
@@ -82,7 +80,7 @@ import { ToastModule } from 'primeng/toast';
               }
             </div>
 
-            <app-pagination-controls
+            <app-pagination-controls itemNounSingular="desafio" itemNounPlural="desafios" ariaLabel="Paginação dos desafios"
               [page]="query().page"
               [size]="query().size"
               [totalElements]="challengesPage()?.totalElements || 0"
@@ -93,11 +91,7 @@ import { ToastModule } from 'primeng/toast';
               (sizeChange)="handleSizeChange($event)"
             ></app-pagination-controls>
           } @else {
-            <div class="empty-state">
-              <i class="fa-solid fa-graduation-cap empty-icon"></i>
-              <h3>Nenhum desafio disponível</h3>
-              <p>Você ainda não tem desafios atribuídos às suas turmas.</p>
-            </div>
+            <app-empty-state icon="fa-solid fa-graduation-cap" title="Nenhum desafio disponível" description="Você ainda não tem desafios atribuídos às suas turmas."></app-empty-state>
           }
         }
       </main>
@@ -106,17 +100,9 @@ import { ToastModule } from 'primeng/toast';
   styles: [`
     .page-layout {
       min-height: 100vh;
-      background-color: #e5e7eb;
+      background-color: var(--mapa-page-background);
       display: flex;
       flex-direction: column;
-    }
-
-    .content-container {
-      max-width: 1320px;
-      width: 100%;
-      margin: 0 auto;
-      padding: 32px 24px 64px;
-      box-sizing: border-box;
     }
 
     .page-header {
@@ -128,23 +114,15 @@ import { ToastModule } from 'primeng/toast';
       font-size: 0.7rem;
       font-weight: 700;
       letter-spacing: 0.12em;
-      color: #64748b;
+      color: var(--mapa-gray-500);
       text-transform: uppercase;
       margin-bottom: 6px;
-    }
-
-    .page-title {
-      margin: 0 0 8px 0;
-      font-size: 2.25rem;
-      font-weight: 800;
-      color: #0f172a;
-      letter-spacing: -0.03em;
     }
 
     .page-subtitle {
       margin: 0;
       font-size: 0.95rem;
-      color: #475569;
+      color: var(--mapa-gray-600);
     }
 
     .filters-bar {
@@ -152,8 +130,8 @@ import { ToastModule } from 'primeng/toast';
       align-items: center;
       gap: 12px;
       margin-bottom: 24px;
-      background-color: #ffffff;
-      border: 1px solid #e2e8f0;
+      background-color: var(--mapa-white);
+      border: 1px solid var(--mapa-gray-200);
       border-radius: 12px;
       padding: 14px 16px;
       box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
@@ -167,12 +145,12 @@ import { ToastModule } from 'primeng/toast';
       width: 100%;
       height: 42px;
       border-radius: 10px;
-      border-color: #cbd5e1;
+      border-color: var(--mapa-gray-300);
       box-shadow: none;
     }
 
     :host ::ng-deep .search-field .p-inputtext:enabled:focus {
-      border-color: #0099ff;
+      border-color: var(--mapa-blue-500);
       box-shadow: 0 0 0 3px rgba(0, 153, 255, 0.15);
     }
 
@@ -183,13 +161,13 @@ import { ToastModule } from 'primeng/toast';
     :host ::ng-deep .filter-dropdown.p-select {
       min-width: 190px;
       height: 42px;
-      border: 1px solid #cbd5e1;
+      border: 1px solid var(--mapa-gray-300);
       border-radius: 10px;
       box-shadow: none;
     }
 
     :host ::ng-deep .filter-dropdown.p-select:not(.p-disabled):hover {
-      border-color: #0099ff;
+      border-color: var(--mapa-blue-500);
     }
 
     .challenges-grid {
@@ -199,43 +177,11 @@ import { ToastModule } from 'primeng/toast';
       margin-bottom: 24px;
     }
 
-    .empty-state {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      padding: 56px 24px;
-      background-color: #f8fafc;
-      border: 1px dashed #cbd5e1;
-      border-radius: 12px;
-      text-align: center;
-    }
-
-    .empty-state h3 {
-      margin: 0;
-      font-size: 1rem;
-      font-weight: 800;
-      color: #0f172a;
-    }
-
-    .empty-state p {
-      margin: 0;
-      font-size: 0.875rem;
-      color: #475569;
-    }
-
-    .empty-icon {
-      font-size: 1.75rem;
-      color: #94a3b8;
-      margin-bottom: 6px;
-    }
-
     @media (max-width: 768px) {
-      .content-container {
+      .mapa-page-container {
         padding: 20px 16px 40px;
       }
-      .page-title {
+      .mapa-page-title {
         font-size: 1.75rem;
       }
       .filters-bar {
@@ -271,7 +217,7 @@ export class MyChallengesPageComponent implements OnInit {
 
   constructor(
     private readonly challengeService: ChallengeService,
-    private readonly messageService: MessageService,
+    private readonly feedbackService: FeedbackService,
     private readonly router: Router
   ) {
     effect(() => {
@@ -297,11 +243,7 @@ export class MyChallengesPageComponent implements OnInit {
       },
       error: () => {
         this.loading.set(false);
-        this.messageService.add({ 
-          severity: 'error', 
-          summary: 'Erro', 
-          detail: 'Não foi possível carregar os desafios.' 
-        });
+        this.feedbackService.showError('Erro', 'Não foi possível carregar os desafios.');
       }
     });
   }
@@ -325,19 +267,11 @@ export class MyChallengesPageComponent implements OnInit {
       next: () => {
         this.selectingId.set(null);
         this.loadChallenges();
-        this.messageService.add({ 
-          severity: 'success', 
-          summary: 'Desafio Selecionado', 
-          detail: `"${challenge.title}" é agora o seu desafio ativo.` 
-        });
+        this.feedbackService.showSuccess('Desafio Selecionado', `"${challenge.title}" é agora o seu desafio ativo.`);
       },
       error: () => {
         this.selectingId.set(null);
-        this.messageService.add({ 
-          severity: 'error', 
-          summary: 'Erro', 
-          detail: 'Não foi possível selecionar o desafio.' 
-        });
+        this.feedbackService.showError('Erro', 'Não foi possível selecionar o desafio.');
       }
     });
   }

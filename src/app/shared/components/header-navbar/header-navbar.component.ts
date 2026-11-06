@@ -74,14 +74,6 @@ import { BrandLogoComponent } from '../brand-logo/brand-logo.component';
            aria-label="Configurações da conta" title="Configurações da conta">
           <i class="fa-solid fa-gear" aria-hidden="true"></i>
         </a>
-        <button type="button" class="theme-toggle-button" aria-label="Toggle theme">
-          <i class="fa-regular fa-sun"></i>
-        </button>
-        
-        <div class="class-badge">
-          TURMA MEC-4B
-        </div>
-
         <div class="user-profile-info">
           <span class="user-name">{{ (authService.currentUser$ | async)?.fullName ?? 'Visitante' }}</span>
           <span class="user-role">{{ getRoleLabel((authService.currentUser$ | async)?.role) }}</span>
@@ -97,8 +89,8 @@ import { BrandLogoComponent } from '../brand-logo/brand-logo.component';
     .navbar-header {
       width: 100%;
       height: 64px;
-      background-color: #e5e7eb;
-      border-bottom: 1px solid #cbd5e1;
+      background-color: var(--mapa-page-background);
+      border-bottom: 1px solid var(--mapa-gray-300);
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -130,14 +122,14 @@ import { BrandLogoComponent } from '../brand-logo/brand-logo.component';
       padding: 8px 16px;
       border-radius: 8px;
       text-decoration: none;
-      color: #475569;
+      color: var(--mapa-gray-600);
       font-size: 0.875rem;
       font-weight: 600;
       transition: all 0.2s ease;
 
       &:hover {
         background-color: #d1d5db;
-        color: #0f172a;
+        color: var(--mapa-ink);
       }
 
       &.active {
@@ -160,7 +152,7 @@ import { BrandLogoComponent } from '../brand-logo/brand-logo.component';
     .theme-toggle-button {
       background: none;
       border: none;
-      color: #64748b;
+      color: var(--mapa-gray-500);
       font-size: 1rem;
       cursor: pointer;
       padding: 6px;
@@ -170,20 +162,9 @@ import { BrandLogoComponent } from '../brand-logo/brand-logo.component';
       justify-content: center;
 
       &:hover {
-        color: #0f172a;
+        color: var(--mapa-ink);
         background-color: #d1d5db;
       }
-    }
-
-    .class-badge {
-      border: 1px solid #94a3b8;
-      border-radius: 4px;
-      padding: 4px 8px;
-      font-size: 0.7rem;
-      font-weight: 700;
-      letter-spacing: 0.05em;
-      color: #334155;
-      background-color: rgba(255, 255, 255, 0.4);
     }
 
     .user-profile-info {
@@ -196,13 +177,13 @@ import { BrandLogoComponent } from '../brand-logo/brand-logo.component';
     .user-name {
       font-size: 0.8rem;
       font-weight: 700;
-      color: #0f172a;
+      color: var(--mapa-ink);
     }
 
     .user-role {
       font-size: 0.65rem;
       font-weight: 700;
-      color: #64748b;
+      color: var(--mapa-gray-500);
       letter-spacing: 0.05em;
     }
 

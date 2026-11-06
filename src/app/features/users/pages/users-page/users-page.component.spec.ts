@@ -1,4 +1,5 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { FeedbackService } from '../../../../shared/services/feedback.service';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { of } from 'rxjs';
@@ -9,6 +10,9 @@ import { AdminUserModel, AdminUserQuery, AdminUserUpdatePayload } from '../../..
 import { PageResponse } from '../../../../core/models/pagination.model';
 import { UserProfileType } from '../../../../core/models/user-profile.enum';
 import { UserModel } from '../../../../core/models/auth.model';
+
+const feedbackService = { showSuccess: vi.fn(), showError: vi.fn() };
+beforeEach(() => vi.clearAllMocks());
 
 const buildUser = (overrides: Partial<AdminUserModel> = {}): AdminUserModel => ({
   id: 1,
@@ -86,7 +90,7 @@ describe('UsersPageComponent', () => {
     const adminUserServiceStub = buildAdminUserServiceStub(adminUsers);
     await TestBed.configureTestingModule({
       imports: [UsersPageComponent],
-      providers: [
+      providers: [{ provide: FeedbackService, useValue: feedbackService }, 
         provideRouter([]),
         { provide: AdminUserService, useValue: adminUserServiceStub.service },
         { provide: AuthService, useValue: buildAuthServiceStub() }
@@ -112,7 +116,7 @@ describe('UsersPageComponent', () => {
     const fixture = await createPageFixture();
     const element = fixture.nativeElement as HTMLElement;
 
-    expect(element.querySelector('.page-title')?.textContent).toContain('Todos os usuários');
+    expect(element.querySelector('.mapa-page-title')?.textContent).toContain('Todos os usuários');
     expect(element.querySelector('.page-subtitle')?.textContent).toContain('2 contas cadastradas');
 
     const rows = element.querySelectorAll('.users-table tbody tr');
@@ -139,7 +143,7 @@ describe('UsersPageComponent', () => {
     const element = fixture.nativeElement as HTMLElement;
 
     expect(element.querySelector('.empty-state')).not.toBeNull();
-    expect(element.querySelector('.empty-state-title')?.textContent).toContain(
+    expect(element.querySelector('app-empty-state h2')?.textContent).toContain(
       'Nenhum usuário encontrado'
     );
     expect(element.querySelector('.users-table')).toBeNull();
@@ -192,7 +196,7 @@ describe('UsersPageComponent', () => {
     expect(adminUserServiceStub.receivedUpdates.length).toBe(1);
     expect(adminUserServiceStub.receivedUpdates[0].userId).toBe(1);
     expect(adminUserServiceStub.receivedUpdates[0].payload.active).toBe(false);
-    expect(element.querySelector('.feedback-toast')?.textContent).toContain('desativada');
+    expect(feedbackService.showSuccess).toHaveBeenCalledWith('Sucesso', expect.stringContaining('desativada'));
   });
 
   it('should not allow changing the status of the logged admin account', async () => {

@@ -1,3 +1,4 @@
+import { DialogModule } from 'primeng/dialog';
 import { Component, EventEmitter, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
@@ -50,23 +51,12 @@ const TERMS_SECTIONS: readonly TermsSection[] = [
 @Component({
   selector: 'app-terms-of-use-modal',
   standalone: true,
-  imports: [CommonModule],
-  host: {
-    '(document:keydown.escape)': 'handleClose()'
-  },
+  imports: [DialogModule, CommonModule],
   template: `
-    <div class="terms-backdrop" (click)="handleBackdropClick($event)">
-      <div class="terms-card" role="dialog" aria-modal="true" aria-labelledby="termsOfUseModalTitle">
-        <header class="terms-header">
-          <div class="terms-header-text">
-            <span class="terms-tag">TERMOS DE USO</span>
-            <h2 class="terms-title" id="termsOfUseModalTitle">Termos de Uso e Privacidade do MAPA</h2>
-            <p class="terms-version">Versão {{ termsVersion }} — vigente a partir do aceite no cadastro</p>
-          </div>
-          <button type="button" class="terms-close-button" (click)="handleClose()" aria-label="Fechar termos de uso">
-            <i class="pi pi-times"></i>
-          </button>
-        </header>
+    <p-dialog header="Termos de Uso e Privacidade do MAPA" [visible]="true" [modal]="true"
+      [draggable]="false" [style]="{ width: 'min(92vw, 640px)' }" styleClass="mapa-dialog"
+      [dismissableMask]="true" (visibleChange)="handleVisibilityChange($event)">
+      <p class="terms-version">Versão {{ termsVersion }} — vigente a partir do aceite no cadastro</p>
 
         <div class="terms-body">
           @for (section of sections; track section.title) {
@@ -83,82 +73,13 @@ const TERMS_SECTIONS: readonly TermsSection[] = [
             <span>Entendi</span>
           </button>
         </footer>
-      </div>
-    </div>
+    </p-dialog>
   `,
   styles: [`
-    .terms-backdrop {
-      position: fixed;
-      inset: 0;
-      background-color: rgba(15, 23, 42, 0.55);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 24px;
-      z-index: 1000;
-    }
-
-    .terms-card {
-      width: 100%;
-      max-width: 640px;
-      background-color: #ffffff;
-      border-radius: 14px;
-      box-shadow: 0 20px 45px rgba(15, 23, 42, 0.25);
-      display: flex;
-      flex-direction: column;
-      max-height: 88vh;
-      overflow: auto;
-    }
-
-    .terms-header {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 16px;
-      padding: 22px 24px 16px 24px;
-      border-bottom: 1px solid #e2e8f0;
-    }
-
-    .terms-tag {
-      display: inline-block;
-      font-size: 0.7rem;
-      font-weight: 800;
-      letter-spacing: 0.08em;
-      color: #0284c7;
-      background-color: #e0f2fe;
-      border-radius: 6px;
-      padding: 4px 8px;
-      margin-bottom: 8px;
-    }
-
-    .terms-title {
-      font-size: 1.25rem;
-      font-weight: 800;
-      color: #0f172a;
-      margin: 0;
-    }
-
     .terms-version {
       font-size: 0.8rem;
-      color: #64748b;
+      color: var(--mapa-gray-500);
       margin: 6px 0 0 0;
-    }
-
-    .terms-close-button {
-      background: none;
-      border: none;
-      color: #64748b;
-      cursor: pointer;
-      font-size: 1.1rem;
-      padding: 4px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: color 0.2s ease;
-    }
-
-    .terms-close-button:hover {
-      color: #0f172a;
     }
 
     .terms-body {
@@ -171,14 +92,14 @@ const TERMS_SECTIONS: readonly TermsSection[] = [
     .terms-section-title {
       font-size: 0.9rem;
       font-weight: 700;
-      color: #0f172a;
+      color: var(--mapa-ink);
       margin: 0 0 4px 0;
     }
 
     .terms-section-text {
       font-size: 0.85rem;
       line-height: 1.55;
-      color: #475569;
+      color: var(--mapa-gray-600);
       margin: 0;
     }
 
@@ -186,10 +107,10 @@ const TERMS_SECTIONS: readonly TermsSection[] = [
       display: flex;
       justify-content: flex-end;
       padding: 16px 24px 22px 24px;
-      border-top: 1px solid #e2e8f0;
+      border-top: 1px solid var(--mapa-gray-200);
       position: sticky;
       bottom: 0;
-      background-color: #ffffff;
+      background-color: var(--mapa-white);
     }
 
     .terms-acknowledge-button {
@@ -197,8 +118,8 @@ const TERMS_SECTIONS: readonly TermsSection[] = [
       padding: 0 18px;
       border: none;
       border-radius: 10px;
-      background-color: #0099ff;
-      color: #ffffff;
+      background-color: var(--mapa-blue-500);
+      color: var(--mapa-white);
       font-size: 0.85rem;
       font-weight: 700;
       cursor: pointer;
@@ -209,11 +130,15 @@ const TERMS_SECTIONS: readonly TermsSection[] = [
     }
 
     .terms-acknowledge-button:hover {
-      background-color: #0088e6;
+      background-color: var(--mapa-blue-600);
     }
   `]
 })
 export class TermsOfUseModalComponent {
+  handleVisibilityChange(visible: boolean): void {
+    if (!visible) this.handleClose();
+  }
+
   @Output() close = new EventEmitter<void>();
 
   readonly termsVersion = TERMS_OF_USE_VERSION;
@@ -222,10 +147,5 @@ export class TermsOfUseModalComponent {
   handleClose(): void {
     this.close.emit();
   }
-
-  handleBackdropClick(mouseEvent: MouseEvent): void {
-    if (mouseEvent.target === mouseEvent.currentTarget) {
-      this.handleClose();
-    }
-  }
+
 }

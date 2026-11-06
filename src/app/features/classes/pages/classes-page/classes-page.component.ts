@@ -1,4 +1,6 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { EmptyStateComponent } from '../../../../shared/components/empty-state/empty-state.component';
+import { FeedbackService } from '../../../../shared/services/feedback.service';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import {
@@ -36,12 +38,12 @@ import { ClassService } from '../../../../core/services/class.service';
 import { HeaderNavbarComponent } from '../../../../shared/components/header-navbar/header-navbar.component';
 import { LoadingComponent } from '../../../../shared/components/loading/loading.component';
 import { PaginationControlsComponent } from '../../../../shared/components/pagination-controls/pagination-controls.component';
-import { ConfirmDialogComponent } from '../../../garage/components/confirm-dialog/confirm-dialog.component';
+import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-classes-page',
   standalone: true,
-  imports: [
+  imports: [EmptyStateComponent, 
     CommonModule,
     ReactiveFormsModule,
     HeaderNavbarComponent,
@@ -53,11 +55,11 @@ import { ConfirmDialogComponent } from '../../../garage/components/confirm-dialo
     <div class="page-layout">
       <app-header-navbar></app-header-navbar>
 
-      <main class="content-container">
+      <main class="mapa-page-container">
         <section class="page-header">
           <div class="page-header-text">
             <span class="category-tag">PROFESSOR</span>
-            <h1 class="page-title">Gerenciar turmas</h1>
+            <h1 class="mapa-page-title">Gerenciar turmas</h1>
             <p class="page-subtitle">Crie turmas, compartilhe o código e acompanhe os alunos.</p>
           </div>
         </section>
@@ -155,21 +157,15 @@ import { ConfirmDialogComponent } from '../../../garage/components/confirm-dialo
                   [totalPages]="classesPage.totalPages"
                   [hasNext]="classesPage.hasNext"
                   [hasPrevious]="classesPage.hasPrevious"
-                  itemNounSingular="schoolClass"
-                  itemNounPlural="school_classes"
+                  itemNounSingular="turma"
+                  itemNounPlural="turmas"
                   ariaLabel="Paginação das turmas"
                   [pageSizeOptions]="pageSizeOptions"
                   (pageChange)="handlePageChange($event)"
                   (sizeChange)="handleSizeChange($event)"
                 ></app-pagination-controls>
               } @else {
-                <div class="empty-state">
-                  <i class="fa-solid fa-chalkboard-user empty-state-icon"></i>
-                  <p class="empty-state-title">Nenhuma turma por aqui.</p>
-                  <p class="empty-state-text">
-                    Crie a sua primeira turma e compartilhe o código com os alunos.
-                  </p>
-                </div>
+                <app-empty-state icon="fa-solid fa-chalkboard-user" title="Nenhuma turma por aqui." description="Crie a sua primeira turma e compartilhe o código com os alunos."></app-empty-state>
               }
             } @else {
               <app-loading message="Carregando turmas..."></app-loading>
@@ -295,13 +291,7 @@ import { ConfirmDialogComponent } from '../../../garage/components/confirm-dialo
             } @else if (isLoadingDetail) {
               <app-loading message="Carregando detalhes da turma..."></app-loading>
             } @else {
-              <div class="detail-placeholder">
-                <i class="fa-solid fa-chalkboard-user empty-state-icon"></i>
-                <p class="empty-state-title">Selecione uma turma</p>
-                <p class="empty-state-text">
-                  Escolha uma turma na lista para ver o código e os alunos matriculados.
-                </p>
-              </div>
+              <app-empty-state icon="fa-solid fa-chalkboard-user" title="Selecione uma turma" description="Escolha uma turma na lista para ver o código e os alunos matriculados."></app-empty-state>
             }
           </div>
         </section>
@@ -312,7 +302,7 @@ import { ConfirmDialogComponent } from '../../../garage/components/confirm-dialo
           title="Excluir turma"
           [message]="deleteDialogMessage"
           confirmationLabel="Confirmo que desejo excluir esta turma e todas as matrículas. Esta ação não pode ser desfeita."
-          confirmButtonLabel="Excluir schoolClass"
+          confirmButtonLabel="Excluir turma"
           [isConfirming]="isConfirmingDelete"
           [errorMessage]="deleteErrorMessage"
           (confirm)="handleConfirmDelete()"
@@ -325,7 +315,7 @@ import { ConfirmDialogComponent } from '../../../garage/components/confirm-dialo
           title="Gerar novo código"
           [message]="regenerateDialogMessage"
           confirmationLabel="Confirmo que desejo substituir o código atual desta turma."
-          confirmButtonLabel="Gerar novo código"
+          confirmButtonLabel="Gerar novo código" confirmIcon="pi pi-refresh" severity="secondary"
           confirmingLabel="Gerando..."
           [isConfirming]="isConfirmingRegenerate"
           [errorMessage]="regenerateErrorMessage"
@@ -333,33 +323,15 @@ import { ConfirmDialogComponent } from '../../../garage/components/confirm-dialo
           (cancel)="handleCancelRegenerate()"
         ></app-confirm-dialog>
       }
-
-      @if (feedbackMessage) {
-        <div
-          class="feedback-toast"
-          [class.feedback-success]="isSuccess"
-          [class.feedback-error]="!isSuccess"
-        >
-          {{ feedbackMessage }}
-        </div>
-      }
     </div>
   `,
   styles: [
     `
       .page-layout {
         min-height: 100vh;
-        background-color: #e5e7eb;
+        background-color: var(--mapa-page-background);
         display: flex;
         flex-direction: column;
-      }
-
-      .content-container {
-        max-width: 1320px;
-        width: 100%;
-        margin: 0 auto;
-        padding: 32px 24px 64px 24px;
-        box-sizing: border-box;
       }
 
       .page-header {
@@ -374,32 +346,24 @@ import { ConfirmDialogComponent } from '../../../garage/components/confirm-dialo
         font-size: 0.7rem;
         font-weight: 700;
         letter-spacing: 0.12em;
-        color: #64748b;
+        color: var(--mapa-gray-500);
         text-transform: uppercase;
         display: block;
         margin-bottom: 6px;
       }
 
-      .page-title {
-        margin: 0 0 8px 0;
-        font-size: 2.25rem;
-        font-weight: 800;
-        color: #0f172a;
-        letter-spacing: -0.03em;
-      }
-
       .page-subtitle {
         margin: 0;
         font-size: 0.95rem;
-        color: #475569;
+        color: var(--mapa-gray-600);
       }
 
       .filters-bar {
         display: flex;
         gap: 12px;
         align-items: center;
-        background-color: #ffffff;
-        border: 1px solid #e2e8f0;
+        background-color: var(--mapa-white);
+        border: 1px solid var(--mapa-gray-200);
         border-radius: 12px;
         padding: 14px 16px;
         margin-bottom: 24px;
@@ -424,27 +388,27 @@ import { ConfirmDialogComponent } from '../../../garage/components/confirm-dialo
         width: 100%;
         height: 42px;
         padding: 0 14px 0 40px;
-        border: 1px solid #cbd5e1;
+        border: 1px solid var(--mapa-gray-300);
         border-radius: 10px;
         font-size: 0.875rem;
-        color: #0f172a;
-        background-color: #ffffff;
+        color: var(--mapa-ink);
+        background-color: var(--mapa-white);
         box-sizing: border-box;
       }
 
       .search-input:focus {
         outline: none;
-        border-color: #0099ff;
+        border-color: var(--mapa-blue-500);
         box-shadow: 0 0 0 3px rgba(0, 153, 255, 0.15);
       }
 
       .shift-select {
         height: 42px;
         padding: 0 34px 0 12px;
-        border: 1px solid #cbd5e1;
+        border: 1px solid var(--mapa-gray-300);
         border-radius: 10px;
-        background-color: #ffffff;
-        color: #334155;
+        background-color: var(--mapa-white);
+        color: var(--mapa-gray-700);
         font-size: 0.85rem;
         font-weight: 600;
         cursor: pointer;
@@ -456,7 +420,7 @@ import { ConfirmDialogComponent } from '../../../garage/components/confirm-dialo
 
       .shift-select:focus {
         outline: none;
-        border-color: #0099ff;
+        border-color: var(--mapa-blue-500);
         box-shadow: 0 0 0 3px rgba(0, 153, 255, 0.15);
       }
 
@@ -475,8 +439,8 @@ import { ConfirmDialogComponent } from '../../../garage/components/confirm-dialo
       }
 
       .new-class-card {
-        background-color: #ffffff;
-        border: 1px solid #e2e8f0;
+        background-color: var(--mapa-white);
+        border: 1px solid var(--mapa-gray-200);
         border-radius: 12px;
         padding: 18px;
         box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
@@ -487,7 +451,7 @@ import { ConfirmDialogComponent } from '../../../garage/components/confirm-dialo
         font-size: 0.68rem;
         font-weight: 700;
         letter-spacing: 0.1em;
-        color: #64748b;
+        color: var(--mapa-gray-500);
         margin-bottom: 12px;
         font-family: ui-monospace, 'Cascadia Code', Menlo, Consolas, monospace;
       }
@@ -496,18 +460,18 @@ import { ConfirmDialogComponent } from '../../../garage/components/confirm-dialo
         width: 100%;
         height: 42px;
         padding: 0 12px;
-        border: 1px solid #cbd5e1;
+        border: 1px solid var(--mapa-gray-300);
         border-radius: 10px;
         font-size: 0.875rem;
-        color: #0f172a;
-        background-color: #ffffff;
+        color: var(--mapa-ink);
+        background-color: var(--mapa-white);
         box-sizing: border-box;
         margin-bottom: 10px;
       }
 
       .form-input:focus {
         outline: none;
-        border-color: #0099ff;
+        border-color: var(--mapa-blue-500);
         box-shadow: 0 0 0 3px rgba(0, 153, 255, 0.15);
       }
 
@@ -538,8 +502,8 @@ import { ConfirmDialogComponent } from '../../../garage/components/confirm-dialo
         height: 44px;
         border: none;
         border-radius: 10px;
-        background-color: #0099ff;
-        color: #ffffff;
+        background-color: var(--mapa-blue-500);
+        color: var(--mapa-white);
         font-size: 0.875rem;
         font-weight: 700;
         cursor: pointer;
@@ -551,7 +515,7 @@ import { ConfirmDialogComponent } from '../../../garage/components/confirm-dialo
       }
 
       .primary-button:hover:not(:disabled) {
-        background-color: #0088e6;
+        background-color: var(--mapa-blue-600);
       }
 
       .primary-button:disabled {
@@ -575,8 +539,8 @@ import { ConfirmDialogComponent } from '../../../garage/components/confirm-dialo
         justify-content: space-between;
         gap: 12px;
         padding: 14px 16px;
-        background-color: #ffffff;
-        border: 1px solid #e2e8f0;
+        background-color: var(--mapa-white);
+        border: 1px solid var(--mapa-gray-200);
         border-radius: 12px;
         cursor: pointer;
         text-align: left;
@@ -590,7 +554,7 @@ import { ConfirmDialogComponent } from '../../../garage/components/confirm-dialo
       }
 
       .class-list-item.selected {
-        border-color: #0099ff;
+        border-color: var(--mapa-blue-500);
         box-shadow: 0 0 0 3px rgba(0, 153, 255, 0.15);
       }
 
@@ -604,12 +568,12 @@ import { ConfirmDialogComponent } from '../../../garage/components/confirm-dialo
       .class-item-name {
         font-weight: 700;
         font-size: 0.95rem;
-        color: #0f172a;
+        color: var(--mapa-ink);
       }
 
       .class-item-meta {
         font-size: 0.75rem;
-        color: #64748b;
+        color: var(--mapa-gray-500);
       }
 
       .code-badge {
@@ -624,46 +588,13 @@ import { ConfirmDialogComponent } from '../../../garage/components/confirm-dialo
         letter-spacing: 0.05em;
       }
 
-      .empty-state,
-      .detail-placeholder {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        justify-content: center;
-        gap: 6px;
-        padding: 56px 24px;
-        background-color: #f8fafc;
-        border: 1px dashed #cbd5e1;
-        border-radius: 12px;
-        text-align: center;
-      }
-
-      .empty-state-icon {
-        font-size: 1.75rem;
-        color: #94a3b8;
-        margin-bottom: 6px;
-      }
-
-      .empty-state-title {
-        margin: 0;
-        font-size: 1rem;
-        font-weight: 800;
-        color: #0f172a;
-      }
-
-      .empty-state-text {
-        margin: 0;
-        font-size: 0.875rem;
-        color: #475569;
-      }
-
       .detail-column {
         min-width: 0;
       }
 
       .detail-card {
-        background-color: #ffffff;
-        border: 1px solid #e2e8f0;
+        background-color: var(--mapa-white);
+        border: 1px solid var(--mapa-gray-200);
         border-radius: 12px;
         padding: 24px;
         box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
@@ -681,7 +612,7 @@ import { ConfirmDialogComponent } from '../../../garage/components/confirm-dialo
         gap: 16px;
         flex-wrap: wrap;
         padding-bottom: 18px;
-        border-bottom: 1px solid #f1f5f9;
+        border-bottom: 1px solid var(--mapa-gray-100);
       }
 
       .detail-code-label {
@@ -690,7 +621,7 @@ import { ConfirmDialogComponent } from '../../../garage/components/confirm-dialo
         font-size: 0.7rem;
         font-weight: 700;
         letter-spacing: 0.1em;
-        color: #64748b;
+        color: var(--mapa-gray-500);
         margin-bottom: 6px;
       }
 
@@ -698,12 +629,12 @@ import { ConfirmDialogComponent } from '../../../garage/components/confirm-dialo
         margin: 0 0 6px 0;
         font-size: 1.5rem;
         font-weight: 800;
-        color: #0f172a;
+        color: var(--mapa-ink);
       }
 
       .detail-meta {
         font-size: 0.85rem;
-        color: #475569;
+        color: var(--mapa-gray-600);
       }
 
       .detail-actions {
@@ -715,10 +646,10 @@ import { ConfirmDialogComponent } from '../../../garage/components/confirm-dialo
       .secondary-button {
         height: 38px;
         padding: 0 14px;
-        border: 1px solid #cbd5e1;
+        border: 1px solid var(--mapa-gray-300);
         border-radius: 10px;
-        background-color: #ffffff;
-        color: #334155;
+        background-color: var(--mapa-white);
+        color: var(--mapa-gray-700);
         font-size: 0.8rem;
         font-weight: 700;
         cursor: pointer;
@@ -726,7 +657,7 @@ import { ConfirmDialogComponent } from '../../../garage/components/confirm-dialo
       }
 
       .secondary-button:hover:not(:disabled) {
-        background-color: #f1f5f9;
+        background-color: var(--mapa-gray-100);
       }
 
       .delete-class-button {
@@ -751,7 +682,7 @@ import { ConfirmDialogComponent } from '../../../garage/components/confirm-dialo
 
       .edit-form {
         padding: 18px 0;
-        border-bottom: 1px solid #f1f5f9;
+        border-bottom: 1px solid var(--mapa-gray-100);
       }
 
       .edit-actions {
@@ -776,12 +707,12 @@ import { ConfirmDialogComponent } from '../../../garage/components/confirm-dialo
         gap: 8px;
         font-size: 0.95rem;
         font-weight: 700;
-        color: #0f172a;
+        color: var(--mapa-ink);
         margin-bottom: 12px;
       }
 
       .students-list {
-        border: 1px solid #e2e8f0;
+        border: 1px solid var(--mapa-gray-200);
         border-radius: 12px;
         overflow: hidden;
       }
@@ -792,7 +723,7 @@ import { ConfirmDialogComponent } from '../../../garage/components/confirm-dialo
         justify-content: space-between;
         gap: 12px;
         padding: 12px 16px;
-        border-bottom: 1px solid #f1f5f9;
+        border-bottom: 1px solid var(--mapa-gray-100);
       }
 
       .student-row:last-child {
@@ -809,12 +740,12 @@ import { ConfirmDialogComponent } from '../../../garage/components/confirm-dialo
       .student-name {
         font-size: 0.9rem;
         font-weight: 700;
-        color: #0f172a;
+        color: var(--mapa-ink);
       }
 
       .student-email {
         font-size: 0.78rem;
-        color: #64748b;
+        color: var(--mapa-gray-500);
         font-family: ui-monospace, 'Cascadia Code', Menlo, Consolas, monospace;
         word-break: break-all;
       }
@@ -847,45 +778,10 @@ import { ConfirmDialogComponent } from '../../../garage/components/confirm-dialo
         margin: 0;
         padding: 16px;
         font-size: 0.85rem;
-        color: #64748b;
-        background-color: #f8fafc;
-        border: 1px dashed #cbd5e1;
+        color: var(--mapa-gray-500);
+        background-color: var(--mapa-gray-50);
+        border: 1px dashed var(--mapa-gray-300);
         border-radius: 10px;
-      }
-
-      .feedback-toast {
-        position: fixed;
-        bottom: 2rem;
-        right: 2rem;
-        max-width: 420px;
-        padding: 1rem 1.5rem;
-        background-color: #1e293b;
-        color: #ffffff;
-        border-radius: 12px;
-        font-size: 0.9rem;
-        font-weight: 500;
-        box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-        animation: slideIn 0.3s ease;
-        z-index: 1100;
-      }
-
-      .feedback-toast.feedback-success {
-        background-color: #10b981;
-      }
-
-      .feedback-toast.feedback-error {
-        background-color: #dc2626;
-      }
-
-      @keyframes slideIn {
-        from {
-          opacity: 0;
-          transform: translateY(10px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
       }
 
       @media (max-width: 992px) {
@@ -895,11 +791,11 @@ import { ConfirmDialogComponent } from '../../../garage/components/confirm-dialo
       }
 
       @media (max-width: 640px) {
-        .content-container {
+        .mapa-page-container {
           padding: 20px 16px 40px 16px;
         }
 
-        .page-title {
+        .mapa-page-title {
           font-size: 1.75rem;
         }
 
@@ -911,20 +807,14 @@ import { ConfirmDialogComponent } from '../../../garage/components/confirm-dialo
         .detail-header {
           flex-direction: column;
         }
-
-        .feedback-toast {
-          left: 16px;
-          right: 16px;
-          bottom: 16px;
-        }
       }
     `,
   ],
 })
 export class ClassesPageComponent implements OnInit, OnDestroy {
+  private readonly feedbackService = inject(FeedbackService);
   private static readonly DEFAULT_PAGE_SIZE = 6;
   private static readonly SEARCH_DEBOUNCE_MILLISECONDS = 300;
-  private static readonly FEEDBACK_TIMEOUT_MILLISECONDS = 4000;
 
   readonly pageSizeOptions: number[] = [6, 12, 24];
   readonly shiftOptions = SHIFT_OPTIONS;
@@ -957,9 +847,6 @@ export class ClassesPageComponent implements OnInit, OnDestroy {
 
   removingStudentId: number | null = null;
 
-  feedbackMessage = '';
-  isSuccess = false;
-
   readonly createForm: FormGroup<{ name: FormControl<string>; shift: FormControl<string> }>;
   readonly editForm: FormGroup<{ name: FormControl<string>; shift: FormControl<string> }>;
 
@@ -973,7 +860,6 @@ export class ClassesPageComponent implements OnInit, OnDestroy {
   private readonly searchInputSubject = new Subject<string>();
   private readonly selectedClassSubject = new BehaviorSubject<ClassDetailModel | null>(null);
   private searchSubscription: Subscription | null = null;
-  private feedbackTimeoutId: ReturnType<typeof setTimeout> | null = null;
 
   constructor(
     private readonly classService: ClassService,
@@ -1011,7 +897,6 @@ export class ClassesPageComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.searchSubscription?.unsubscribe();
-    this.clearFeedbackTimeout();
   }
 
   handleSearchInput(inputEvent: Event): void {
@@ -1350,21 +1235,8 @@ export class ClassesPageComponent implements OnInit, OnDestroy {
   }
 
   private showFeedback(message: string, isSuccess: boolean): void {
-    this.feedbackMessage = message;
-    this.isSuccess = isSuccess;
-    this.clearFeedbackTimeout();
-
-    this.feedbackTimeoutId = setTimeout(() => {
-      this.feedbackMessage = '';
-      this.feedbackTimeoutId = null;
-    }, ClassesPageComponent.FEEDBACK_TIMEOUT_MILLISECONDS);
+    if (isSuccess) this.feedbackService.showSuccess('Sucesso', message);
+    else this.feedbackService.showError('Erro', message);
   }
 
-  private clearFeedbackTimeout(): void {
-    if (this.feedbackTimeoutId === null) {
-      return;
-    }
-    clearTimeout(this.feedbackTimeoutId);
-    this.feedbackTimeoutId = null;
-  }
 }

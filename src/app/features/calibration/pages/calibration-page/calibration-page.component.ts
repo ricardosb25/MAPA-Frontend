@@ -1,4 +1,6 @@
-import { Component, OnDestroy, OnInit, computed, signal } from '@angular/core';
+import { EmptyStateComponent } from '../../../../shared/components/empty-state/empty-state.component';
+import { FeedbackService } from '../../../../shared/services/feedback.service';
+import { Component, inject, OnDestroy, OnInit, computed, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
@@ -18,7 +20,7 @@ import { ChallengeModel } from '../../../../core/models/challenge.model';
 @Component({
   selector: 'app-calibration-page',
   standalone: true,
-  imports: [
+  imports: [EmptyStateComponent, 
     CommonModule,
     RouterModule,
     HeaderNavbarComponent,
@@ -30,10 +32,10 @@ import { ChallengeModel } from '../../../../core/models/challenge.model';
     <div class="page-layout">
       <app-header-navbar></app-header-navbar>
 
-      <main class="content-container">
+      <main class="mapa-page-container">
         <section class="page-header">
           <span class="category-tag">BANCADA</span>
-          <h1 class="page-title">Calibração de ECU</h1>
+          <h1 class="mapa-page-title">Calibração de ECU</h1>
           @if (engine(); as selectedEngine) {
             <span class="active-engine-badge" title="Motor ativo na bancada deste usuário">
               <i class="fa-solid fa-engine"></i>
@@ -53,17 +55,10 @@ import { ChallengeModel } from '../../../../core/models/challenge.model';
         }
 
         @if (!isLoading() && engine() === null) {
-          <section class="empty-state">
-            <i class="fa-solid fa-sliders empty-state-icon"></i>
-            <p class="empty-state-title">Nenhum motor na bancada</p>
-            <p class="empty-state-text">
-              Escolha um motor no catálogo para editar os mapas de ignição e combustível.
-            </p>
-            <a routerLink="/garage" class="catalog-button">
+          <app-empty-state icon="fa-solid fa-sliders" title="Nenhum motor na bancada" description="Escolha um motor no catálogo para editar os mapas de ignição e combustível."><a routerLink="/garage" class="catalog-button">
               <i class="fa-solid fa-warehouse"></i>
               <span>Ir para o catálogo</span>
-            </a>
-          </section>
+            </a></app-empty-state>
         }
 
         @if (engine() && activeMap(); as currentMap) {
@@ -172,30 +167,15 @@ import { ChallengeModel } from '../../../../core/models/challenge.model';
           </section>
         }
       </main>
-
-
-      @if (feedbackMessage()) {
-        <div class="feedback-toast" [class.feedback-success]="isSuccess()" [class.feedback-error]="!isSuccess()">
-          {{ feedbackMessage() }}
-        </div>
-      }
     </div>
   `,
   styles: [
     `
       .page-layout {
         min-height: 100vh;
-        background-color: #e5e7eb;
+        background-color: var(--mapa-page-background);
         display: flex;
         flex-direction: column;
-      }
-
-      .content-container {
-        max-width: 1320px;
-        width: 100%;
-        margin: 0 auto;
-        padding: 32px 24px 64px 24px;
-        box-sizing: border-box;
       }
 
       .page-header {
@@ -207,18 +187,10 @@ import { ChallengeModel } from '../../../../core/models/challenge.model';
         font-size: 0.7rem;
         font-weight: 700;
         letter-spacing: 0.12em;
-        color: #64748b;
+        color: var(--mapa-gray-500);
         text-transform: uppercase;
         display: block;
         margin-bottom: 6px;
-      }
-
-      .page-title {
-        margin: 0 0 8px 0;
-        font-size: 2.25rem;
-        font-weight: 800;
-        color: #0f172a;
-        letter-spacing: -0.03em;
       }
 
       .active-engine-badge {
@@ -241,40 +213,8 @@ import { ChallengeModel } from '../../../../core/models/challenge.model';
       .page-subtitle {
         margin: 0;
         font-size: 0.95rem;
-        color: #475569;
+        color: var(--mapa-gray-600);
         line-height: 1.5;
-      }
-
-      .empty-state {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        text-align: center;
-        gap: 10px;
-        padding: 56px 24px;
-        background-color: #f8fafc;
-        border: 1px solid #cbd5e1;
-        border-radius: 12px;
-      }
-
-      .empty-state-icon {
-        font-size: 2rem;
-        color: #94a3b8;
-        margin-bottom: 6px;
-      }
-
-      .empty-state-title {
-        margin: 0;
-        font-size: 1.1rem;
-        font-weight: 800;
-        color: #0f172a;
-      }
-
-      .empty-state-text {
-        margin: 0 0 12px 0;
-        font-size: 0.875rem;
-        color: #64748b;
-        max-width: 420px;
       }
 
       .catalog-button {
@@ -284,8 +224,8 @@ import { ChallengeModel } from '../../../../core/models/challenge.model';
         height: 44px;
         padding: 0 20px;
         border-radius: 10px;
-        background-color: #0099ff;
-        color: #ffffff;
+        background-color: var(--mapa-blue-500);
+        color: var(--mapa-white);
         font-size: 0.875rem;
         font-weight: 700;
         text-decoration: none;
@@ -293,7 +233,7 @@ import { ChallengeModel } from '../../../../core/models/challenge.model';
       }
 
       .catalog-button:hover {
-        background-color: #0088e6;
+        background-color: var(--mapa-blue-600);
       }
 
       .workspace-grid {
@@ -304,8 +244,8 @@ import { ChallengeModel } from '../../../../core/models/challenge.model';
       }
 
       .map-card {
-        background-color: #f8fafc;
-        border: 1px solid #cbd5e1;
+        background-color: var(--mapa-gray-50);
+        border: 1px solid var(--mapa-gray-300);
         border-radius: 12px;
         padding: 24px;
         box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
@@ -324,7 +264,7 @@ import { ChallengeModel } from '../../../../core/models/challenge.model';
         font-size: 0.75rem;
         font-weight: 700;
         letter-spacing: 0.08em;
-        color: #334155;
+        color: var(--mapa-gray-700);
       }
 
       .map-displacement-badge {
@@ -332,14 +272,14 @@ import { ChallengeModel } from '../../../../core/models/challenge.model';
         align-items: center;
         gap: 6px;
         padding: 4px 10px;
-        border: 1px solid #e2e8f0;
+        border: 1px solid var(--mapa-gray-200);
         border-radius: 999px;
         font-family: 'Courier New', monospace;
         font-size: 0.7rem;
         font-weight: 700;
         letter-spacing: 0.06em;
-        color: #475569;
-        background-color: #f8fafc;
+        color: var(--mapa-gray-600);
+        background-color: var(--mapa-gray-50);
         white-space: nowrap;
       }
 
@@ -360,7 +300,7 @@ import { ChallengeModel } from '../../../../core/models/challenge.model';
         font-family: 'Courier New', monospace;
         font-size: 0.72rem;
         font-weight: 700;
-        color: #475569;
+        color: var(--mapa-gray-600);
       }
 
       .map-status {
@@ -370,7 +310,7 @@ import { ChallengeModel } from '../../../../core/models/challenge.model';
         margin: 16px 0 0 0;
         font-size: 0.78rem;
         font-weight: 600;
-        color: #64748b;
+        color: var(--mapa-gray-500);
       }
 
       .sidebar {
@@ -380,8 +320,8 @@ import { ChallengeModel } from '../../../../core/models/challenge.model';
       }
 
       .sidebar-card {
-        background-color: #f8fafc;
-        border: 1px solid #cbd5e1;
+        background-color: var(--mapa-gray-50);
+        border: 1px solid var(--mapa-gray-300);
         border-radius: 12px;
         padding: 24px;
         display: flex;
@@ -395,7 +335,7 @@ import { ChallengeModel } from '../../../../core/models/challenge.model';
         font-size: 0.7rem;
         font-weight: 700;
         letter-spacing: 0.1em;
-        color: #64748b;
+        color: var(--mapa-gray-500);
       }
 
       .map-type-button,
@@ -406,10 +346,10 @@ import { ChallengeModel } from '../../../../core/models/challenge.model';
         gap: 10px;
         height: 46px;
         padding: 0 16px;
-        border: 1px solid #cbd5e1;
+        border: 1px solid var(--mapa-gray-300);
         border-radius: 10px;
-        background-color: #334155;
-        color: #ffffff;
+        background-color: var(--mapa-gray-700);
+        color: var(--mapa-white);
         font-size: 0.875rem;
         font-weight: 700;
         cursor: pointer;
@@ -422,23 +362,23 @@ import { ChallengeModel } from '../../../../core/models/challenge.model';
       }
 
       .map-type-button.map-type-active {
-        background-color: #0099ff;
-        border-color: #0099ff;
+        background-color: var(--mapa-blue-500);
+        border-color: var(--mapa-blue-500);
         box-shadow: 0 2px 8px rgba(0, 153, 255, 0.3);
       }
 
       .map-type-button.map-type-active:hover {
-        background-color: #0088e6;
+        background-color: var(--mapa-blue-600);
       }
 
       .sidebar-divider {
         height: 1px;
-        background-color: #e2e8f0;
+        background-color: var(--mapa-gray-200);
       }
 
       .dyno-button {
-        background-color: #0099ff;
-        border-color: #0099ff;
+        background-color: var(--mapa-blue-500);
+        border-color: var(--mapa-blue-500);
         text-decoration: none;
         box-sizing: border-box;
       }
@@ -488,34 +428,21 @@ import { ChallengeModel } from '../../../../core/models/challenge.model';
       }
 
       .confirm-cancel-button {
-        border: 1px solid #cbd5e1;
-        background-color: #ffffff;
-        color: #334155;
+        border: 1px solid var(--mapa-gray-300);
+        background-color: var(--mapa-white);
+        color: var(--mapa-gray-700);
       }
 
       .confirm-accept-button {
         border: none;
         background-color: #f59e0b;
-        color: #ffffff;
+        color: var(--mapa-white);
       }
 
       .confirm-cancel-button:disabled,
       .confirm-accept-button:disabled {
         opacity: 0.6;
         cursor: not-allowed;
-      }
-
-      .feedback-toast {
-        position: fixed;
-        bottom: 24px;
-        left: 50%;
-        transform: translateX(-50%);
-        padding: 12px 20px;
-        border-radius: 10px;
-        font-size: 0.85rem;
-        font-weight: 700;
-        box-shadow: 0 10px 25px rgba(15, 23, 42, 0.2);
-        z-index: 1100;
       }
 
       .feedback-success {
@@ -539,6 +466,7 @@ import { ChallengeModel } from '../../../../core/models/challenge.model';
   ]
 })
 export class CalibrationPageComponent implements OnInit, OnDestroy {
+  private readonly feedbackService = inject(FeedbackService);
   readonly authService: AuthService;
   readonly mapTitles = ECU_MAP_TITLES;
 
@@ -550,13 +478,9 @@ export class CalibrationPageComponent implements OnInit, OnDestroy {
   readonly isSaving = signal(false);
   readonly isRestoreConfirmOpen = signal(false);
   readonly isRestoring = signal(false);
-  readonly feedbackMessage = signal('');
-  readonly isSuccess = signal(false);
 
   private engineSubscription: Subscription | null = null;
-  private feedbackTimeoutId: ReturnType<typeof setTimeout> | null = null;
 
-  private static readonly FEEDBACK_TIMEOUT_MILLISECONDS = 4000;
 
   constructor(
     authService: AuthService,
@@ -587,7 +511,6 @@ export class CalibrationPageComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.engineSubscription?.unsubscribe();
-    this.clearFeedbackTimeout();
   }
 
   readonly activeMap = computed(
@@ -699,22 +622,8 @@ export class CalibrationPageComponent implements OnInit, OnDestroy {
   }
 
   private showFeedback(message: string, isSuccess: boolean): void {
-    this.feedbackMessage.set(message);
-    this.isSuccess.set(isSuccess);
-    this.clearFeedbackTimeout();
-
-    this.feedbackTimeoutId = setTimeout(() => {
-      this.feedbackMessage.set('');
-      this.feedbackTimeoutId = null;
-    }, CalibrationPageComponent.FEEDBACK_TIMEOUT_MILLISECONDS);
+    if (isSuccess) this.feedbackService.showSuccess('Sucesso', message);
+    else this.feedbackService.showError('Erro', message);
   }
 
-  private clearFeedbackTimeout(): void {
-    if (this.feedbackTimeoutId === null) {
-      return;
-    }
-
-    clearTimeout(this.feedbackTimeoutId);
-    this.feedbackTimeoutId = null;
-  }
 }

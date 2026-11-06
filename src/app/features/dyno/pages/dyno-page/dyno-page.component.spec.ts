@@ -1,4 +1,5 @@
-﻿import { describe, it, expect, beforeEach } from 'vitest';
+import { FeedbackService } from '../../../../shared/services/feedback.service';
+﻿import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { of, throwError } from 'rxjs';
@@ -13,6 +14,9 @@ import { AuthService } from '../../../../core/services/auth.service';
 import { ChallengeModel } from '../../../../core/models/challenge.model';
 import { UserModel } from '../../../../core/models/auth.model';
 import { UserProfileType } from '../../../../core/models/user-profile.enum';
+
+const feedbackService = { showSuccess: vi.fn(), showError: vi.fn() };
+beforeEach(() => vi.clearAllMocks());
 
 const buildEngine = (overrides: Partial<EngineModel> = {}): EngineModel => ({
   id: 101,
@@ -144,7 +148,7 @@ describe('DynoPageComponent', () => {
 
     await TestBed.configureTestingModule({
       imports: [DynoPageComponent],
-      providers: [
+      providers: [{ provide: FeedbackService, useValue: feedbackService }, 
         provideRouter([]),
         { provide: EngineService, useValue: buildEngineServiceStub(options.engine) },
         { provide: DynoService, useValue: dynoServiceStub.service },
@@ -253,9 +257,7 @@ describe('DynoPageComponent', () => {
     await fixture.whenStable();
     fixture.detectChanges();
 
-    expect(element.querySelector('.feedback-error')?.textContent).toContain(
-      'Nenhum motor ativo selecionado.'
-    );
+    expect(feedbackService.showError).toHaveBeenCalledWith('Erro', 'Nenhum motor ativo selecionado.');
     expect(element.querySelector('app-dyno-chart')).toBeNull();
   });
 });

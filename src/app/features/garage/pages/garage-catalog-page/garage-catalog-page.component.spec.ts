@@ -1,4 +1,5 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { FeedbackService } from '../../../../shared/services/feedback.service';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { of } from 'rxjs';
@@ -8,6 +9,9 @@ import { EngineService } from '../../../../core/services/engine.service';
 import { EngineModel, PageResponse } from '../../../../core/models/engine.model';
 import { UserModel } from '../../../../core/models/auth.model';
 import { UserProfileType } from '../../../../core/models/user-profile.enum';
+
+const feedbackService = { showSuccess: vi.fn(), showError: vi.fn() };
+beforeEach(() => vi.clearAllMocks());
 
 
 const buildEngine = (): EngineModel => ({
@@ -73,7 +77,7 @@ describe('GarageCatalogPageComponent', () => {
   const configureTestingModule = async (role: UserProfileType) => {
     await TestBed.configureTestingModule({
       imports: [GarageCatalogPageComponent],
-      providers: [
+      providers: [{ provide: FeedbackService, useValue: feedbackService }, 
         provideRouter([]),
         { provide: EngineService, useValue: buildEngineServiceStub() },
         { provide: AuthService, useValue: buildAuthServiceStub(role) }

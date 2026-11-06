@@ -225,23 +225,9 @@ export const passwordMatchValidator: ValidatorFn = (controlGroup: AbstractContro
     </div>
   `,
   styles: [`
-    .form-card-container {
-      width: 100%;
-      max-width: 440px;
-      margin: 0 auto;
-    }
-
-    .form-title {
-      font-size: 2.25rem;
-      font-weight: 800;
-      color: #0f172a;
-      letter-spacing: -0.03em;
-      margin: 0 0 0.5rem 0;
-    }
-
     .form-subtitle {
       font-size: 0.925rem;
-      color: #64748b;
+      color: var(--mapa-gray-500);
       margin: 0 0 1.75rem 0;
       line-height: 1.4;
     }
@@ -258,51 +244,6 @@ export const passwordMatchValidator: ValidatorFn = (controlGroup: AbstractContro
       gap: 0.35rem;
     }
 
-    .field-label {
-      font-size: 0.875rem;
-      font-weight: 500;
-      color: #334155;
-    }
-
-    .input-wrapper {
-      position: relative;
-      display: flex;
-      align-items: center;
-      background-color: #f1f5f9;
-      border: 1px solid #cbd5e1;
-      border-radius: 12px;
-      padding: 0 0.875rem;
-      height: 52px;
-      transition: border-color 0.2s ease, box-shadow 0.2s ease;
-    }
-
-    .input-wrapper:focus-within {
-      border-color: #0099ff;
-      background-color: #ffffff;
-      box-shadow: 0 0 0 3px rgba(0, 153, 255, 0.15);
-    }
-
-    .input-wrapper.input-error {
-      border-color: #ef4444;
-      background-color: #fef2f2;
-    }
-
-    .input-prefix-icon {
-      color: #64748b;
-      font-size: 1.1rem;
-      margin-right: 0.75rem;
-    }
-
-    .form-input {
-      flex: 1;
-      border: none;
-      background: transparent;
-      outline: none;
-      font-size: 0.95rem;
-      color: #0f172a;
-      width: 100%;
-    }
-
     .custom-dropdown-container {
       position: relative;
       width: 100%;
@@ -313,15 +254,15 @@ export const passwordMatchValidator: ValidatorFn = (controlGroup: AbstractContro
       cursor: pointer;
       text-align: left;
       font-family: inherit;
-      border: 1px solid #cbd5e1;
-      background-color: #f1f5f9;
+      border: 1px solid var(--mapa-gray-300);
+      background-color: var(--mapa-gray-100);
     }
 
     .custom-dropdown-trigger:focus,
     .custom-dropdown-container.dropdown-open .custom-dropdown-trigger {
       outline: none;
-      border-color: #0099ff;
-      background-color: #ffffff;
+      border-color: var(--mapa-blue-500);
+      background-color: var(--mapa-white);
       box-shadow: 0 0 0 3px rgba(0, 153, 255, 0.15);
     }
 
@@ -333,7 +274,7 @@ export const passwordMatchValidator: ValidatorFn = (controlGroup: AbstractContro
     .dropdown-selected-text {
       flex: 1;
       font-size: 0.95rem;
-      color: #0f172a;
+      color: var(--mapa-ink);
       user-select: none;
     }
 
@@ -342,7 +283,7 @@ export const passwordMatchValidator: ValidatorFn = (controlGroup: AbstractContro
     }
 
     .dropdown-arrow {
-      color: #64748b;
+      color: var(--mapa-gray-500);
       font-size: 0.85rem;
       transition: transform 0.2s ease, color 0.2s ease;
       margin-left: auto;
@@ -350,7 +291,7 @@ export const passwordMatchValidator: ValidatorFn = (controlGroup: AbstractContro
 
     .dropdown-arrow.arrow-rotated {
       transform: rotate(180deg);
-      color: #0099ff;
+      color: var(--mapa-blue-500);
     }
 
     .custom-dropdown-menu {
@@ -362,8 +303,8 @@ export const passwordMatchValidator: ValidatorFn = (controlGroup: AbstractContro
       margin: 0;
       padding: 6px;
       list-style: none;
-      background-color: #ffffff;
-      border: 1px solid #cbd5e1;
+      background-color: var(--mapa-white);
+      border: 1px solid var(--mapa-gray-300);
       border-radius: 12px;
       box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
       animation: dropdownSlideDown 0.15s ease-out;
@@ -387,30 +328,30 @@ export const passwordMatchValidator: ValidatorFn = (controlGroup: AbstractContro
       padding: 10px 14px;
       border-radius: 8px;
       font-size: 0.925rem;
-      color: #0f172a;
+      color: var(--mapa-ink);
       cursor: pointer;
       transition: background-color 0.15s ease, color 0.15s ease;
     }
 
     .custom-dropdown-option:hover {
-      background-color: #f1f5f9;
-      color: #0099ff;
+      background-color: var(--mapa-gray-100);
+      color: var(--mapa-blue-500);
     }
 
     .custom-dropdown-option.option-selected {
-      background-color: #eef8ff;
-      color: #0099ff;
+      background-color: var(--mapa-blue-50);
+      color: var(--mapa-blue-500);
       font-weight: 600;
     }
 
     .option-icon {
       font-size: 1rem;
-      color: #64748b;
+      color: var(--mapa-gray-500);
     }
 
     .custom-dropdown-option:hover .option-icon,
     .custom-dropdown-option.option-selected .option-icon {
-      color: #0099ff;
+      color: var(--mapa-blue-500);
     }
 
     .option-label {
@@ -419,17 +360,13 @@ export const passwordMatchValidator: ValidatorFn = (controlGroup: AbstractContro
 
     .option-check-icon {
       font-size: 0.9rem;
-      color: #0099ff;
-    }
-
-    .form-input::placeholder {
-      color: #94a3b8;
+      color: var(--mapa-blue-500);
     }
 
     .icon-toggle-button {
       background: none;
       border: none;
-      color: #64748b;
+      color: var(--mapa-gray-500);
       cursor: pointer;
       padding: 0.25rem;
       display: flex;
@@ -440,13 +377,7 @@ export const passwordMatchValidator: ValidatorFn = (controlGroup: AbstractContro
     }
 
     .icon-toggle-button:hover {
-      color: #0f172a;
-    }
-
-    .error-message {
-      font-size: 0.8rem;
-      color: #ef4444;
-      margin-top: 0.15rem;
+      color: var(--mapa-ink);
     }
 
     .terms-consent-group {
@@ -472,7 +403,7 @@ export const passwordMatchValidator: ValidatorFn = (controlGroup: AbstractContro
 
     .terms-consent-label {
       font-size: 0.85rem;
-      color: #334155;
+      color: var(--mapa-gray-700);
       cursor: pointer;
     }
 
@@ -483,66 +414,14 @@ export const passwordMatchValidator: ValidatorFn = (controlGroup: AbstractContro
       font: inherit;
       font-size: 0.85rem;
       font-weight: 600;
-      color: #0099ff;
+      color: var(--mapa-blue-500);
       text-decoration: underline;
       cursor: pointer;
       transition: color 0.2s ease;
     }
 
     .terms-link:hover {
-      color: #0088e6;
-    }
-
-    .submit-button {
-      height: 52px;
-      background-color: #0099ff;
-      color: #ffffff;
-      border: none;
-      border-radius: 12px;
-      font-size: 1rem;
-      font-weight: 700;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-      margin-top: 0.5rem;
-      transition: background-color 0.2s ease, transform 0.1s ease;
-    }
-
-    .submit-button:hover:not(:disabled) {
-      background-color: #0088e6;
-    }
-
-    .submit-button:active:not(:disabled) {
-      transform: scale(0.99);
-    }
-
-    .submit-button:disabled {
-      opacity: 0.7;
-      cursor: not-allowed;
-    }
-
-    .button-spinner {
-      font-size: 1.1rem;
-    }
-
-    .switch-route-text {
-      text-align: left;
-      font-size: 0.875rem;
-      color: #64748b;
-      margin-top: 0.5rem;
-    }
-
-    .route-link {
-      color: #0099ff;
-      font-weight: 600;
-      text-decoration: none;
-      transition: text-decoration 0.2s ease;
-    }
-
-    .route-link:hover {
-      text-decoration: underline;
+      color: var(--mapa-blue-600);
     }
   `]
 })

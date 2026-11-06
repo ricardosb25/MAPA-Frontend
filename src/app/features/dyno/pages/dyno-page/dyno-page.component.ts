@@ -1,4 +1,6 @@
-import { Component, OnDestroy, OnInit, signal } from '@angular/core';
+import { EmptyStateComponent } from '../../../../shared/components/empty-state/empty-state.component';
+import { FeedbackService } from '../../../../shared/services/feedback.service';
+import { Component, inject, OnDestroy, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
@@ -18,7 +20,7 @@ import { EngineHealthComponent } from '../../components/engine-health/engine-hea
 @Component({
   selector: 'app-dyno-page',
   standalone: true,
-  imports: [
+  imports: [EmptyStateComponent, 
     CommonModule,
     RouterModule,
     HeaderNavbarComponent,
@@ -31,10 +33,10 @@ import { EngineHealthComponent } from '../../components/engine-health/engine-hea
     <div class="page-layout">
       <app-header-navbar></app-header-navbar>
 
-      <main class="content-container">
+      <main class="mapa-page-container">
         <section class="page-header">
           <span class="category-tag">TESTE DE BANCADA</span>
-          <h1 class="page-title">Dinamômetro virtual</h1>
+          <h1 class="mapa-page-title">Dinamômetro virtual</h1>
           @if (engine(); as selectedEngine) {
             <p class="page-subtitle">
               {{ selectedEngine.manufacturer }} {{ selectedEngine.name }} — aceleração total da marcha-lenta ao corte
@@ -49,15 +51,10 @@ import { EngineHealthComponent } from '../../components/engine-health/engine-hea
           <app-loading variant="page" message="Carregando dados do dinamômetro..."></app-loading>
         } @else {
         @if (engine() === null) {
-          <section class="empty-state">
-            <i class="fa-solid fa-gauge-high empty-state-icon"></i>
-            <p class="empty-state-title">Nenhum motor na bancada</p>
-            <p class="empty-state-text">Escolha um motor no catálogo para rodar o dinamômetro virtual.</p>
-            <a routerLink="/garage" class="catalog-button">
+          <app-empty-state icon="fa-solid fa-gauge-high" title="Nenhum motor na bancada" description="Escolha um motor no catálogo para rodar o dinamômetro virtual."><a routerLink="/garage" class="catalog-button">
               <i class="fa-solid fa-warehouse"></i>
               <span>Ir para o catálogo</span>
-            </a>
-          </section>
+            </a></app-empty-state>
         }
 
         @if (engine(); as selectedEngine) {
@@ -128,30 +125,15 @@ import { EngineHealthComponent } from '../../components/engine-health/engine-hea
         }
         }
       </main>
-
-
-      @if (feedbackMessage()) {
-        <div class="feedback-toast" [class.feedback-success]="isSuccess()" [class.feedback-error]="!isSuccess()">
-          {{ feedbackMessage() }}
-        </div>
-      }
     </div>
   `,
   styles: [
     `
       .page-layout {
         min-height: 100vh;
-        background-color: #e5e7eb;
+        background-color: var(--mapa-page-background);
         display: flex;
         flex-direction: column;
-      }
-
-      .content-container {
-        max-width: 1320px;
-        width: 100%;
-        margin: 0 auto;
-        padding: 32px 24px 64px 24px;
-        box-sizing: border-box;
       }
 
       .page-header {
@@ -163,56 +145,17 @@ import { EngineHealthComponent } from '../../components/engine-health/engine-hea
         font-size: 0.7rem;
         font-weight: 700;
         letter-spacing: 0.12em;
-        color: #64748b;
+        color: var(--mapa-gray-500);
         text-transform: uppercase;
         display: block;
         margin-bottom: 6px;
       }
 
-      .page-title {
-        margin: 0 0 8px 0;
-        font-size: 2.25rem;
-        font-weight: 800;
-        color: #0f172a;
-        letter-spacing: -0.03em;
-      }
-
       .page-subtitle {
         margin: 0;
         font-size: 0.95rem;
-        color: #475569;
+        color: var(--mapa-gray-600);
         line-height: 1.5;
-      }
-
-      .empty-state {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 8px;
-        padding: 48px 24px;
-        background-color: #f8fafc;
-        border: 1px solid #cbd5e1;
-        border-radius: 12px;
-        text-align: center;
-      }
-
-      .empty-state-icon {
-        font-size: 2rem;
-        color: #94a3b8;
-        margin-bottom: 6px;
-      }
-
-      .empty-state-title {
-        margin: 0;
-        font-size: 1.05rem;
-        font-weight: 800;
-        color: #0f172a;
-      }
-
-      .empty-state-text {
-        margin: 0 0 12px 0;
-        font-size: 0.875rem;
-        color: #64748b;
       }
 
       .catalog-button {
@@ -220,8 +163,8 @@ import { EngineHealthComponent } from '../../components/engine-health/engine-hea
         align-items: center;
         gap: 8px;
         padding: 10px 18px;
-        background-color: #0099ff;
-        color: #ffffff;
+        background-color: var(--mapa-blue-500);
+        color: var(--mapa-white);
         border: none;
         border-radius: 10px;
         font-size: 0.875rem;
@@ -232,7 +175,7 @@ import { EngineHealthComponent } from '../../components/engine-health/engine-hea
       }
 
       .catalog-button:hover {
-        background-color: #0088e6;
+        background-color: var(--mapa-blue-600);
       }
 
       .workspace-grid {
@@ -256,8 +199,8 @@ import { EngineHealthComponent } from '../../components/engine-health/engine-hea
       }
 
       .chart-card {
-        background-color: #f8fafc;
-        border: 1px solid #cbd5e1;
+        background-color: var(--mapa-gray-50);
+        border: 1px solid var(--mapa-gray-300);
         border-radius: 12px;
         padding: 24px;
         box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
@@ -284,18 +227,18 @@ import { EngineHealthComponent } from '../../components/engine-health/engine-hea
         font-size: 0.65rem;
         font-weight: 700;
         letter-spacing: 0.1em;
-        color: #64748b;
+        color: var(--mapa-gray-500);
         margin-bottom: 6px;
       }
 
       .stat-value {
         font-size: 1.35rem;
         font-weight: 800;
-        color: #0f172a;
+        color: var(--mapa-ink);
       }
 
       .stat-power {
-        color: #0099ff;
+        color: var(--mapa-blue-500);
       }
 
       .stat-torque {
@@ -312,8 +255,8 @@ import { EngineHealthComponent } from '../../components/engine-health/engine-hea
         align-items: center;
         gap: 8px;
         padding: 12px 22px;
-        background-color: #0099ff;
-        color: #ffffff;
+        background-color: var(--mapa-blue-500);
+        color: var(--mapa-white);
         border: none;
         border-radius: 10px;
         font-size: 0.875rem;
@@ -324,7 +267,7 @@ import { EngineHealthComponent } from '../../components/engine-health/engine-hea
       }
 
       .run-button:hover:not(:disabled) {
-        background-color: #0088e6;
+        background-color: var(--mapa-blue-600);
       }
 
       .run-button:disabled {
@@ -337,9 +280,9 @@ import { EngineHealthComponent } from '../../components/engine-health/engine-hea
         align-items: center;
         justify-content: center;
         min-height: 340px;
-        border: 1px dashed #cbd5e1;
+        border: 1px dashed var(--mapa-gray-300);
         border-radius: 10px;
-        color: #64748b;
+        color: var(--mapa-gray-500);
         font-size: 0.875rem;
         font-weight: 600;
         text-align: center;
@@ -353,7 +296,7 @@ import { EngineHealthComponent } from '../../components/engine-health/engine-hea
         align-self: flex-start;
         padding: 12px 20px;
         background-color: #1e293b;
-        color: #ffffff;
+        color: var(--mapa-white);
         border: none;
         border-radius: 10px;
         font-size: 0.875rem;
@@ -364,20 +307,7 @@ import { EngineHealthComponent } from '../../components/engine-health/engine-hea
       }
 
       .back-button:hover {
-        background-color: #0f172a;
-      }
-
-      .feedback-toast {
-        position: fixed;
-        bottom: 24px;
-        right: 24px;
-        padding: 14px 20px;
-        border-radius: 10px;
-        font-size: 0.85rem;
-        font-weight: 600;
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
-        z-index: 1000;
-        max-width: 420px;
+        background-color: var(--mapa-ink);
       }
 
       .feedback-success {
@@ -401,16 +331,12 @@ import { EngineHealthComponent } from '../../components/engine-health/engine-hea
   ]
 })
 export class DynoPageComponent implements OnInit, OnDestroy {
-  private static readonly FEEDBACK_TIMEOUT_MILLISECONDS = 4500;
+  private readonly feedbackService = inject(FeedbackService);
   readonly engine = signal<EngineModel | null>(null);
   readonly isLoading = signal(true);
   readonly result = signal<DynoResult | null>(null);
   readonly isRunning = signal(false);
-  readonly feedbackMessage = signal('');
-  readonly isSuccess = signal(false);
   readonly challenge = signal<ChallengeModel | null>(null);
-
-  private feedbackTimeoutId: ReturnType<typeof setTimeout> | null = null;
   private readonly subscriptions: Subscription[] = [];
 
   constructor(
@@ -440,7 +366,6 @@ export class DynoPageComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.subscriptions.forEach((subscription) => subscription.unsubscribe());
-    this.clearFeedbackTimeout();
   }
 
   handleRunSimulation(): void {
@@ -480,22 +405,8 @@ export class DynoPageComponent implements OnInit, OnDestroy {
   }
 
   private showFeedback(message: string, isSuccess: boolean): void {
-    this.feedbackMessage.set(message);
-    this.isSuccess.set(isSuccess);
-    this.clearFeedbackTimeout();
-
-    this.feedbackTimeoutId = setTimeout(() => {
-      this.feedbackMessage.set('');
-      this.feedbackTimeoutId = null;
-    }, DynoPageComponent.FEEDBACK_TIMEOUT_MILLISECONDS);
+    if (isSuccess) this.feedbackService.showSuccess('Sucesso', message);
+    else this.feedbackService.showError('Erro', message);
   }
 
-  private clearFeedbackTimeout(): void {
-    if (this.feedbackTimeoutId === null) {
-      return;
-    }
-
-    clearTimeout(this.feedbackTimeoutId);
-    this.feedbackTimeoutId = null;
-  }
 }

@@ -1,4 +1,6 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { EmptyStateComponent } from '../../../../shared/components/empty-state/empty-state.component';
+import { FeedbackService } from '../../../../shared/services/feedback.service';
+import { Component, inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { BehaviorSubject, Observable, catchError, of, switchMap, take, tap } from 'rxjs';
@@ -15,12 +17,12 @@ import { LoadingComponent } from '../../../../shared/components/loading/loading.
 import { PaginationControlsComponent } from '../../../../shared/components/pagination-controls/pagination-controls.component';
 import { EngineCardComponent } from '../../components/engine-card/engine-card.component';
 import { EngineFormModalComponent } from '../../components/engine-form-modal/engine-form-modal.component';
-import { ConfirmDialogComponent } from '../../components/confirm-dialog/confirm-dialog.component';
+import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog.component';
 
 @Component({
   selector: 'app-garage-catalog-page',
   standalone: true,
-  imports: [
+  imports: [EmptyStateComponent, 
     CommonModule,
     HeaderNavbarComponent,
     LoadingComponent,
@@ -33,11 +35,11 @@ import { ConfirmDialogComponent } from '../../components/confirm-dialog/confirm-
     <div class="page-layout">
       <app-header-navbar></app-header-navbar>
 
-      <main class="content-container">
+      <main class="mapa-page-container">
         <section class="page-header">
           <div class="page-header-text">
             <span class="category-tag">CATÁLOGO</span>
-            <h1 class="page-title">Garagem de motores</h1>
+            <h1 class="mapa-page-title">Garagem de motores</h1>
             <p class="page-subtitle">
               Selecione a base mecânica. Os mapas voltam ao padrão de fábrica ao trocar de motor.
             </p>
@@ -65,16 +67,10 @@ import { ConfirmDialogComponent } from '../../components/confirm-dialog/confirm-
                 ></app-engine-card>
               </div>
             } @else {
-              <div class="empty-state">
-                <i class="fa-solid fa-warehouse empty-state-icon"></i>
-                <p class="empty-state-title">Nenhum motor por aqui.</p>
-                <p class="empty-state-text">
-                  Cadastre um novo motor para começar a montar o catálogo da turma.
-                </p>
-              </div>
+              <app-empty-state icon="fa-solid fa-warehouse" title="Nenhum motor por aqui." description="Cadastre um novo motor para começar a montar o catálogo da turma."></app-empty-state>
             }
 
-            <app-pagination-controls
+            <app-pagination-controls itemNounSingular="motor" itemNounPlural="motores" ariaLabel="Paginação do catálogo de motores"
               [page]="enginesPage.page"
               [size]="enginesPage.size"
               [totalElements]="enginesPage.totalElements"
@@ -102,7 +98,7 @@ import { ConfirmDialogComponent } from '../../components/confirm-dialog/confirm-
       }
 
       @if (isDeleteDialogOpen) {
-        <app-confirm-dialog
+        <app-confirm-dialog confirmButtonLabel="Excluir motor" confirmingLabel="Excluindo..."
           title="Excluir motor"
           [message]="deleteDialogMessage"
           confirmationLabel="Confirmo que desejo excluir este motor do catálogo. Esta ação não pode ser desfeita."
@@ -112,28 +108,14 @@ import { ConfirmDialogComponent } from '../../components/confirm-dialog/confirm-
           (cancel)="handleCancelDelete()"
         ></app-confirm-dialog>
       }
-
-      @if (feedbackMessage) {
-        <div class="feedback-toast" [class.feedback-success]="isSuccess" [class.feedback-error]="!isSuccess">
-          {{ feedbackMessage }}
-        </div>
-      }
     </div>
   `,
   styles: [`
     .page-layout {
       min-height: 100vh;
-      background-color: #e5e7eb;
+      background-color: var(--mapa-page-background);
       display: flex;
       flex-direction: column;
-    }
-
-    .content-container {
-      max-width: 1320px;
-      width: 100%;
-      margin: 0 auto;
-      padding: 32px 24px 64px 24px;
-      box-sizing: border-box;
     }
 
     .page-header {
@@ -154,8 +136,8 @@ import { ConfirmDialogComponent } from '../../components/confirm-dialog/confirm-
       padding: 0 20px;
       border: none;
       border-radius: 10px;
-      background-color: #0099ff;
-      color: #ffffff;
+      background-color: var(--mapa-blue-500);
+      color: var(--mapa-white);
       font-size: 0.875rem;
       font-weight: 700;
       cursor: pointer;
@@ -167,7 +149,7 @@ import { ConfirmDialogComponent } from '../../components/confirm-dialog/confirm-
     }
 
     .create-engine-button:hover {
-      background-color: #0088e6;
+      background-color: var(--mapa-blue-600);
     }
 
     .create-engine-button:active {
@@ -178,24 +160,16 @@ import { ConfirmDialogComponent } from '../../components/confirm-dialog/confirm-
       font-size: 0.7rem;
       font-weight: 700;
       letter-spacing: 0.12em;
-      color: #64748b;
+      color: var(--mapa-gray-500);
       text-transform: uppercase;
       display: block;
       margin-bottom: 6px;
     }
 
-    .page-title {
-      margin: 0 0 8px 0;
-      font-size: 2.25rem;
-      font-weight: 800;
-      color: #0f172a;
-      letter-spacing: -0.03em;
-    }
-
     .page-subtitle {
       margin: 0;
       font-size: 0.95rem;
-      color: #475569;
+      color: var(--mapa-gray-600);
       line-height: 1.5;
     }
 
@@ -210,73 +184,6 @@ import { ConfirmDialogComponent } from '../../components/confirm-dialog/confirm-
       opacity: 0.5;
     }
 
-    .empty-state {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      padding: 56px 24px;
-      background-color: #f8fafc;
-      border: 1px dashed #cbd5e1;
-      border-radius: 12px;
-      text-align: center;
-    }
-
-    .empty-state-icon {
-      font-size: 1.75rem;
-      color: #94a3b8;
-      margin-bottom: 6px;
-    }
-
-    .empty-state-title {
-      margin: 0;
-      font-size: 1rem;
-      font-weight: 800;
-      color: #0f172a;
-    }
-
-    .empty-state-text {
-      margin: 0;
-      font-size: 0.875rem;
-      color: #475569;
-    }
-
-    .feedback-toast {
-      position: fixed;
-      bottom: 2rem;
-      right: 2rem;
-      max-width: 420px;
-      padding: 1rem 1.5rem;
-      background-color: #1e293b;
-      color: #ffffff;
-      border-radius: 12px;
-      font-size: 0.9rem;
-      font-weight: 500;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-      animation: slideIn 0.3s ease;
-      z-index: 1100;
-    }
-
-    .feedback-toast.feedback-success {
-      background-color: #10b981;
-    }
-
-    .feedback-toast.feedback-error {
-      background-color: #dc2626;
-    }
-
-    @keyframes slideIn {
-      from {
-        opacity: 0;
-        transform: translateY(10px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
     @media (max-width: 1024px) {
       .engines-grid {
         grid-template-columns: repeat(2, 1fr);
@@ -284,7 +191,7 @@ import { ConfirmDialogComponent } from '../../components/confirm-dialog/confirm-
     }
 
     @media (max-width: 640px) {
-      .content-container {
+      .mapa-page-container {
         padding: 20px 16px 40px 16px;
       }
       .page-header {
@@ -294,29 +201,22 @@ import { ConfirmDialogComponent } from '../../components/confirm-dialog/confirm-
       .create-engine-button {
         justify-content: center;
       }
-      .page-title {
+      .mapa-page-title {
         font-size: 1.75rem;
       }
       .engines-grid {
         grid-template-columns: 1fr;
         gap: 16px;
       }
-      .feedback-toast {
-        left: 16px;
-        right: 16px;
-        bottom: 16px;
-      }
     }
   `]
 })
-export class GarageCatalogPageComponent implements OnInit, OnDestroy {
+export class GarageCatalogPageComponent implements OnInit {
+  private readonly feedbackService = inject(FeedbackService);
   private static readonly DEFAULT_PAGE_SIZE = 12;
-  private static readonly FEEDBACK_TIMEOUT_MILLISECONDS = 4000;
 
   enginesPage$!: Observable<PageResponse<EngineModel>>;
   isLoading = false;
-  feedbackMessage = '';
-  isSuccess = false;
 
   isFormModalOpen = false;
   engineBeingEdited: EngineModel | null = null;
@@ -335,7 +235,6 @@ export class GarageCatalogPageComponent implements OnInit, OnDestroy {
     sort: 'id,ASC'
   });
   private hasAppliedInitialSelection = false;
-  private feedbackTimeoutId: ReturnType<typeof setTimeout> | null = null;
 
   constructor(
     private readonly engineService: EngineService,
@@ -350,10 +249,7 @@ export class GarageCatalogPageComponent implements OnInit, OnDestroy {
       switchMap((query) => this.loadEnginesPage(query))
     );
   }
-
-  ngOnDestroy(): void {
-    this.clearFeedbackTimeout();
-  }
+
 
   get deleteDialogMessage(): string {
     if (this.engineBeingDeleted === null) {
@@ -616,22 +512,8 @@ export class GarageCatalogPageComponent implements OnInit, OnDestroy {
   }
 
   private showFeedback(message: string, isSuccess: boolean): void {
-    this.feedbackMessage = message;
-    this.isSuccess = isSuccess;
-    this.clearFeedbackTimeout();
-
-    this.feedbackTimeoutId = setTimeout(() => {
-      this.feedbackMessage = '';
-      this.feedbackTimeoutId = null;
-    }, GarageCatalogPageComponent.FEEDBACK_TIMEOUT_MILLISECONDS);
+    if (isSuccess) this.feedbackService.showSuccess('Sucesso', message);
+    else this.feedbackService.showError('Erro', message);
   }
 
-  private clearFeedbackTimeout(): void {
-    if (this.feedbackTimeoutId === null) {
-      return;
-    }
-
-    clearTimeout(this.feedbackTimeoutId);
-    this.feedbackTimeoutId = null;
-  }
 }

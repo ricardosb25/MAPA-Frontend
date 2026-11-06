@@ -39,8 +39,8 @@ import { ChallengeModel } from '../../../../core/models/challenge.model';
   styles: [
     `
       .challenge-card {
-        background-color: #ffffff;
-        border: 1px solid #e2e8f0;
+        background-color: var(--mapa-white);
+        border: 1px solid var(--mapa-gray-200);
         border-radius: 12px;
         padding: 18px;
         box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
@@ -55,16 +55,16 @@ import { ChallengeModel } from '../../../../core/models/challenge.model';
         letter-spacing: 0.14em;
         text-transform: uppercase;
         border-radius: 6px;
-        background: #eef8ff;
-        border: 1px solid #bce4ff;
-        color: #065ca0;
+        background: var(--mapa-blue-50);
+        border: 1px solid var(--mapa-blue-200);
+        color: var(--mapa-blue-800);
       }
 
       .challenge-title {
         margin: 0 0 8px 0;
         font-size: 1.05rem;
         font-weight: 800;
-        color: #0f172a;
+        color: var(--mapa-ink);
         line-height: 1.3;
         letter-spacing: -0.01em;
       }
@@ -73,7 +73,7 @@ import { ChallengeModel } from '../../../../core/models/challenge.model';
         margin: 0 0 14px 0;
         font-size: 0.82rem;
         line-height: 1.5;
-        color: #475569;
+        color: var(--mapa-gray-600);
       }
 
       .criteria-list {
@@ -91,7 +91,7 @@ import { ChallengeModel } from '../../../../core/models/challenge.model';
         gap: 9px;
         font-size: 0.8rem;
         font-weight: 600;
-        color: #475569;
+        color: var(--mapa-gray-600);
       }
 
       .criteria-dot {
@@ -99,30 +99,30 @@ import { ChallengeModel } from '../../../../core/models/challenge.model';
         height: 14px;
         min-width: 14px;
         border-radius: 50%;
-        background-color: #ffffff;
-        border: 2px solid #cbd5e1;
+        background-color: var(--mapa-white);
+        border: 2px solid var(--mapa-gray-300);
         box-sizing: border-box;
         transition: background-color 0.2s ease, border-color 0.2s ease;
       }
 
       .criteria-item.criteria-done {
-        color: #065ca0;
+        color: var(--mapa-blue-800);
         font-weight: 700;
       }
 
       .criteria-item.criteria-done .criteria-dot {
-        background-color: #0099ff;
-        border-color: #0099ff;
+        background-color: var(--mapa-blue-500);
+        border-color: var(--mapa-blue-500);
       }
 
       :host ::ng-deep .challenge-progress {
         height: 6px;
         border-radius: 3px;
-        background: #e2e8f0;
+        background: var(--mapa-gray-200);
       }
 
       :host ::ng-deep .challenge-progress .p-progressbar-value {
-        background: #0099ff;
+        background: var(--mapa-blue-500);
         border-radius: 3px;
       }
 
@@ -131,7 +131,7 @@ import { ChallengeModel } from '../../../../core/models/challenge.model';
         margin-top: 7px;
         font-size: 0.7rem;
         font-weight: 700;
-        color: #64748b;
+        color: var(--mapa-gray-500);
         letter-spacing: 0.03em;
       }
     `

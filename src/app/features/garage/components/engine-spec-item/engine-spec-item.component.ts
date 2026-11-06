@@ -22,14 +22,14 @@ import { CommonModule } from '@angular/common';
       font-size: 0.65rem;
       font-weight: 700;
       letter-spacing: 0.08em;
-      color: #64748b;
+      color: var(--mapa-gray-500);
       text-transform: uppercase;
     }
 
     .spec-value {
       font-size: 0.9rem;
       font-weight: 800;
-      color: #0f172a;
+      color: var(--mapa-ink);
     }
   `]
 })

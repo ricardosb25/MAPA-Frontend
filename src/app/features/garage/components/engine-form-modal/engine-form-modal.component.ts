@@ -1,3 +1,4 @@
+import { DialogModule } from 'primeng/dialog';
 import { Component, EventEmitter, Input, OnInit, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import {
@@ -47,28 +48,12 @@ export const integerValueValidator: ValidatorFn = (
 @Component({
   selector: 'app-engine-form-modal',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule],
-  host: {
-    '(document:keydown.escape)': 'handleClose()'
-  },
+  imports: [DialogModule, CommonModule, ReactiveFormsModule],
   template: `
-    <div class="modal-backdrop" (click)="handleBackdropClick($event)">
-      <div class="modal-card" role="dialog" aria-modal="true" aria-labelledby="engineFormModalTitle">
-        <header class="modal-header">
-          <div class="modal-header-text">
-            <span class="modal-tag">{{ isEditMode ? 'EDIÇÃO' : 'CADASTRO' }}</span>
-            <h2 class="modal-title" id="engineFormModalTitle">{{ modalTitle }}</h2>
-          </div>
-          <button
-            type="button"
-            class="modal-close-button"
-            [disabled]="isSubmitting"
-            (click)="handleClose()"
-            aria-label="Fechar"
-          >
-            <i class="pi pi-times"></i>
-          </button>
-        </header>
+    <p-dialog [header]="modalTitle" [visible]="true" [modal]="true" [draggable]="false"
+      [style]="{ width: 'min(92vw, 680px)' }" styleClass="mapa-dialog"
+      [closable]="!isSubmitting" [closeOnEscape]="!isSubmitting" [dismissableMask]="!isSubmitting"
+      (visibleChange)="handleVisibilityChange($event)">
 
         <form [formGroup]="engineForm" (ngSubmit)="handleFormSubmit()" class="engine-form" novalidate>
           <div class="form-body">
@@ -277,72 +262,9 @@ export const integerValueValidator: ValidatorFn = (
             </button>
           </footer>
         </form>
-      </div>
-    </div>
+    </p-dialog>
   `,
   styles: [`
-    .modal-backdrop {
-      position: fixed;
-      inset: 0;
-      background-color: rgba(15, 23, 42, 0.55);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      padding: 24px;
-      z-index: 1000;
-    }
-
-    .modal-card {
-      width: 100%;
-      max-width: 680px;
-      background-color: #ffffff;
-      border-radius: 14px;
-      box-shadow: 0 20px 45px rgba(15, 23, 42, 0.25);
-      display: flex;
-      flex-direction: column;
-      max-height: 90vh;
-      overflow: auto;
-    }
-
-    .modal-header {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 12px;
-      padding: 20px 24px 12px 24px;
-      border-bottom: 1px solid #e2e8f0;
-    }
-
-    .modal-tag {
-      font-size: 0.65rem;
-      font-weight: 700;
-      letter-spacing: 0.12em;
-      color: #0284c7;
-    }
-
-    .modal-title {
-      margin: 4px 0 0 0;
-      font-size: 1.35rem;
-      font-weight: 800;
-      color: #0f172a;
-      letter-spacing: -0.02em;
-    }
-
-    .modal-close-button {
-      background: none;
-      border: none;
-      color: #64748b;
-      font-size: 0.95rem;
-      cursor: pointer;
-      padding: 4px;
-      border-radius: 6px;
-    }
-
-    .modal-close-button:hover:not(:disabled) {
-      color: #0f172a;
-      background-color: #f1f5f9;
-    }
-
     .form-body {
       padding: 20px 24px 0 24px;
     }
@@ -367,7 +289,7 @@ export const integerValueValidator: ValidatorFn = (
       font-size: 0.7rem;
       font-weight: 700;
       letter-spacing: 0.08em;
-      color: #475569;
+      color: var(--mapa-gray-600);
       text-transform: uppercase;
     }
 
@@ -375,19 +297,19 @@ export const integerValueValidator: ValidatorFn = (
       width: 100%;
       height: 42px;
       padding: 0 12px;
-      border: 1px solid #cbd5e1;
+      border: 1px solid var(--mapa-gray-300);
       border-radius: 10px;
-      background-color: #f8fafc;
+      background-color: var(--mapa-gray-50);
       font-family: inherit;
       font-size: 0.9rem;
-      color: #0f172a;
+      color: var(--mapa-ink);
       outline: none;
       transition: border-color 0.2s ease, box-shadow 0.2s ease;
     }
 
     .form-input:focus {
-      border-color: #0099ff;
-      background-color: #ffffff;
+      border-color: var(--mapa-blue-500);
+      background-color: var(--mapa-white);
       box-shadow: 0 0 0 3px rgba(0, 153, 255, 0.15);
     }
 
@@ -415,8 +337,8 @@ export const integerValueValidator: ValidatorFn = (
     }
 
     .form-select option {
-      background-color: #ffffff;
-      color: #0f172a;
+      background-color: var(--mapa-white);
+      color: var(--mapa-ink);
     }
 
     .error-message {
@@ -444,9 +366,9 @@ export const integerValueValidator: ValidatorFn = (
       gap: 10px;
       margin-top: 18px;
       padding: 12px;
-      border: 1px solid #cbd5e1;
+      border: 1px solid var(--mapa-gray-300);
       border-radius: 10px;
-      background-color: #f8fafc;
+      background-color: var(--mapa-gray-50);
     }
 
     .confirmation-group.confirmation-error {
@@ -464,7 +386,7 @@ export const integerValueValidator: ValidatorFn = (
     .confirmation-label {
       font-size: 0.825rem;
       line-height: 1.4;
-      color: #334155;
+      color: var(--mapa-gray-700);
       font-weight: 600;
       cursor: pointer;
     }
@@ -480,17 +402,17 @@ export const integerValueValidator: ValidatorFn = (
     .secondary-button {
       height: 42px;
       padding: 0 18px;
-      border: 1px solid #cbd5e1;
+      border: 1px solid var(--mapa-gray-300);
       border-radius: 10px;
-      background-color: #ffffff;
-      color: #334155;
+      background-color: var(--mapa-white);
+      color: var(--mapa-gray-700);
       font-size: 0.85rem;
       font-weight: 700;
       cursor: pointer;
     }
 
     .secondary-button:hover:not(:disabled) {
-      background-color: #f1f5f9;
+      background-color: var(--mapa-gray-100);
     }
 
     .primary-button {
@@ -498,8 +420,8 @@ export const integerValueValidator: ValidatorFn = (
       padding: 0 20px;
       border: none;
       border-radius: 10px;
-      background-color: #0099ff;
-      color: #ffffff;
+      background-color: var(--mapa-blue-500);
+      color: var(--mapa-white);
       font-size: 0.85rem;
       font-weight: 700;
       cursor: pointer;
@@ -509,7 +431,7 @@ export const integerValueValidator: ValidatorFn = (
     }
 
     .primary-button:hover:not(:disabled) {
-      background-color: #0088e6;
+      background-color: var(--mapa-blue-600);
     }
 
     .secondary-button:disabled,
@@ -526,6 +448,10 @@ export const integerValueValidator: ValidatorFn = (
   `]
 })
 export class EngineFormModalComponent implements OnInit {
+  handleVisibilityChange(visible: boolean): void {
+    if (!visible) this.handleClose();
+  }
+
   @Input() engine: EngineModel | null = null;
   @Input() isSubmitting = false;
   @Input() serverFieldErrors: Record<string, string> | null = null;
@@ -646,10 +572,5 @@ export class EngineFormModalComponent implements OnInit {
     }
     this.closeModal.emit();
   }
-
-  handleBackdropClick(mouseEvent: MouseEvent): void {
-    if (mouseEvent.target === mouseEvent.currentTarget) {
-      this.handleClose();
-    }
-  }
+
 }

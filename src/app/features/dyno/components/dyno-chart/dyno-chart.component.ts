@@ -53,19 +53,19 @@ const KGFM_TO_NM = 9.80665;
       }
 
       .series-toggle.series-active {
-        color: #334155;
+        color: var(--mapa-gray-700);
       }
 
       .series-dot {
         width: 14px;
         height: 3px;
         border-radius: 2px;
-        background-color: #cbd5e1;
+        background-color: var(--mapa-gray-300);
         transition: background-color 0.2s ease;
       }
 
       .series-active .dot-power {
-        background-color: #0099ff;
+        background-color: var(--mapa-blue-500);
       }
 
       .series-active .dot-torque {

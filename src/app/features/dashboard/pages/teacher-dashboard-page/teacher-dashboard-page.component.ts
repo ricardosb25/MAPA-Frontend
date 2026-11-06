@@ -1,3 +1,4 @@
+import { EmptyStateComponent } from '../../../../shared/components/empty-state/empty-state.component';
 import { Component, DestroyRef, computed, inject, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { FormsModule } from '@angular/forms';
@@ -20,14 +21,14 @@ import { LoadingComponent } from '../../../../shared/components/loading/loading.
 
 @Component({
   selector: 'app-teacher-dashboard-page',
-  imports: [DatePipe, FormsModule, RouterLink, UIChart, ButtonModule, SelectModule, TableModule,
+  imports: [EmptyStateComponent, DatePipe, FormsModule, RouterLink, UIChart, ButtonModule, SelectModule, TableModule,
     ProgressBarModule, MessageModule, HeaderNavbarComponent, LoadingComponent],
   template: `
     <app-header-navbar />
     <main class="dashboard-shell">
       <header class="page-heading">
         <div><span class="eyebrow">ACOMPANHAMENTO PEDAGÓGICO</span>
-          <h1>Desempenho das turmas</h1>
+          <h1 class="mapa-page-title">Desempenho das turmas</h1>
           <p>Uma visão do aprendizado, da primeira tentativa à conclusão.</p>
         </div>
         <p-button label="Atualizar" icon="pi pi-refresh" severity="secondary" [outlined]="true"
@@ -40,12 +41,7 @@ import { LoadingComponent } from '../../../../shared/components/loading/loading.
         <p-message severity="error">{{ loadError() }}</p-message>
         <p-button label="Tentar novamente" icon="pi pi-refresh" (onClick)="loadDashboard()" />
       } @else if (!dashboard()?.classes?.length) {
-        <section class="empty-state">
-          <i class="pi pi-users" aria-hidden="true"></i>
-          <h2>O acompanhamento começa pela sua primeira turma</h2>
-          <p>Crie uma turma, convide os alunos e atribua desafios para acompanhar os resultados aqui.</p>
-          <p-button label="Gerenciar turmas" icon="pi pi-arrow-right" routerLink="/classes" />
-        </section>
+        <app-empty-state icon="pi pi-users" title="O acompanhamento começa pela sua primeira turma" description="Crie uma turma, convide os alunos e atribua desafios para acompanhar os resultados aqui."><p-button label="Gerenciar turmas" icon="pi pi-arrow-right" routerLink="/classes" /></app-empty-state>
       } @else {
         <div class="scope-toolbar">
           <div class="scope-select"><label for="dashboard-class">Turma</label>
@@ -143,42 +139,39 @@ import { LoadingComponent } from '../../../../shared/components/loading/loading.
     :host { display: block; min-height: 100vh; }
     .dashboard-shell { max-width: 1320px; margin: auto; padding: 36px 28px 56px; }
     .page-heading, .scope-toolbar, .table-heading { display: flex; justify-content: space-between; align-items: center; gap: 24px; }
-    .eyebrow, .section-index { font-family: 'Courier New', monospace; font-size: .68rem; letter-spacing: .1em; font-weight: 700; color: #0072c7; }
-    h1 { margin: 8px 0; font-size: clamp(1.7rem, 3vw, 2.2rem); letter-spacing: -.045em; color: #0f172a; }
-    h2 { color: #0f172a; font-size: 1.05rem; margin: 8px 0; }
-    .page-heading p, .panel-heading p, .empty-state p { margin: 0; color: #64748b; font-size: .85rem; line-height: 1.65; }
-    .scope-toolbar { margin: 30px 0 24px; padding: 18px 0; border-top: 1px solid #cbd5e1; border-bottom: 1px solid #cbd5e1; }
+    .eyebrow, .section-index { font-family: 'Courier New', monospace; font-size: .68rem; letter-spacing: .1em; font-weight: 700; color: var(--mapa-blue-700); }
+    h2 { color: var(--mapa-ink); font-size: 1.05rem; margin: 8px 0; }
+    .page-heading p, .panel-heading p { margin: 0; color: var(--mapa-gray-500); font-size: .85rem; line-height: 1.65; }
+    .scope-toolbar { margin: 30px 0 24px; padding: 18px 0; border-top: 1px solid var(--mapa-gray-300); border-bottom: 1px solid var(--mapa-gray-300); }
     .scope-select { width: min(100%, 370px); display: grid; gap: 8px; }
-    label { font-size: .75rem; color: #334155; font-weight: 700; }
-    .updated-at { font-size: .72rem; color: #64748b; }
+    label { font-size: .75rem; color: var(--mapa-gray-700); font-weight: 700; }
+    .updated-at { font-size: .72rem; color: var(--mapa-gray-500); }
     .metrics-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 18px; }
-    .metric-card { background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 12px; padding: 22px; display: grid; gap: 14px; }
-    .metric-label { display: flex; justify-content: space-between; align-items: center; gap: 10px; color: #475569; font-size: .8rem; font-weight: 600; }
-    .metric-label i { color: #0072c7; }
-    .big-number { font-size: clamp(2rem, 3vw, 2.8rem); font-weight: 800; color: #0f172a; letter-spacing: -.06em; font-variant-numeric: tabular-nums; line-height: 1; }
-    .metric-detail { font-size: .7rem; color: #64748b; line-height: 1.5; }
-    .metric-highlight { background: #eef8ff; border-color: #8ed5ff; }
-    .metric-highlight .big-number { color: #0072c7; }
+    .metric-card { background: var(--mapa-gray-50); border: 1px solid var(--mapa-gray-300); border-radius: 12px; padding: 22px; display: grid; gap: 14px; }
+    .metric-label { display: flex; justify-content: space-between; align-items: center; gap: 10px; color: var(--mapa-gray-600); font-size: .8rem; font-weight: 600; }
+    .metric-label i { color: var(--mapa-blue-700); }
+    .big-number { font-size: clamp(2rem, 3vw, 2.8rem); font-weight: 800; color: var(--mapa-ink); letter-spacing: -.06em; font-variant-numeric: tabular-nums; line-height: 1; }
+    .metric-detail { font-size: .7rem; color: var(--mapa-gray-500); line-height: 1.5; }
+    .metric-highlight { background: var(--mapa-blue-50); border-color: #8ed5ff; }
+    .metric-highlight .big-number { color: var(--mapa-blue-700); }
     .charts-grid { display: grid; grid-template-columns: 1.25fr 1fr; gap: 24px; margin: 24px 0; }
-    .panel { background: #f8fafc; border: 1px solid #cbd5e1; padding: 24px; border-radius: 12px; min-width: 0; }
+    .panel { background: var(--mapa-gray-50); border: 1px solid var(--mapa-gray-300); padding: 24px; border-radius: 12px; min-width: 0; }
     .panel-heading { margin-bottom: 24px; }
     .progress-legend { margin-top: 16px; display: grid; gap: 9px; }
-    .progress-legend span { display: flex; align-items: center; gap: 8px; font-size: .76rem; color: #475569; }
-    .progress-legend strong { margin-left: auto; color: #0f172a; font-variant-numeric: tabular-nums; }
+    .progress-legend span { display: flex; align-items: center; gap: 8px; font-size: .76rem; color: var(--mapa-gray-600); }
+    .progress-legend strong { margin-left: auto; color: var(--mapa-ink); font-variant-numeric: tabular-nums; }
     .legend-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
-    .completed { background: #0099ff; } .ongoing { background: #f59e0b; } .pending { background: #cbd5e1; }
-    .chart-empty, .empty-state { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; text-align: center; color: #64748b; }
+    .completed { background: var(--mapa-blue-500); } .ongoing { background: #f59e0b; } .pending { background: var(--mapa-gray-300); }
+    .chart-empty { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 16px; text-align: center; color: var(--mapa-gray-500); }
     .chart-empty { min-height: 280px; padding: 24px; font-size: .85rem; line-height: 1.7; }
-    .chart-empty i, .empty-state > i { font-size: 2rem; color: #0099ff; }
-    .empty-state { margin-top: 32px; padding: 64px 24px; background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 12px; }
-    .empty-state h2 { margin: 0; } .empty-state p { max-width: 480px; }
-    .text-link { font-size: .78rem; color: #0072c7; text-decoration: none; white-space: nowrap; font-weight: 700; }
+    .chart-empty i { font-size: 2rem; color: var(--mapa-blue-500); }
+    .text-link { font-size: .78rem; color: var(--mapa-blue-700); text-decoration: none; white-space: nowrap; font-weight: 700; }
     .text-link i { margin-left: 6px; font-size: .7rem; }
-    .class-name { display: block; color: #334155; font-size: .82rem; }
-    .class-meta { display: block; font-size: .7rem; margin-top: 6px; color: #64748b; }
+    .class-name { display: block; color: var(--mapa-gray-700); font-size: .82rem; }
+    .class-meta { display: block; font-size: .7rem; margin-top: 6px; color: var(--mapa-gray-500); }
     .completion-cell { min-width: 120px; display: grid; gap: 6px; font-size: .8rem; font-weight: 700; }
-    .completion-cell small { font-weight: 400; color: #64748b; font-size: .65rem; }
-    .data-note { font-size: .72rem; color: #64748b; line-height: 1.7; margin: 20px 0 0; }
+    .completion-cell small { font-weight: 400; color: var(--mapa-gray-500); font-size: .65rem; }
+    .data-note { font-size: .72rem; color: var(--mapa-gray-500); line-height: 1.7; margin: 20px 0 0; }
     @media (max-width: 1000px) { .metrics-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); } .charts-grid { grid-template-columns: 1fr; } }
     @media (max-width: 600px) { .dashboard-shell { padding: 24px 16px; } .page-heading, .scope-toolbar, .table-heading { align-items: flex-start; flex-direction: column; gap: 16px; } .metric-card { padding: 16px; } .panel { padding: 18px; } .metrics-grid { gap: 12px; } }
   `]

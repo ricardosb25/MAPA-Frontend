@@ -87,7 +87,7 @@ interface CellPosition {
         font-size: 0.7rem;
         font-weight: 700;
         letter-spacing: 0.06em;
-        color: #475569;
+        color: var(--mapa-gray-600);
         text-align: center;
         padding: 4px 6px;
         white-space: nowrap;
@@ -113,7 +113,7 @@ interface CellPosition {
         font-family: inherit;
         font-size: 0.95rem;
         font-weight: 700;
-        color: #0f172a;
+        color: var(--mapa-ink);
         cursor: pointer;
         transition: transform 0.12s ease, box-shadow 0.12s ease;
       }
@@ -132,14 +132,14 @@ interface CellPosition {
         width: 100%;
         min-width: 56px;
         height: 44px;
-        border: 2px solid #0099ff;
+        border: 2px solid var(--mapa-blue-500);
         border-radius: 8px;
         text-align: center;
         font-family: inherit;
         font-size: 0.95rem;
         font-weight: 700;
-        color: #0f172a;
-        background-color: #ffffff;
+        color: var(--mapa-ink);
+        background-color: var(--mapa-white);
         outline: none;
         box-shadow: 0 0 0 3px rgba(0, 153, 255, 0.2);
         box-sizing: border-box;

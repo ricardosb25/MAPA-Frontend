@@ -85,7 +85,7 @@ import { HomeStepItem } from '../../models/home.model';
   styles: [`
     .home-layout {
       min-height: 100vh;
-      background-color: #e5e7eb;
+      background-color: var(--mapa-page-background);
       display: flex;
       flex-direction: column;
     }
@@ -102,7 +102,7 @@ import { HomeStepItem } from '../../models/home.model';
     }
 
     .mapa-banner-section {
-      background: linear-gradient(135deg, #f8fafc 0%, #edf2f7 100%);
+      background: linear-gradient(135deg, var(--mapa-gray-50) 0%, #edf2f7 100%);
       border: 1px solid #d1d5db;
       border-radius: 16px;
       padding: 44px 48px;
@@ -117,14 +117,14 @@ import { HomeStepItem } from '../../models/home.model';
       font-size: 0.72rem;
       font-weight: 700;
       letter-spacing: 0.14em;
-      color: #64748b;
+      color: var(--mapa-gray-500);
       margin-bottom: 8px;
     }
 
     .mapa-banner-title {
       font-size: 3.25rem;
       font-weight: 900;
-      color: #0f172a;
+      color: var(--mapa-ink);
       letter-spacing: -0.04em;
       line-height: 1;
       margin: 0 0 12px 0;
@@ -140,7 +140,7 @@ import { HomeStepItem } from '../../models/home.model';
 
     .mapa-banner-description {
       font-size: 0.95rem;
-      color: #475569;
+      color: var(--mapa-gray-600);
       line-height: 1.6;
       margin: 0 0 28px 0;
     }
@@ -156,8 +156,8 @@ import { HomeStepItem } from '../../models/home.model';
       padding: 0 24px;
       border: none;
       border-radius: 10px;
-      background-color: #0099ff;
-      color: #ffffff;
+      background-color: var(--mapa-blue-500);
+      color: var(--mapa-white);
       font-size: 0.9rem;
       font-weight: 700;
       cursor: pointer;
@@ -168,7 +168,7 @@ import { HomeStepItem } from '../../models/home.model';
       transition: background-color 0.2s ease, transform 0.1s ease;
 
       &:hover {
-        background-color: #0088e6;
+        background-color: var(--mapa-blue-600);
         transform: translateY(-1px);
       }
     }
@@ -190,7 +190,7 @@ import { HomeStepItem } from '../../models/home.model';
       font-size: 0.68rem;
       font-weight: 800;
       letter-spacing: 0.12em;
-      color: #64748b;
+      color: var(--mapa-gray-500);
       margin-bottom: 4px;
       text-transform: uppercase;
     }
@@ -198,7 +198,7 @@ import { HomeStepItem } from '../../models/home.model';
     .section-main-title {
       font-size: 1.75rem;
       font-weight: 800;
-      color: #0f172a;
+      color: var(--mapa-ink);
       letter-spacing: -0.03em;
       margin: 0;
     }
@@ -209,7 +209,7 @@ import { HomeStepItem } from '../../models/home.model';
       gap: 8px;
       font-size: 0.78rem;
       font-weight: 600;
-      color: #64748b;
+      color: var(--mapa-gray-500);
     }
 
     .cycle-icon {
@@ -224,7 +224,7 @@ import { HomeStepItem } from '../../models/home.model';
     }
 
     .workflow-card {
-      background-color: #f8fafc;
+      background-color: var(--mapa-gray-50);
       border: 1px solid #d1d5db;
       border-radius: 14px;
       padding: 24px;
@@ -272,7 +272,7 @@ import { HomeStepItem } from '../../models/home.model';
     .step-number-watermark {
       font-size: 1.75rem;
       font-weight: 800;
-      color: #cbd5e1;
+      color: var(--mapa-gray-300);
       letter-spacing: -0.03em;
       line-height: 1;
     }
@@ -288,7 +288,7 @@ import { HomeStepItem } from '../../models/home.model';
       font-size: 0.68rem;
       font-weight: 800;
       letter-spacing: 0.1em;
-      color: #64748b;
+      color: var(--mapa-gray-500);
       margin-bottom: 6px;
       text-transform: uppercase;
     }
@@ -296,14 +296,14 @@ import { HomeStepItem } from '../../models/home.model';
     .step-title {
       font-size: 1.25rem;
       font-weight: 800;
-      color: #0f172a;
+      color: var(--mapa-ink);
       letter-spacing: -0.02em;
       margin: 0 0 10px 0;
     }
 
     .step-description {
       font-size: 0.86rem;
-      color: #475569;
+      color: var(--mapa-gray-600);
       line-height: 1.5;
       margin: 0 0 14px 0;
       flex: 1;
@@ -311,7 +311,7 @@ import { HomeStepItem } from '../../models/home.model';
 
     .step-note {
       font-size: 0.76rem;
-      color: #64748b;
+      color: var(--mapa-gray-500);
       line-height: 1.4;
       margin: 0;
     }
@@ -323,8 +323,8 @@ import { HomeStepItem } from '../../models/home.model';
     .step-action-button {
       width: 100%;
       height: 42px;
-      background-color: #e2e8f0;
-      border: 1px solid #cbd5e1;
+      background-color: var(--mapa-gray-200);
+      border: 1px solid var(--mapa-gray-300);
       border-radius: 8px;
       font-size: 0.85rem;
       font-weight: 700;
@@ -337,8 +337,8 @@ import { HomeStepItem } from '../../models/home.model';
       transition: background-color 0.2s ease;
 
       &:hover {
-        background-color: #cbd5e1;
-        color: #0f172a;
+        background-color: var(--mapa-gray-300);
+        color: var(--mapa-ink);
       }
     }
 

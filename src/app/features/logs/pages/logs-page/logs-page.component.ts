@@ -1,4 +1,6 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { EmptyStateComponent } from '../../../../shared/components/empty-state/empty-state.component';
+import { FeedbackService } from '../../../../shared/services/feedback.service';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import {
@@ -23,16 +25,16 @@ import { PaginationControlsComponent } from '../../../../shared/components/pagin
 @Component({
   selector: 'app-logs-page',
   standalone: true,
-  imports: [CommonModule, HeaderNavbarComponent, LoadingComponent, PaginationControlsComponent],
+  imports: [EmptyStateComponent, CommonModule, HeaderNavbarComponent, LoadingComponent, PaginationControlsComponent],
   template: `
     <div class="page-layout">
       <app-header-navbar></app-header-navbar>
 
-      <main class="content-container">
+      <main class="mapa-page-container">
         <section class="page-header">
           <div class="page-header-text">
             <span class="category-tag">ADMINISTRAÇÃO</span>
-            <h1 class="page-title">Logs salvos</h1>
+            <h1 class="mapa-page-title">Logs salvos</h1>
             <p class="page-subtitle">Histórico de ações dos usuários na plataforma.</p>
           </div>
         </section>
@@ -116,45 +118,21 @@ import { PaginationControlsComponent } from '../../../../shared/components/pagin
                 (sizeChange)="handleSizeChange($event)"
               ></app-pagination-controls>
             } @else {
-              <div class="empty-state">
-                <i class="fa-solid fa-inbox empty-state-icon"></i>
-                <p class="empty-state-title">Nenhum log encontrado.</p>
-                <p class="empty-state-text">
-                  Ajuste os filtros ou aguarde novas ações serem registradas na plataforma.
-                </p>
-              </div>
+              <app-empty-state icon="fa-solid fa-inbox" title="Nenhum log encontrado." description="Ajuste os filtros ou aguarde novas ações serem registradas na plataforma."></app-empty-state>
             }
           } @else {
             <app-loading message="Carregando registros..."></app-loading>
           }
         </section>
       </main>
-
-      @if (feedbackMessage) {
-        <div
-          class="feedback-toast"
-          [class.feedback-success]="isSuccess"
-          [class.feedback-error]="!isSuccess"
-        >
-          {{ feedbackMessage }}
-        </div>
-      }
     </div>
   `,
   styles: [`
     .page-layout {
       min-height: 100vh;
-      background-color: #e5e7eb;
+      background-color: var(--mapa-page-background);
       display: flex;
       flex-direction: column;
-    }
-
-    .content-container {
-      max-width: 1320px;
-      width: 100%;
-      margin: 0 auto;
-      padding: 32px 24px 64px 24px;
-      box-sizing: border-box;
     }
 
     .page-header {
@@ -165,24 +143,16 @@ import { PaginationControlsComponent } from '../../../../shared/components/pagin
       font-size: 0.7rem;
       font-weight: 700;
       letter-spacing: 0.12em;
-      color: #64748b;
+      color: var(--mapa-gray-500);
       text-transform: uppercase;
       display: block;
       margin-bottom: 6px;
     }
 
-    .page-title {
-      margin: 0 0 8px 0;
-      font-size: 2.25rem;
-      font-weight: 800;
-      color: #0f172a;
-      letter-spacing: -0.03em;
-    }
-
     .page-subtitle {
       margin: 0;
       font-size: 0.95rem;
-      color: #475569;
+      color: var(--mapa-gray-600);
       line-height: 1.5;
     }
 
@@ -213,11 +183,11 @@ import { PaginationControlsComponent } from '../../../../shared/components/pagin
       width: 100%;
       height: 44px;
       padding: 0 14px 0 40px;
-      border: 1px solid #cbd5e1;
+      border: 1px solid var(--mapa-gray-300);
       border-radius: 10px;
-      background-color: #ffffff;
+      background-color: var(--mapa-white);
       font-size: 0.875rem;
-      color: #0f172a;
+      color: var(--mapa-ink);
       box-sizing: border-box;
       transition: border-color 0.2s ease, box-shadow 0.2s ease;
     }
@@ -228,7 +198,7 @@ import { PaginationControlsComponent } from '../../../../shared/components/pagin
 
     .search-input:focus {
       outline: none;
-      border-color: #0099ff;
+      border-color: var(--mapa-blue-500);
       box-shadow: 0 0 0 3px rgba(0, 153, 255, 0.15);
     }
 
@@ -236,10 +206,10 @@ import { PaginationControlsComponent } from '../../../../shared/components/pagin
       height: 44px;
       min-width: 170px;
       padding: 0 34px 0 14px;
-      border: 1px solid #cbd5e1;
+      border: 1px solid var(--mapa-gray-300);
       border-radius: 10px;
-      background-color: #ffffff;
-      color: #0f172a;
+      background-color: var(--mapa-white);
+      color: var(--mapa-ink);
       font-size: 0.875rem;
       font-weight: 600;
       cursor: pointer;
@@ -254,13 +224,13 @@ import { PaginationControlsComponent } from '../../../../shared/components/pagin
 
     .level-select:focus {
       outline: none;
-      border-color: #0099ff;
+      border-color: var(--mapa-blue-500);
       box-shadow: 0 0 0 3px rgba(0, 153, 255, 0.15);
     }
 
     .table-card {
-      background-color: #ffffff;
-      border: 1px solid #e2e8f0;
+      background-color: var(--mapa-white);
+      border: 1px solid var(--mapa-gray-200);
       border-radius: 12px;
       overflow: hidden;
       box-shadow: 0 1px 3px rgba(15, 23, 42, 0.06);
@@ -286,20 +256,20 @@ import { PaginationControlsComponent } from '../../../../shared/components/pagin
       font-weight: 700;
       letter-spacing: 0.1em;
       text-transform: uppercase;
-      color: #64748b;
+      color: var(--mapa-gray-500);
       text-align: left;
       padding: 14px 20px;
-      border-bottom: 1px solid #e2e8f0;
-      background-color: #f8fafc;
+      border-bottom: 1px solid var(--mapa-gray-200);
+      background-color: var(--mapa-gray-50);
       font-family: ui-monospace, 'Cascadia Code', Menlo, Consolas, monospace;
       white-space: nowrap;
     }
 
     .logs-table td {
       padding: 13px 20px;
-      border-bottom: 1px solid #f1f5f9;
+      border-bottom: 1px solid var(--mapa-gray-100);
       font-size: 0.85rem;
-      color: #334155;
+      color: var(--mapa-gray-700);
       vertical-align: middle;
     }
 
@@ -308,7 +278,7 @@ import { PaginationControlsComponent } from '../../../../shared/components/pagin
     }
 
     .logs-table tbody tr:hover {
-      background-color: #f8fafc;
+      background-color: var(--mapa-gray-50);
     }
 
     .logs-table tbody tr:last-child td {
@@ -317,26 +287,26 @@ import { PaginationControlsComponent } from '../../../../shared/components/pagin
 
     .cell-date {
       font-size: 0.76rem;
-      color: #475569;
+      color: var(--mapa-gray-600);
       white-space: nowrap;
       font-family: ui-monospace, 'Cascadia Code', Menlo, Consolas, monospace;
     }
 
     .cell-user {
       font-weight: 700;
-      color: #0f172a;
+      color: var(--mapa-ink);
       white-space: nowrap;
     }
 
     .cell-action {
       font-weight: 600;
-      color: #0f172a;
+      color: var(--mapa-ink);
       white-space: nowrap;
     }
 
     .detail-primary {
       display: block;
-      color: #475569;
+      color: var(--mapa-gray-600);
     }
 
     .detail-target {
@@ -378,78 +348,11 @@ import { PaginationControlsComponent } from '../../../../shared/components/pagin
       color: #dc2626;
     }
 
-    .empty-state {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 6px;
-      padding: 56px 24px;
-      background-color: #f8fafc;
-      border: 1px dashed #cbd5e1;
-      border-radius: 12px;
-      text-align: center;
-    }
-
-    .empty-state-icon {
-      font-size: 1.75rem;
-      color: #94a3b8;
-      margin-bottom: 6px;
-    }
-
-    .empty-state-title {
-      margin: 0;
-      font-size: 1rem;
-      font-weight: 800;
-      color: #0f172a;
-    }
-
-    .empty-state-text {
-      margin: 0;
-      font-size: 0.875rem;
-      color: #475569;
-    }
-
-    .feedback-toast {
-      position: fixed;
-      bottom: 2rem;
-      right: 2rem;
-      max-width: 420px;
-      padding: 1rem 1.5rem;
-      background-color: #1e293b;
-      color: #ffffff;
-      border-radius: 12px;
-      font-size: 0.9rem;
-      font-weight: 500;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-      animation: slideIn 0.3s ease;
-      z-index: 1100;
-    }
-
-    .feedback-toast.feedback-success {
-      background-color: #10b981;
-    }
-
-    .feedback-toast.feedback-error {
-      background-color: #dc2626;
-    }
-
-    @keyframes slideIn {
-      from {
-        opacity: 0;
-        transform: translateY(10px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
     @media (max-width: 640px) {
-      .content-container {
+      .mapa-page-container {
         padding: 20px 16px 40px 16px;
       }
-      .page-title {
+      .mapa-page-title {
         font-size: 1.75rem;
       }
       .search-field {
@@ -458,26 +361,19 @@ import { PaginationControlsComponent } from '../../../../shared/components/pagin
       .level-select {
         width: 100%;
       }
-      .feedback-toast {
-        left: 16px;
-        right: 16px;
-        bottom: 16px;
-      }
     }
   `]
 })
 export class LogsPageComponent implements OnInit, OnDestroy {
+  private readonly feedbackService = inject(FeedbackService);
   private static readonly DEFAULT_PAGE_SIZE = 10;
   private static readonly SEARCH_DEBOUNCE_MILLISECONDS = 300;
-  private static readonly FEEDBACK_TIMEOUT_MILLISECONDS = 4000;
 
   readonly pageSizeOptions: number[] = [10, 20, 50];
 
   logsPage$!: Observable<PageResponse<AuditLogModel>>;
   isLoading = false;
   selectedLevel: AuditLogLevel | '' = '';
-  feedbackMessage = '';
-  isSuccess = false;
 
   private readonly pageQuerySubject = new BehaviorSubject<AuditLogQuery>({
     search: '',
@@ -488,7 +384,6 @@ export class LogsPageComponent implements OnInit, OnDestroy {
   });
   private readonly searchInputSubject = new Subject<string>();
   private searchSubscription: Subscription | null = null;
-  private feedbackTimeoutId: ReturnType<typeof setTimeout> | null = null;
 
   constructor(private readonly auditLogService: AuditLogService) {}
 
@@ -510,7 +405,6 @@ export class LogsPageComponent implements OnInit, OnDestroy {
 
   ngOnDestroy(): void {
     this.searchSubscription?.unsubscribe();
-    this.clearFeedbackTimeout();
   }
 
   handleSearchInput(event: Event): void {
@@ -602,22 +496,8 @@ export class LogsPageComponent implements OnInit, OnDestroy {
   }
 
   private showFeedback(message: string, isSuccess: boolean): void {
-    this.feedbackMessage = message;
-    this.isSuccess = isSuccess;
-    this.clearFeedbackTimeout();
-
-    this.feedbackTimeoutId = setTimeout(() => {
-      this.feedbackMessage = '';
-      this.feedbackTimeoutId = null;
-    }, LogsPageComponent.FEEDBACK_TIMEOUT_MILLISECONDS);
+    if (isSuccess) this.feedbackService.showSuccess('Sucesso', message);
+    else this.feedbackService.showError('Erro', message);
   }
 
-  private clearFeedbackTimeout(): void {
-    if (this.feedbackTimeoutId === null) {
-      return;
-    }
-
-    clearTimeout(this.feedbackTimeoutId);
-    this.feedbackTimeoutId = null;
-  }
 }

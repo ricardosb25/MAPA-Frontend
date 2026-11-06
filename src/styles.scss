@@ -3,14 +3,21 @@
 @import "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap";
 
 :root {
+  --mapa-blue-300: #8ed5ff;
+  --mapa-blue-400: #59bdff;
+  --mapa-blue-800: #065ca0;
+  --mapa-blue-950: #072f4f;
+  --mapa-page-background: #e5e7eb;
+  --mapa-radius-card: 12px;
+  --mapa-danger: #b91c1c;
   color-scheme: light;
-  --color-primary: #0099ff;
-  --color-primary-hover: #0088e6;
-  --color-on-primary: #ffffff;
+  --color-primary: var(--mapa-blue-500);
+  --color-primary-hover: var(--mapa-blue-600);
+  --color-on-primary: var(--mapa-white);
 
   --mapa-blue-900: #0b4d80;
-  --mapa-blue-700: #065ca0;
-  --mapa-blue-600: #0072c7;
+  --mapa-blue-700: #0072c7;
+  --mapa-blue-600: #0088e6;
   --mapa-blue-500: #0099ff;
   --mapa-blue-200: #bce4ff;
   --mapa-blue-100: #d9efff;
@@ -37,19 +44,19 @@ html, body {
   height: 100%;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   background-color: #e5e7eb;
-  color: #0f172a;
+  color: var(--mapa-ink);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 select {
-  background-color: #ffffff;
-  color: #0f172a;
+  background-color: var(--mapa-white);
+  color: var(--mapa-ink);
 }
 
 option {
-  background-color: #ffffff;
-  color: #0f172a;
+  background-color: var(--mapa-white);
+  color: var(--mapa-ink);
 }
 
 input[type='checkbox'] {
@@ -58,9 +65,9 @@ input[type='checkbox'] {
   -moz-appearance: none;
   width: 18px;
   height: 18px;
-  border: 1.5px solid #cbd5e1;
+  border: 1.5px solid var(--mapa-gray-300);
   border-radius: 4px;
-  background-color: #ffffff;
+  background-color: var(--mapa-white);
   cursor: pointer;
   display: inline-grid;
   place-content: center;
@@ -73,8 +80,8 @@ input[type='checkbox'] {
     content: "";
     width: 9px;
     height: 5px;
-    border-left: 2px solid #ffffff;
-    border-bottom: 2px solid #ffffff;
+    border-left: 2px solid var(--mapa-white);
+    border-bottom: 2px solid var(--mapa-white);
     transform: rotate(-45deg) scale(0);
     transform-origin: center;
     transition: transform 0.15s ease-in-out;
@@ -101,33 +108,33 @@ input[type='checkbox'] {
   }
 
   &:disabled {
-    background-color: #f1f5f9;
-    border-color: #e2e8f0;
+    background-color: var(--mapa-gray-100);
+    border-color: var(--mapa-gray-200);
     cursor: not-allowed;
   }
 }
 
-.challenge-toast .p-toast-message-success,
-.challenge-toast .p-toast-message-info {
+.mapa-toast .p-toast-message-success,
+.mapa-toast .p-toast-message-info {
   background: var(--mapa-blue-50);
   border: 1px solid var(--mapa-blue-200);
   color: var(--mapa-blue-700);
 }
 
-.challenge-toast .p-toast-message-error,
-.challenge-toast .p-toast-message-warn {
+.mapa-toast .p-toast-message-error,
+.mapa-toast .p-toast-message-warn {
   background: var(--mapa-gray-100);
   border: 1px solid var(--mapa-gray-300);
   color: var(--mapa-ink);
 }
 
-.challenge-toast .p-toast-message-success .p-toast-message-icon,
-.challenge-toast .p-toast-message-info .p-toast-message-icon {
+.mapa-toast .p-toast-message-success .p-toast-message-icon,
+.mapa-toast .p-toast-message-info .p-toast-message-icon {
   color: var(--mapa-blue-600);
 }
 
-.challenge-toast .p-toast-message-error .p-toast-message-icon,
-.challenge-toast .p-toast-message-warn .p-toast-message-icon {
+.mapa-toast .p-toast-message-error .p-toast-message-icon,
+.mapa-toast .p-toast-message-warn .p-toast-message-icon {
   color: var(--mapa-gray-700);
 }
 
@@ -182,44 +189,44 @@ input[type='checkbox'] {
   color: var(--mapa-gray-500);
 }
 
-.challenge-dialog.p-dialog {
-  background: #ffffff;
+:is(.challenge-dialog, .mapa-dialog).p-dialog {
+  background: var(--mapa-white);
   color: var(--mapa-ink);
   border: 1px solid var(--mapa-gray-200);
   border-radius: 12px;
   box-shadow: 0 18px 40px -24px rgba(15, 23, 42, 0.3);
 }
 
-.challenge-dialog .p-dialog-header {
+:is(.challenge-dialog, .mapa-dialog) .p-dialog-header {
   padding: 1rem 1.25rem;
   border-bottom: 1px solid var(--mapa-gray-200);
 }
 
-.challenge-dialog .p-dialog-content {
-  background: #ffffff;
+:is(.challenge-dialog, .mapa-dialog) .p-dialog-content {
+  background: var(--mapa-white);
   padding: 1.25rem;
 }
 
-.challenge-dialog .p-inputtext,
-.challenge-dialog .p-textarea,
-.challenge-dialog .p-select,
-.challenge-dialog .p-inputnumber-input {
-  background: #ffffff;
+:is(.challenge-dialog, .mapa-dialog) .p-inputtext,
+:is(.challenge-dialog, .mapa-dialog) .p-textarea,
+:is(.challenge-dialog, .mapa-dialog) .p-select,
+:is(.challenge-dialog, .mapa-dialog) .p-inputnumber-input {
+  background: var(--mapa-white);
   color: var(--mapa-ink);
   border-color: var(--mapa-gray-300);
   border-radius: 10px;
   box-shadow: none;
 }
 
-.challenge-dialog .p-inputtext:enabled:focus,
-.challenge-dialog .p-textarea:enabled:focus,
-.challenge-dialog .p-inputnumber-input:enabled:focus,
-.challenge-dialog .p-select:not(.p-disabled).p-focus {
+:is(.challenge-dialog, .mapa-dialog) .p-inputtext:enabled:focus,
+:is(.challenge-dialog, .mapa-dialog) .p-textarea:enabled:focus,
+:is(.challenge-dialog, .mapa-dialog) .p-inputnumber-input:enabled:focus,
+:is(.challenge-dialog, .mapa-dialog) .p-select:not(.p-disabled).p-focus {
   border-color: var(--mapa-blue-500);
   box-shadow: 0 0 0 2px rgba(0, 153, 255, 0.14);
 }
 
-.challenge-dialog .p-datatable .p-datatable-thead > tr > th {
+:is(.challenge-dialog, .mapa-dialog) .p-datatable .p-datatable-thead > tr > th {
   background: var(--mapa-gray-50);
   border-color: var(--mapa-gray-200);
   color: var(--mapa-gray-600);
@@ -227,19 +234,19 @@ input[type='checkbox'] {
   font-weight: 700;
 }
 
-.challenge-dialog .p-datatable .p-datatable-tbody > tr > td {
+:is(.challenge-dialog, .mapa-dialog) .p-datatable .p-datatable-tbody > tr > td {
   border-color: var(--mapa-gray-100);
   color: var(--mapa-gray-700);
   font-size: 0.82rem;
 }
 
-.challenge-dialog .p-datatable .p-datatable-tbody > tr:hover {
+:is(.challenge-dialog, .mapa-dialog) .p-datatable .p-datatable-tbody > tr:hover {
   background: var(--mapa-gray-50);
 }
 
-.challenge-dialog .p-paginator {
+:is(.challenge-dialog, .mapa-dialog) .p-paginator {
   border-top: 1px solid var(--mapa-gray-200);
-  background: #ffffff;
+  background: var(--mapa-white);
 }
 
 .challenge-confirm-dialog.p-dialog {
@@ -270,3 +277,115 @@ input[type='checkbox'] {
   color: var(--mapa-ink);
 }
 
+
+.mapa-page-container { max-width: 1320px; width: 100%; margin: 0 auto; padding: 32px 24px 64px; }
+.mapa-page-title { margin: 0 0 8px; font-size: 2.25rem; font-weight: 800; color: var(--mapa-ink); letter-spacing: -.03em; }
+@media (max-width: 640px) { .mapa-page-container { padding: 24px 16px 48px; } .mapa-page-title { font-size: 1.75rem; } }
+:is(app-login-form, app-register-form, app-forgot-password-form, app-reset-password-form) .form-card-container {
+      width: 100%;
+      max-width: 440px;
+      margin: 0 auto;
+    }
+:is(app-login-form, app-register-form, app-forgot-password-form, app-reset-password-form) .form-title {
+      font-size: 2.25rem;
+      font-weight: 800;
+      color: var(--mapa-ink);
+      letter-spacing: -0.03em;
+      margin: 0 0 0.5rem 0;
+    }
+:is(app-login-form, app-register-form, app-forgot-password-form, app-reset-password-form) .field-label {
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--mapa-gray-700);
+    }
+:is(app-login-form, app-register-form, app-forgot-password-form, app-reset-password-form) .input-wrapper {
+      position: relative;
+      display: flex;
+      align-items: center;
+      background-color: var(--mapa-gray-100);
+      border: 1px solid var(--mapa-gray-300);
+      border-radius: 12px;
+      padding: 0 0.875rem;
+      height: 52px;
+      transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+:is(app-login-form, app-register-form, app-forgot-password-form, app-reset-password-form) .input-wrapper:focus-within {
+      border-color: var(--mapa-blue-500);
+      background-color: var(--mapa-white);
+      box-shadow: 0 0 0 3px rgba(0, 153, 255, 0.15);
+    }
+:is(app-login-form, app-register-form, app-forgot-password-form, app-reset-password-form) .input-wrapper.input-error {
+      border-color: #ef4444;
+      background-color: #fef2f2;
+    }
+:is(app-login-form, app-register-form, app-forgot-password-form, app-reset-password-form) .input-prefix-icon {
+      color: var(--mapa-gray-500);
+      font-size: 1.1rem;
+      margin-right: 0.75rem;
+    }
+:is(app-login-form, app-register-form, app-forgot-password-form, app-reset-password-form) .form-input {
+      flex: 1;
+      border: none;
+      background: transparent;
+      outline: none;
+      font-size: 0.95rem;
+      color: var(--mapa-ink);
+      width: 100%;
+    }
+:is(app-login-form, app-register-form, app-forgot-password-form, app-reset-password-form) .form-input::placeholder {
+      color: #94a3b8;
+    }
+:is(app-login-form, app-register-form, app-forgot-password-form, app-reset-password-form) .error-message {
+      font-size: 0.8rem;
+      color: #ef4444;
+      margin-top: 0.15rem;
+    }
+:is(app-login-form, app-register-form, app-forgot-password-form, app-reset-password-form) .submit-button {
+      height: 52px;
+      background-color: var(--mapa-blue-500);
+      color: var(--mapa-white);
+      border: none;
+      border-radius: 12px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+      transition: background-color 0.2s ease, transform 0.1s ease;
+    }
+:is(app-login-form, app-register-form, app-forgot-password-form, app-reset-password-form) .submit-button:hover:not(:disabled) {
+      background-color: #0088e6;
+    }
+:is(app-login-form, app-register-form, app-forgot-password-form, app-reset-password-form) .submit-button:active:not(:disabled) {
+      transform: scale(0.99);
+    }
+:is(app-login-form, app-register-form, app-forgot-password-form, app-reset-password-form) .submit-button:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+    }
+:is(app-login-form, app-register-form, app-forgot-password-form, app-reset-password-form) .button-spinner {
+      font-size: 1.1rem;
+    }
+:is(app-login-form, app-register-form, app-forgot-password-form, app-reset-password-form) .switch-route-text {
+      text-align: left;
+      font-size: 0.875rem;
+      color: var(--mapa-gray-500);
+      margin-top: 0.5rem;
+    }
+:is(app-login-form, app-register-form, app-forgot-password-form, app-reset-password-form) .route-link {
+      color: var(--mapa-blue-500);
+      font-weight: 600;
+      text-decoration: none;
+      transition: text-decoration 0.2s ease;
+    }
+:is(app-login-form, app-register-form, app-forgot-password-form, app-reset-password-form) .route-link:hover {
+      text-decoration: underline;
+    }
+
+.mapa-toast .p-toast-message-error { background: #fef2f2; border-color: #fecaca; color: var(--mapa-danger); }
+.mapa-toast .p-toast-message-error .p-toast-message-icon { color: var(--mapa-danger); }
+.mapa-toast .p-toast-message-warn { background: #fffbeb; border-color: #fde68a; color: #b45309; }
+.mapa-toast .p-toast-message-warn .p-toast-message-icon { color: #b45309; }

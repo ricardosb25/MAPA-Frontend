@@ -86,18 +86,18 @@ import { LoadingComponent } from '../../../../shared/components/loading/loading.
 
     .student-name {
       font-weight: 700;
-      color: #0f172a;
+      color: var(--mapa-ink);
     }
 
     .student-email {
       font-size: 0.72rem;
-      color: #64748b;
+      color: var(--mapa-gray-500);
     }
 
     .empty-cell {
       text-align: center;
       padding: 1.5rem;
-      color: #475569;
+      color: var(--mapa-gray-600);
     }
   `]
 })

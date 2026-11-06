@@ -1,4 +1,5 @@
-import { describe, it, expect, beforeEach } from 'vitest';
+import { FeedbackService } from '../../../../shared/services/feedback.service';
+import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
 import { of } from 'rxjs';
@@ -12,6 +13,9 @@ import { ChallengeModel } from '../../../../core/models/challenge.model';
 import { EngineModel } from '../../../../core/models/engine.model';
 import { UserModel } from '../../../../core/models/auth.model';
 import { UserProfileType } from '../../../../core/models/user-profile.enum';
+
+const feedbackService = { showSuccess: vi.fn(), showError: vi.fn() };
+beforeEach(() => vi.clearAllMocks());
 
 const buildEngine = (overrides: Partial<EngineModel> = {}): EngineModel => ({
   id: 101,
@@ -148,7 +152,7 @@ describe('CalibrationPageComponent', () => {
 
     await TestBed.configureTestingModule({
       imports: [CalibrationPageComponent],
-      providers: [
+      providers: [{ provide: FeedbackService, useValue: feedbackService }, 
         provideRouter([]),
         { provide: EngineService, useValue: buildEngineServiceStub(options.engine) },
         { provide: EcuMapService, useValue: ecuMapServiceStub.service },
@@ -282,8 +286,6 @@ describe('CalibrationPageComponent', () => {
 
     expect(ecuMapServiceStub.restoreCalls).toHaveLength(1);
     expect(ecuMapServiceStub.restoreCalls[0]).toEqual({ engineId: 101, mapType: 'FUEL' });
-    expect(element.querySelector('.feedback-toast')?.textContent).toContain(
-      'Mapa restaurado para o padrão de fábrica'
-    );
+    expect(feedbackService.showSuccess).toHaveBeenCalledWith('Sucesso', expect.stringContaining('Mapa restaurado para o padrão de fábrica'));
   });
 });
