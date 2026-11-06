@@ -22,6 +22,7 @@ export interface ChallengeModel {
   completed: boolean;
   completedCriteria: number;
   criteria: string[];
+  criteriaResults?: boolean[];
   completedStudents: number;
   enrolledStudents: number;
 }

@@ -45,8 +45,8 @@ import { LoadingComponent } from '../../../../shared/components/loading/loading.
         <div class="card-heading"><span class="section-number">01</span>
           <div><h2 id="restore-motors-title">Base de motores</h2><p>Recrie o catálogo com os motores padrão.</p></div>
         </div>
-        <p class="restore-description">Apaga os motores atuais, os ajustes vinculados e a seleção de motor de todos os usuários.
-          Desafios vinculados impedem a restauração e precisam ser removidos antes.</p>
+        <p class="restore-description">Apaga os motores atuais, os desafios vinculados, suas participações, progressos e tentativas,
+          o histórico do dinamômetro, os ajustes e a seleção de motor de todos os usuários.</p>
         <p-button label="Restaurar base de motores" icon="pi pi-refresh" severity="danger"
           [disabled]="restoringBase() !== null" (onClick)="requestRestoration('motors')" />
       </section>
@@ -210,7 +210,7 @@ export class SettingsPageComponent {
   readonly restoringBase = signal<'motors' | 'maps' | null>(null);
   readonly restorationError = signal('');
   readonly restorationConfirmation = computed(() => this.pendingRestoration() === 'motors'
-    ? 'Todos os motores, ajustes vinculados e seleções serão apagados. O catálogo será recriado com os motores padrão.'
+    ? 'Todos os motores, desafios vinculados, participações, progressos, tentativas, histórico do dinamômetro, ajustes e seleções serão apagados. O catálogo será recriado com os motores padrão.'
     : 'Todos os mapas de fábrica e ajustes personalizados serão apagados. A base será recriada com os mapas padrão.');
 
   readonly settings = signal<AccountSettings | null>(null);
@@ -340,3 +340,4 @@ export class SettingsPageComponent {
     void this.router.navigate(['/login']);
   }
 }
+

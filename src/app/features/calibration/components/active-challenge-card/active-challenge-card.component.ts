@@ -20,8 +20,8 @@ import { ChallengeModel } from '../../../../core/models/challenge.model';
       <p class="challenge-description">{{ challenge.description }}</p>
 
       <ul class="criteria-list">
-        @for (criterion of challenge.criteria; track criterion; let index = $index) {
-          <li class="criteria-item" [class.criteria-done]="index < challenge.completedCriteria">
+        @for (criterion of challenge.criteria; track criterion; let criterionPosition = $index) {
+          <li class="criteria-item" [class.criteria-done]="challenge.criteriaResults?.[criterionPosition] === true">
             <span class="criteria-dot"></span>
             <span>{{ criterion }}</span>
           </li>

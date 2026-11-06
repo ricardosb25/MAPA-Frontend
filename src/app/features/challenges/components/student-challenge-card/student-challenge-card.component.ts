@@ -40,9 +40,9 @@ import { CardModule } from 'primeng/card';
           </div>
 
           <div class="criteria-list">
-            @for (criterion of challenge.criteria; track criterion; let i = $index) {
-              <div class="criterion-item" [class.met]="i < challenge.completedCriteria">
-                <i class="fa-solid" [class.fa-circle-check]="i < challenge.completedCriteria" [class.fa-circle] ="i >= challenge.completedCriteria"></i>
+            @for (criterion of challenge.criteria; track criterion; let criterionPosition = $index) {
+              <div class="criterion-item" [class.met]="challenge.criteriaResults?.[criterionPosition] === true">
+                <i class="fa-solid" [class.fa-circle-check]="challenge.criteriaResults?.[criterionPosition] === true" [class.fa-circle]="challenge.criteriaResults?.[criterionPosition] !== true"></i>
                 <span>{{ criterion }}</span>
               </div>
             }

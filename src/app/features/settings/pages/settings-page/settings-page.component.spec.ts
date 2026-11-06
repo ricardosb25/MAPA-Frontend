@@ -137,6 +137,8 @@ describe('SettingsPageComponent', () => {
     const fixture = TestBed.createComponent(SettingsPageComponent);
     const component = fixture.componentInstance;
     component.requestRestoration('motors');
+    expect(component.restorationConfirmation()).toContain('desafios vinculados, participações, progressos, tentativas');
+    expect(component.restorationConfirmation()).toContain('histórico do dinamômetro');
     expect(restorationService.restoreMotors).not.toHaveBeenCalled();
     component.confirmRestoration();
     component.confirmRestoration();
