@@ -6,20 +6,15 @@ import { take } from 'rxjs/operators';
 import { AuthService } from '../../../../core/services/auth.service';
 import { ResetPasswordRequest } from '../../../../core/models/auth.model';
 import { FeedbackService } from '../../../../shared/services/feedback.service';
-import { InfoSidebarComponent } from '../../../../shared/components/info-sidebar/info-sidebar.component';
+import { AuthLayoutComponent } from '../../../../shared/components/auth-layout/auth-layout.component';
 import { ResetPasswordFormComponent } from '../../components/reset-password-form/reset-password-form.component';
 
 @Component({
   selector: 'app-reset-password-page',
   standalone: true,
-  imports: [CommonModule, InfoSidebarComponent, ResetPasswordFormComponent],
+  imports: [AuthLayoutComponent, ResetPasswordFormComponent],
   template: `
-    <div class="auth-page-layout">
-      <div class="sidebar-column">
-        <app-info-sidebar mode="login"></app-info-sidebar>
-      </div>
-
-      <main class="form-column">
+    <app-auth-layout mode="login">
         @if (resetToken) {
           <app-reset-password-form
             [token]="resetToken"
@@ -27,50 +22,8 @@ import { ResetPasswordFormComponent } from '../../components/reset-password-form
             (submitResetPasswordForm)="onResetPasswordSubmit($event)"
           ></app-reset-password-form>
         }
-      </main>
-    </div>
-  `,
-  styles: [`
-    .auth-page-layout {
-      display: flex;
-      min-height: 100vh;
-      width: 100%;
-      background-color: #e5e7eb;
-      box-sizing: border-box;
-    }
-
-    .sidebar-column {
-      flex: 1;
-      max-width: 580px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      padding: 2.5rem;
-    }
-
-    .form-column {
-      flex: 1;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      padding: 2.5rem;
-      position: relative;
-    }
-
-    @media (max-width: 991px) {
-      .auth-page-layout {
-        flex-direction: column;
-      }
-      .sidebar-column {
-        max-width: 100%;
-        padding: 1.5rem;
-      }
-      .form-column {
-        padding: 1.5rem;
-      }
-    }
-  `]
+      </app-auth-layout>
+  `
 })
 export class ResetPasswordPageComponent implements OnDestroy {
   isSubmitting = false;

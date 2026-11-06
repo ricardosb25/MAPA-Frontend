@@ -8,6 +8,7 @@ import {
   ResetPasswordRequest,
   UserModel
 } from '../models/auth.model';
+import { UserProfileType } from '../models/user-profile.enum';
 
 export abstract class AuthService {
   abstract readonly currentUser$: Observable<UserModel | null>;
@@ -21,4 +22,5 @@ export abstract class AuthService {
   abstract getToken(): string | null;
   abstract isAuthenticated(): boolean;
   abstract isAdmin(): boolean;
+  abstract getRole(): UserProfileType | null;
 }

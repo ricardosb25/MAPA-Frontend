@@ -25,18 +25,7 @@ export interface EnginePayload {
   aspirationType: EngineAspirationType;
 }
 
-export interface PageResponse<T> {
-  content: T[];
-  page: number;
-  size: number;
-  totalElements: number;
-  totalPages: number;
-  first: boolean;
-  last: boolean;
-  hasNext: boolean;
-  hasPrevious: boolean;
-  sort: string;
-}
+export type { PageResponse } from './pagination.model';
 
 export interface EnginePageQuery {
   page: number;

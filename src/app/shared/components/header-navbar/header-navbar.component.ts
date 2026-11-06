@@ -17,7 +17,7 @@ import { BrandLogoComponent } from '../brand-logo/brand-logo.component';
       </div>
 
       <nav class="navbar-center">
-        <a routerLink="/dashboard" class="nav-item">
+        <a routerLink="/home" routerLinkActive="active" class="nav-item">
           <i class="fa-solid fa-border-all nav-icon"></i>
           <span>Painel</span>
         </a>
@@ -25,25 +25,55 @@ import { BrandLogoComponent } from '../brand-logo/brand-logo.component';
           <i class="fa-solid fa-warehouse nav-icon"></i>
           <span>Garagem</span>
         </a>
-        <a routerLink="/calibration" class="nav-item">
+        <a routerLink="/calibration" routerLinkActive="active" class="nav-item">
           <i class="fa-solid fa-sliders nav-icon"></i>
           <span>Calibração</span>
         </a>
-        <a routerLink="/dyno" class="nav-item">
+        <a routerLink="/dyno" routerLinkActive="active" class="nav-item">
           <i class="fa-solid fa-gauge-high nav-icon"></i>
           <span>Dinamômetro</span>
         </a>
+        @if ((authService.currentUser$ | async)?.role === 'TEACHER') {
+          <a routerLink="/dashboard" routerLinkActive="active" class="nav-item">
+            <i class="fa-solid fa-chart-column nav-icon" aria-hidden="true"></i>
+            <span>Desempenho</span>
+          </a>
+          <a routerLink="/classes" routerLinkActive="active" class="nav-item">
+            <i class="fa-solid fa-chalkboard-user nav-icon"></i>
+            <span>Turmas</span>
+          </a>
+          <a routerLink="/challenges" routerLinkActive="active" class="nav-item">
+            <i class="fa-solid fa-bullseye nav-icon"></i>
+            <span>Desafios</span>
+          </a>
+        }
+        @if ((authService.currentUser$ | async)?.role === 'STUDENT') {
+          <a routerLink="/my-classes" routerLinkActive="active" class="nav-item">
+            <i class="fa-solid fa-chalkboard-user nav-icon"></i>
+            <span>Minhas turmas</span>
+          </a>
+          <a routerLink="/my-challenges" routerLinkActive="active" class="nav-item">
+            <i class="fa-solid fa-bullseye nav-icon"></i>
+            <span>Meus Desafios</span>
+          </a>
+        }
+        @if (authService.isAdmin$ | async) {
+          <a routerLink="/users" routerLinkActive="active" class="nav-item">
+            <i class="fa-solid fa-users nav-icon"></i>
+            <span>Usuários</span>
+          </a>
+          <a routerLink="/logs" routerLinkActive="active" class="nav-item">
+            <i class="fa-solid fa-clipboard-list nav-icon"></i>
+            <span>Logs</span>
+          </a>
+        }
       </nav>
 
       <div class="navbar-right">
-        <button type="button" class="theme-toggle-button" aria-label="Toggle theme">
-          <i class="fa-regular fa-sun"></i>
-        </button>
-        
-        <div class="class-badge">
-          TURMA MEC-4B
-        </div>
-
+        <a routerLink="/settings" routerLinkActive="active" class="theme-toggle-button"
+           aria-label="Configurações da conta" title="Configurações da conta">
+          <i class="fa-solid fa-gear" aria-hidden="true"></i>
+        </a>
         <div class="user-profile-info">
           <span class="user-name">{{ (authService.currentUser$ | async)?.fullName ?? 'Visitante' }}</span>
           <span class="user-role">{{ getRoleLabel((authService.currentUser$ | async)?.role) }}</span>
@@ -59,8 +89,8 @@ import { BrandLogoComponent } from '../brand-logo/brand-logo.component';
     .navbar-header {
       width: 100%;
       height: 64px;
-      background-color: #e5e7eb;
-      border-bottom: 1px solid #cbd5e1;
+      background-color: var(--mapa-page-background);
+      border-bottom: 1px solid var(--mapa-gray-300);
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -92,14 +122,14 @@ import { BrandLogoComponent } from '../brand-logo/brand-logo.component';
       padding: 8px 16px;
       border-radius: 8px;
       text-decoration: none;
-      color: #475569;
+      color: var(--mapa-gray-600);
       font-size: 0.875rem;
       font-weight: 600;
       transition: all 0.2s ease;
 
       &:hover {
         background-color: #d1d5db;
-        color: #0f172a;
+        color: var(--mapa-ink);
       }
 
       &.active {
@@ -122,7 +152,7 @@ import { BrandLogoComponent } from '../brand-logo/brand-logo.component';
     .theme-toggle-button {
       background: none;
       border: none;
-      color: #64748b;
+      color: var(--mapa-gray-500);
       font-size: 1rem;
       cursor: pointer;
       padding: 6px;
@@ -132,20 +162,9 @@ import { BrandLogoComponent } from '../brand-logo/brand-logo.component';
       justify-content: center;
 
       &:hover {
-        color: #0f172a;
+        color: var(--mapa-ink);
         background-color: #d1d5db;
       }
-    }
-
-    .class-badge {
-      border: 1px solid #94a3b8;
-      border-radius: 4px;
-      padding: 4px 8px;
-      font-size: 0.7rem;
-      font-weight: 700;
-      letter-spacing: 0.05em;
-      color: #334155;
-      background-color: rgba(255, 255, 255, 0.4);
     }
 
     .user-profile-info {
@@ -158,17 +177,22 @@ import { BrandLogoComponent } from '../brand-logo/brand-logo.component';
     .user-name {
       font-size: 0.8rem;
       font-weight: 700;
-      color: #0f172a;
+      color: var(--mapa-ink);
     }
 
     .user-role {
       font-size: 0.65rem;
       font-weight: 700;
-      color: #64748b;
+      color: var(--mapa-gray-500);
       letter-spacing: 0.05em;
     }
 
     @media (max-width: 992px) {
+      .navbar-center {
+        flex-wrap: wrap;
+        width: 100%;
+      }
+
       .navbar-header {
         flex-wrap: wrap;
         height: auto;

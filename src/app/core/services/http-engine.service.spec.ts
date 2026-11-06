@@ -10,15 +10,20 @@ import {
   PageResponse
 } from '../models/engine.model';
 import { API_CONFIG } from '../config/api.config';
+import { BehaviorSubject } from 'rxjs';
+import { AuthService } from './auth.service';
 
 describe('HttpEngineService', () => {
   let service: HttpEngineService;
   let httpTestingController: HttpTestingController;
+  let currentUser: BehaviorSubject<{ id: number } | null>;
 
   beforeEach(() => {
+    currentUser = new BehaviorSubject<{ id: number } | null>({ id: 1 });
     TestBed.configureTestingModule({
       providers: [
         HttpEngineService,
+        { provide: AuthService, useValue: { currentUser$: currentUser } },
         provideHttpClient(),
         provideHttpClientTesting()
       ]
@@ -26,6 +31,7 @@ describe('HttpEngineService', () => {
 
     service = TestBed.inject(HttpEngineService);
     httpTestingController = TestBed.inject(HttpTestingController);
+
   });
 
   afterEach(() => {
@@ -92,6 +98,7 @@ describe('HttpEngineService', () => {
 
     const pageRequest = httpTestingController.expectOne(matchesEnginesPageRequest);
     pageRequest.flush(buildPage([buildEngine()]));
+    httpTestingController.expectOne(API_CONFIG.endpoints.motoresSelecionado).flush(null);
   });
 
   it('should select an engine by id and keep the flag on a later page fetch', () => {
@@ -100,21 +107,24 @@ describe('HttpEngineService', () => {
       expect(selectedEngine.isSelected).toBe(true);
     });
 
-    httpTestingController.expectOne(API_CONFIG.buildEngineByIdUrl(101)).flush(buildEngine());
+    const selectionRequest = httpTestingController.expectOne(API_CONFIG.endpoints.motoresSelecionado);
+    expect(selectionRequest.request.method).toBe('PUT');
+    selectionRequest.flush(buildEngine());
 
     service.getEnginesPage(defaultQuery).subscribe((enginesPage) => {
       expect(enginesPage.content[0].isSelected).toBe(true);
     });
 
     httpTestingController.expectOne(matchesEnginesPageRequest).flush(buildPage([buildEngine()]));
+    httpTestingController.expectOne(API_CONFIG.endpoints.motoresSelecionado).flush(buildEngine());
   });
 
-  it('should return null without any request when no engine is selected', () => {
+  it('should return null when no engine is selected', () => {
     service.getSelectedEngine().subscribe((selectedEngine) => {
       expect(selectedEngine).toBeNull();
     });
 
-    httpTestingController.expectNone(API_CONFIG.buildEngineByIdUrl(101));
+    httpTestingController.expectOne(API_CONFIG.endpoints.motoresSelecionado).flush(null);
   });
 
   it('should create an engine with POST on the collection endpoint', () => {
@@ -148,7 +158,7 @@ describe('HttpEngineService', () => {
 
   it('should delete an engine with DELETE and clear the current selection', () => {
     service.selectEngine('101').subscribe();
-    httpTestingController.expectOne(API_CONFIG.buildEngineByIdUrl(101)).flush(buildEngine());
+    httpTestingController.expectOne(API_CONFIG.endpoints.motoresSelecionado).flush(buildEngine());
 
     let deletionCompleted = false;
 
@@ -165,6 +175,19 @@ describe('HttpEngineService', () => {
       expect(selectedEngine).toBeNull();
     });
 
-    httpTestingController.expectNone(API_CONFIG.buildEngineByIdUrl(101));
+    httpTestingController.expectOne(API_CONFIG.endpoints.motoresSelecionado).flush(null);
+  });
+
+  it('clears the previous selection on logout and reads the next account selection', () => {
+    const selections: (EngineModel | null)[] = [];
+    const subscription = service.getSelectedEngine().subscribe((engine) => selections.push(engine));
+    httpTestingController.expectOne(API_CONFIG.endpoints.motoresSelecionado).flush(buildEngine());
+
+    currentUser.next(null);
+    expect(selections.at(-1)).toBeNull();
+    currentUser.next({ id: 2 });
+    httpTestingController.expectOne(API_CONFIG.endpoints.motoresSelecionado).flush(buildEngine({ id: 202 }));
+    expect(selections.at(-1)?.id).toBe(202);
+    subscription.unsubscribe();
   });
 });

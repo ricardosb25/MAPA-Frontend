@@ -68,4 +68,28 @@ describe('ConfirmDialogComponent', () => {
 
     expect(cancelEmissions).toBe(1);
   });
+
+  it('confirms actions that do not require a checkbox', () => {
+    const component = createDialog();
+    component.confirmationRequired = false;
+    let confirmEmissions = 0;
+    component.confirm.subscribe(() => confirmEmissions += 1);
+    component.handleConfirm();
+    expect(confirmEmissions).toBe(1);
+  });
+
+  it('blocks confirmation and dialog dismissal while a request is pending', () => {
+    const component = createDialog();
+    component.confirmationRequired = false;
+    component.isConfirming = true;
+    let emissions = 0;
+    component.confirm.subscribe(() => emissions += 1);
+    component.cancel.subscribe(() => emissions += 1);
+    component.handleConfirm();
+    component.handleVisibilityChange(false);
+    expect(emissions).toBe(0);
+    component.isConfirming = false;
+    component.handleVisibilityChange(false);
+    expect(emissions).toBe(1);
+  });
 });

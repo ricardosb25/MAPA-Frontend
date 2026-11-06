@@ -28,6 +28,7 @@ export interface UserModel {
   email: string;
   role: UserProfileType;
   active: boolean;
+  activeMotorId?: number | null;
 }
 
 export interface LoginResponseDto {

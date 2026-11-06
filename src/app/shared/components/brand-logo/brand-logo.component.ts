@@ -27,12 +27,12 @@ export type BrandLogoVariant = 'sidebar' | 'navbar';
     .logo-icon-badge {
       width: 44px;
       height: 44px;
-      background-color: var(--color-primary, #0099ff);
+      background-color: var(--color-primary, var(--mapa-blue-500));
       border-radius: 12px;
       display: flex;
       align-items: center;
       justify-content: center;
-      color: var(--color-on-primary, #ffffff);
+      color: var(--color-on-primary, var(--mapa-white));
       font-size: 1.35rem;
       box-shadow: 0 4px 10px rgba(0, 153, 255, 0.25);
     }
@@ -47,14 +47,14 @@ export type BrandLogoVariant = 'sidebar' | 'navbar';
       font-size: 1.35rem;
       font-weight: 900;
       letter-spacing: -0.02em;
-      color: #0f172a;
+      color: var(--mapa-ink);
     }
 
     .brand-sub-title {
       font-size: 0.65rem;
       font-weight: 700;
       letter-spacing: 0.1em;
-      color: #64748b;
+      color: var(--mapa-gray-500);
       text-transform: uppercase;
     }
 
