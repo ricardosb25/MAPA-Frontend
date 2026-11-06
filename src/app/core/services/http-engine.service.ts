@@ -1,62 +1,88 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable, combineLatest, map, shareReplay, take } from 'rxjs';
-import { EngineModel } from '../models/engine.model';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { BehaviorSubject, Observable, combineLatest, distinctUntilChanged, filter, map, of, shareReplay, startWith, switchMap, take, tap } from 'rxjs';
+import { EngineModel, EnginePageQuery, EnginePayload, PageResponse } from '../models/engine.model';
 import { EngineService } from './engine.service';
 import { API_CONFIG } from '../config/api.config';
+import { AuthService } from './auth.service';
 
 @Injectable({
   providedIn: 'root'
 })
 export class HttpEngineService implements EngineService {
-  private readonly endpointUrl = API_CONFIG.endpoints.motores;
-  private selectedEngineIdSubject = new BehaviorSubject<string | null>(null);
-  private cachedEngines$!: Observable<EngineModel[]>;
+  private readonly enginesEndpointUrl = API_CONFIG.endpoints.motores;
+  private readonly selectionRefresh = new BehaviorSubject<void>(undefined);
+  private readonly selectedEngine$: Observable<EngineModel | null>;
 
-  constructor(private httpClient: HttpClient) {
-    this.cachedEngines$ = this.httpClient.get<EngineModel[]>(this.endpointUrl).pipe(shareReplay(1));
+  constructor(private readonly httpClient: HttpClient, authService: AuthService) {
+    this.selectedEngine$ = authService.currentUser$.pipe(
+      map((user) => user?.id ?? null),
+      distinctUntilChanged(),
+      switchMap((userId) => userId === null ? of(null) : this.selectionRefresh.pipe(
+        switchMap(() => this.httpClient.get<EngineModel | null>(API_CONFIG.endpoints.motoresSelecionado).pipe(
+          map((engine) => engine === null ? null : { ...engine, isSelected: true }),
+          startWith(undefined)
+        ))
+      )),
+      shareReplay({ bufferSize: 1, refCount: true }),
+      filter((engine) => engine !== undefined)
+    );
   }
 
-  getEngines(): Observable<EngineModel[]> {
-    return combineLatest([this.cachedEngines$, this.selectedEngineIdSubject]).pipe(
-      map(([fetchedEngines, selectedId]) => {
-        const effectiveSelectedId =
-          selectedId ?? (fetchedEngines.length > 0 ? fetchedEngines[0].id.toString() : null);
+  getEnginesPage(query: EnginePageQuery): Observable<PageResponse<EngineModel>> {
+    const queryParams = new HttpParams()
+      .set('page', query.page)
+      .set('size', query.size)
+      .set('sort', query.sort);
 
-        return fetchedEngines.map((engineItem) => ({
-          ...engineItem,
-          isSelected:
-            effectiveSelectedId !== null && engineItem.id.toString() === effectiveSelectedId
-        }));
-      })
+    return combineLatest([
+      this.httpClient.get<PageResponse<EngineModel>>(this.enginesEndpointUrl, { params: queryParams }),
+      this.getSelectedEngine()
+    ]).pipe(
+      take(1),
+      map(([enginesPage, selectedEngine]) => this.applySelectionFlag(enginesPage, selectedEngine))
     );
   }
 
   getSelectedEngine(): Observable<EngineModel | null> {
-    return this.getEngines().pipe(
-      map((engineModels) => {
-        const selectedModel = engineModels.find((engineModel) => engineModel.isSelected);
-        return selectedModel ?? null;
-      })
-    );
+    return this.selectedEngine$;
   }
 
   selectEngine(engineId: string): Observable<EngineModel> {
-    this.selectedEngineIdSubject.next(engineId);
+    return this.httpClient
+      .put<EngineModel>(API_CONFIG.endpoints.motoresSelecionado, { engineId: Number(engineId) })
+      .pipe(
+        map((engineModel) => ({ ...engineModel, isSelected: true })),
+        tap(() => this.selectionRefresh.next())
+      );
+  }
 
-    return this.getEngines().pipe(
-      take(1),
-      map((engineModels) => {
-        const targetModel = engineModels.find(
-          (engineModel) => engineModel.id.toString() === engineId
-        );
+  createEngine(payload: EnginePayload): Observable<EngineModel> {
+    return this.httpClient.post<EngineModel>(this.enginesEndpointUrl, payload);
+  }
 
-        if (!targetModel) {
-          throw new Error(`Engine with ID ${engineId} not found.`);
-        }
-
-        return targetModel;
-      })
+  updateEngine(engineId: string, payload: EnginePayload): Observable<EngineModel> {
+    return this.httpClient.put<EngineModel>(API_CONFIG.buildEngineByIdUrl(engineId), payload).pipe(
+      tap(() => this.selectionRefresh.next())
     );
+  }
+
+  deleteEngine(engineId: string): Observable<void> {
+    return this.httpClient.delete<void>(API_CONFIG.buildEngineByIdUrl(engineId)).pipe(
+      tap(() => this.selectionRefresh.next())
+    );
+  }
+
+  private applySelectionFlag(
+    enginesPage: PageResponse<EngineModel>,
+    selectedEngine: EngineModel | null
+  ): PageResponse<EngineModel> {
+    return {
+      ...enginesPage,
+      content: enginesPage.content.map((engineModel) => ({
+        ...engineModel,
+        isSelected: selectedEngine !== null && String(engineModel.id) === String(selectedEngine.id)
+      }))
+    };
   }
 }

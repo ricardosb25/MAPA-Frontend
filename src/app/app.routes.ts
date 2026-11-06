@@ -1,6 +1,16 @@
 import { Routes } from '@angular/router';
+import { adminGuard } from './core/guards/admin.guard';
+import { authGuard } from './core/guards/auth.guard';
+import { roleGuard } from './core/guards/role.guard';
+import { UserProfileType } from './core/models/user-profile.enum';
 
 export const routes: Routes = [
+  {
+    path: 'settings',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/settings/pages/settings-page/settings-page.component')
+      .then((settingsModule) => settingsModule.SettingsPageComponent)
+  },
   {
     path: '',
     redirectTo: 'login',
@@ -15,8 +25,91 @@ export const routes: Routes = [
     loadComponent: () => import('./features/auth/pages/register-page/register-page.component').then((module) => module.RegisterPageComponent)
   },
   {
+    path: 'forgot-password',
+    loadComponent: () =>
+      import('./features/auth/pages/forgot-password-page/forgot-password-page.component').then(
+        (module) => module.ForgotPasswordPageComponent
+      )
+  },
+  {
+    path: 'reset-password',
+    loadComponent: () =>
+      import('./features/auth/pages/reset-password-page/reset-password-page.component').then(
+        (module) => module.ResetPasswordPageComponent
+      )
+  },
+  {
+    path: 'home',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/home/pages/home-page/home-page.component').then(
+        (module) => module.HomePageComponent
+      )
+  },
+  {
+    path: 'dashboard',
+    canActivate: [authGuard, roleGuard([UserProfileType.TEACHER])],
+    loadComponent: () => import('./features/dashboard/pages/teacher-dashboard-page/teacher-dashboard-page.component')
+      .then((dashboardModule) => dashboardModule.TeacherDashboardPageComponent)
+  },
+  {
     path: 'garage',
+    canActivate: [authGuard],
     loadComponent: () => import('./features/garage/pages/garage-catalog-page/garage-catalog-page.component').then((module) => module.GarageCatalogPageComponent)
+  },
+  {
+    path: 'calibration',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/calibration/pages/calibration-page/calibration-page.component').then(
+        (module) => module.CalibrationPageComponent
+      )
+  },
+  {
+    path: 'dyno',
+    canActivate: [authGuard],
+    loadComponent: () =>
+      import('./features/dyno/pages/dyno-page/dyno-page.component').then((module) => module.DynoPageComponent)
+  },
+  {
+    path: 'challenges',
+    canActivate: [authGuard, roleGuard([UserProfileType.TEACHER])],
+    loadComponent: () =>
+      import('./features/challenges/pages/challenges-page/challenges-page.component').then(
+        (module) => module.ChallengesPageComponent
+      )
+  },
+  {
+    path: 'my-challenges',
+    canActivate: [authGuard, roleGuard([UserProfileType.STUDENT])],
+    loadComponent: () =>
+      import('./features/challenges/pages/my-challenges-page/my-challenges-page.component').then(
+        (module) => module.MyChallengesPageComponent
+      )
+  },
+  {
+    path: 'classes',
+    canActivate: [authGuard, roleGuard([UserProfileType.TEACHER])],
+    loadComponent: () =>
+      import('./features/classes/pages/classes-page/classes-page.component').then((module) => module.ClassesPageComponent)
+  },
+  {
+    path: 'my-classes',
+    canActivate: [authGuard, roleGuard([UserProfileType.STUDENT])],
+    loadComponent: () =>
+      import('./features/classes/pages/my-classes-page/my-classes-page.component').then(
+        (module) => module.MyClassesPageComponent
+      )
+  },
+  {
+    path: 'users',
+    canActivate: [authGuard, adminGuard],
+    loadComponent: () => import('./features/users/pages/users-page/users-page.component').then((module) => module.UsersPageComponent)
+  },
+  {
+    path: 'logs',
+    canActivate: [authGuard, adminGuard],
+    loadComponent: () => import('./features/logs/pages/logs-page/logs-page.component').then((module) => module.LogsPageComponent)
   },
   {
     path: 'catalog',

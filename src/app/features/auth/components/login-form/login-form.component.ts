@@ -56,6 +56,10 @@ import { LoginCredentials } from '../../../../core/models/auth.model';
           }
         </div>
 
+        <div class="forgot-password-row">
+          <a routerLink="/forgot-password" class="route-link forgot-password-link">Esqueceu a senha?</a>
+        </div>
+
         <button type="submit" [disabled]="isSubmitting" class="submit-button">
           @if (isSubmitting) {
             <i class="pi pi-spin pi-spinner button-spinner"></i>
@@ -72,23 +76,9 @@ import { LoginCredentials } from '../../../../core/models/auth.model';
     </div>
   `,
   styles: [`
-    .form-card-container {
-      width: 100%;
-      max-width: 440px;
-      margin: 0 auto;
-    }
-
-    .form-title {
-      font-size: 2.25rem;
-      font-weight: 800;
-      color: #0f172a;
-      letter-spacing: -0.03em;
-      margin: 0 0 0.5rem 0;
-    }
-
     .form-subtitle {
       font-size: 0.925rem;
-      color: #64748b;
+      color: var(--mapa-gray-500);
       margin: 0 0 2rem 0;
       line-height: 1.4;
     }
@@ -105,59 +95,10 @@ import { LoginCredentials } from '../../../../core/models/auth.model';
       gap: 0.375rem;
     }
 
-    .field-label {
-      font-size: 0.875rem;
-      font-weight: 500;
-      color: #334155;
-    }
-
-    .input-wrapper {
-      position: relative;
-      display: flex;
-      align-items: center;
-      background-color: #f1f5f9;
-      border: 1px solid #cbd5e1;
-      border-radius: 12px;
-      padding: 0 0.875rem;
-      height: 52px;
-      transition: border-color 0.2s ease, box-shadow 0.2s ease;
-    }
-
-    .input-wrapper:focus-within {
-      border-color: #0099ff;
-      background-color: #ffffff;
-      box-shadow: 0 0 0 3px rgba(0, 153, 255, 0.15);
-    }
-
-    .input-wrapper.input-error {
-      border-color: #ef4444;
-      background-color: #fef2f2;
-    }
-
-    .input-prefix-icon {
-      color: #64748b;
-      font-size: 1.1rem;
-      margin-right: 0.75rem;
-    }
-
-    .form-input {
-      flex: 1;
-      border: none;
-      background: transparent;
-      outline: none;
-      font-size: 0.95rem;
-      color: #0f172a;
-      width: 100%;
-    }
-
-    .form-input::placeholder {
-      color: #94a3b8;
-    }
-
     .icon-toggle-button {
       background: none;
       border: none;
-      color: #64748b;
+      color: var(--mapa-gray-500);
       cursor: pointer;
       padding: 0.25rem;
       display: flex;
@@ -168,65 +109,17 @@ import { LoginCredentials } from '../../../../core/models/auth.model';
     }
 
     .icon-toggle-button:hover {
-      color: #0f172a;
+      color: var(--mapa-ink);
     }
 
-    .error-message {
-      font-size: 0.8rem;
-      color: #ef4444;
-      margin-top: 0.15rem;
-    }
-
-    .submit-button {
-      height: 52px;
-      background-color: #0099ff;
-      color: #ffffff;
-      border: none;
-      border-radius: 12px;
-      font-size: 1rem;
-      font-weight: 700;
-      cursor: pointer;
+    .forgot-password-row {
       display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.5rem;
-      margin-top: 0.5rem;
-      transition: background-color 0.2s ease, transform 0.1s ease;
+      justify-content: flex-end;
+      margin-top: -0.75rem;
     }
 
-    .submit-button:hover:not(:disabled) {
-      background-color: #0088e6;
-    }
-
-    .submit-button:active:not(:disabled) {
-      transform: scale(0.99);
-    }
-
-    .submit-button:disabled {
-      opacity: 0.7;
-      cursor: not-allowed;
-    }
-
-    .button-spinner {
-      font-size: 1.1rem;
-    }
-
-    .switch-route-text {
-      text-align: left;
-      font-size: 0.875rem;
-      color: #64748b;
-      margin-top: 0.5rem;
-    }
-
-    .route-link {
-      color: #0099ff;
-      font-weight: 600;
-      text-decoration: none;
-      transition: text-decoration 0.2s ease;
-    }
-
-    .route-link:hover {
-      text-decoration: underline;
+    .forgot-password-link {
+      font-size: 0.85rem;
     }
   `]
 })

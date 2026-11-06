@@ -2,12 +2,6 @@ import { Component, Input } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { BrandLogoComponent } from '../brand-logo/brand-logo.component';
 
-export interface InfoItem {
-  iconName: string;
-  title: string;
-  description?: string;
-}
-
 export type SidebarMode = 'login' | 'register';
 
 @Component({
@@ -69,14 +63,6 @@ export type SidebarMode = 'login' | 'register';
                 <strong>Aluno:</strong> para aqueles que querem aprender sobre motores, mapas e ecu
               </p>
             </div>
-            <div class="info-card description-card">
-              <div class="card-icon-badge">
-                <i class="pi pi-sliders-h"></i>
-              </div>
-              <p class="card-description">
-                <strong>Outro:</strong> para aqueles que não pertencem a alguma instituição/organização e querem aprender por conta propria sobre motores, mapas e ecu
-              </p>
-            </div>
           </div>
         }
       </div>
@@ -99,7 +85,7 @@ export type SidebarMode = 'login' | 'register';
       font-size: 2.75rem;
       font-weight: 800;
       line-height: 1.1;
-      color: #0f172a;
+      color: var(--mapa-ink);
       letter-spacing: -0.03em;
       margin: 0 0 2rem 0;
     }
@@ -110,7 +96,7 @@ export type SidebarMode = 'login' | 'register';
 
     .section-subtitle {
       font-size: 0.95rem;
-      color: #475569;
+      color: var(--mapa-gray-600);
       font-weight: 500;
       margin: 0 0 1.25rem 0;
     }
@@ -125,8 +111,8 @@ export type SidebarMode = 'login' | 'register';
       display: flex;
       align-items: center;
       gap: 1rem;
-      background-color: #f1f5f9;
-      border: 1px solid #cbd5e1;
+      background-color: var(--mapa-gray-100);
+      border: 1px solid var(--mapa-gray-300);
       border-radius: 16px;
       padding: 1rem 1.25rem;
       transition: transform 0.2s ease, box-shadow 0.2s ease;
@@ -159,12 +145,12 @@ export type SidebarMode = 'login' | 'register';
     .card-description {
       font-size: 0.875rem;
       line-height: 1.4;
-      color: #334155;
+      color: var(--mapa-gray-700);
       margin: 0;
     }
 
     .card-description strong {
-      color: #0f172a;
+      color: var(--mapa-ink);
     }
 
     @media (max-width: 991px) {

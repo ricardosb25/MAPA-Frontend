@@ -39,26 +39,50 @@ import { EngineSpecItemComponent } from '../engine-spec-item/engine-spec-item.co
         ></app-engine-spec-item>
       </div>
 
-      <button
-        type="button"
-        class="action-button"
-        [class.selected-button]="engine.isSelected"
-        (click)="onSelectEngine()"
-      >
-        <ng-container *ngIf="engine.isSelected; else unselectedTemplate">
-          <i class="fa-solid fa-check check-icon"></i>
-          <span>Motor na bancada</span>
-        </ng-container>
-        <ng-template #unselectedTemplate>
-          <span>Selecionar motor</span>
-        </ng-template>
-      </button>
+      <div class="card-action-row">
+        <button
+          type="button"
+          class="action-button"
+          [class.selected-button]="engine.isSelected"
+          (click)="onSelectEngine()"
+        >
+          <ng-container *ngIf="engine.isSelected; else unselectedTemplate">
+            <i class="fa-solid fa-check check-icon"></i>
+            <span>Motor na bancada</span>
+          </ng-container>
+          <ng-template #unselectedTemplate>
+            <span>Selecionar motor</span>
+          </ng-template>
+        </button>
+
+        @if (canManage) {
+          <button
+            type="button"
+            class="icon-button edit-button"
+            title="Editar motor"
+            aria-label="Editar motor"
+            (click)="onEditEngine()"
+          >
+            <i class="fa-solid fa-pen"></i>
+          </button>
+
+          <button
+            type="button"
+            class="icon-button delete-button"
+            title="Excluir motor"
+            aria-label="Excluir motor"
+            (click)="onDeleteEngine()"
+          >
+            <i class="fa-solid fa-trash"></i>
+          </button>
+        }
+      </div>
     </div>
   `,
   styles: [`
     .engine-card {
-      background-color: #f8fafc;
-      border: 1px solid #cbd5e1;
+      background-color: var(--mapa-gray-50);
+      border: 1px solid var(--mapa-gray-300);
       border-radius: 12px;
       padding: 24px;
       display: flex;
@@ -75,7 +99,7 @@ import { EngineSpecItemComponent } from '../engine-spec-item/engine-spec-item.co
 
       &.selected {
         border-color: #38bdf8;
-        background-color: #ffffff;
+        background-color: var(--mapa-white);
       }
     }
 
@@ -97,7 +121,7 @@ import { EngineSpecItemComponent } from '../engine-spec-item/engine-spec-item.co
       font-size: 0.65rem;
       font-weight: 700;
       letter-spacing: 0.1em;
-      color: #64748b;
+      color: var(--mapa-gray-500);
       text-transform: uppercase;
     }
 
@@ -105,7 +129,7 @@ import { EngineSpecItemComponent } from '../engine-spec-item/engine-spec-item.co
       margin: 0;
       font-size: 1.35rem;
       font-weight: 800;
-      color: #0f172a;
+      color: var(--mapa-ink);
       letter-spacing: -0.02em;
     }
 
@@ -113,13 +137,13 @@ import { EngineSpecItemComponent } from '../engine-spec-item/engine-spec-item.co
       margin: 0 0 20px 0;
       font-size: 0.825rem;
       line-height: 1.45;
-      color: #475569;
+      color: var(--mapa-gray-600);
       min-height: 40px;
     }
 
     .divider {
       height: 1px;
-      background-color: #e2e8f0;
+      background-color: var(--mapa-gray-200);
       margin-bottom: 16px;
     }
 
@@ -130,13 +154,19 @@ import { EngineSpecItemComponent } from '../engine-spec-item/engine-spec-item.co
       margin-bottom: 20px;
     }
 
+    .card-action-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
     .action-button {
-      width: 100%;
+      flex: 1;
       height: 42px;
       border: none;
       border-radius: 8px;
-      background-color: #475569;
-      color: #ffffff;
+      background-color: var(--mapa-gray-600);
+      color: var(--mapa-white);
       font-size: 0.875rem;
       font-weight: 700;
       cursor: pointer;
@@ -147,7 +177,7 @@ import { EngineSpecItemComponent } from '../engine-spec-item/engine-spec-item.co
       transition: background-color 0.2s ease, transform 0.1s ease;
 
       &:hover {
-        background-color: #334155;
+        background-color: var(--mapa-gray-700);
       }
 
       &:active {
@@ -155,11 +185,11 @@ import { EngineSpecItemComponent } from '../engine-spec-item/engine-spec-item.co
       }
 
       &.selected-button {
-        background-color: #0099ff;
+        background-color: var(--mapa-blue-500);
         box-shadow: 0 2px 8px rgba(0, 153, 255, 0.3);
 
         &:hover {
-          background-color: #0088e6;
+          background-color: var(--mapa-blue-600);
         }
       }
     }
@@ -167,15 +197,54 @@ import { EngineSpecItemComponent } from '../engine-spec-item/engine-spec-item.co
     .check-icon {
       font-size: 0.9rem;
     }
+
+    .icon-button {
+      width: 42px;
+      height: 42px;
+      min-width: 42px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 1px solid var(--mapa-gray-300);
+      border-radius: 8px;
+      background-color: var(--mapa-white);
+      color: var(--mapa-gray-600);
+      font-size: 0.85rem;
+      cursor: pointer;
+      transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease;
+    }
+
+    .edit-button:hover {
+      background-color: var(--mapa-blue-500);
+      border-color: var(--mapa-blue-500);
+      color: var(--mapa-white);
+    }
+
+    .delete-button:hover {
+      background-color: #dc2626;
+      border-color: #dc2626;
+      color: var(--mapa-white);
+    }
   `]
 })
 export class EngineCardComponent {
   @Input({ required: true }) engine!: EngineModel;
+  @Input() canManage = false;
   @Output() selectEngine = new EventEmitter<string>();
+  @Output() editEngine = new EventEmitter<EngineModel>();
+  @Output() deleteEngine = new EventEmitter<EngineModel>();
 
   onSelectEngine(): void {
     if (!this.engine.isSelected) {
       this.selectEngine.emit(this.engine.id.toString());
     }
+  }
+
+  onEditEngine(): void {
+    this.editEngine.emit(this.engine);
+  }
+
+  onDeleteEngine(): void {
+    this.deleteEngine.emit(this.engine);
   }
 }
