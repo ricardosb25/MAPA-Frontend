@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, signal } from '@angular/core';
+import { Component, Input, OnInit, output, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DialogModule } from 'primeng/dialog';
 import { TableModule } from 'primeng/table';
@@ -14,7 +14,7 @@ import { LoadingComponent } from '../../../../shared/components/loading/loading.
   template: `
     <p-dialog 
       [header]="'Desempenho: ' + challenge?.title" 
-      [(visible)]="visible" 
+      [visible]="visible"
       [modal]="true" 
       [style]="{ width: '800px' }" 
       [draggable]="false" 
@@ -104,6 +104,7 @@ import { LoadingComponent } from '../../../../shared/components/loading/loading.
 export class ChallengePerformanceModalComponent implements OnInit {
   @Input() challenge: ChallengeModel | null = null;
   @Input() visible = false;
+  readonly close = output<void>();
   
   performance = signal<ChallengePerformanceModel | null>(null);
   loading = signal(false);
@@ -136,5 +137,6 @@ export class ChallengePerformanceModalComponent implements OnInit {
 
   handleClose(): void {
     this.performance.set(null);
+    this.close.emit();
   }
 }

@@ -2,6 +2,7 @@ import { Component, DestroyRef, computed, inject, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
 import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { bcryptPasswordValidator } from '../../../../core/validators/bcrypt-password.validator';
 import { Router } from '@angular/router';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
 import { finalize, map, timer } from 'rxjs';
@@ -146,9 +147,9 @@ import { LoadingComponent } from '../../../../shared/components/loading/loading.
             <label for="password-new">Nova senha</label>
             <p-password inputId="password-new" formControlName="newPassword" autocomplete="new-password"
               [feedback]="false" [toggleMask]="true" [fluid]="true" aria-describedby="password-hint" />
-            <small id="password-hint">Use de 8 a 100 caracteres e uma senha diferente da atual.</small>
+            <small id="password-hint">Use pelo menos 8 caracteres, até 72 bytes em UTF-8, e uma senha diferente da atual.</small>
             @if (passwordForm.controls.newPassword.touched && passwordForm.controls.newPassword.invalid) {
-              <small class="field-error">A nova senha deve ter de 8 a 100 caracteres.</small>
+              <small class="field-error">A nova senha deve ter pelo menos 8 caracteres e no máximo 72 bytes em UTF-8.</small>
             }
             <label for="password-confirm">Confirmar nova senha</label>
             <p-password inputId="password-confirm" formControlName="confirmPassword" autocomplete="new-password"
@@ -240,7 +241,7 @@ export class SettingsPageComponent {
   });
   readonly passwordForm = this.formBuilder.group({
     currentPassword: ['', [Validators.required, Validators.maxLength(100)]],
-    newPassword: ['', [Validators.required, Validators.minLength(8), Validators.maxLength(100)]],
+    newPassword: ['', [Validators.required, Validators.minLength(8), bcryptPasswordValidator]],
     confirmPassword: ['', Validators.required]
   });
 

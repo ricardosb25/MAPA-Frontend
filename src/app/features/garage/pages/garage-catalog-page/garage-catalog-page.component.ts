@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { BehaviorSubject, Observable, catchError, of, switchMap, tap } from 'rxjs';
+import { BehaviorSubject, Observable, catchError, of, switchMap, take, tap } from 'rxjs';
 import {
   EngineModel,
   EnginePageQuery,
@@ -543,6 +543,7 @@ export class GarageCatalogPageComponent implements OnInit, OnDestroy {
     this.hasAppliedInitialSelection = true;
 
     return this.engineService.getSelectedEngine().pipe(
+      take(1),
       switchMap((selectedEngine) =>
         selectedEngine !== null
           ? this.engineService.getEnginesPage(query)

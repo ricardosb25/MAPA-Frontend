@@ -1,6 +1,7 @@
 import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { bcryptPasswordValidator } from '../../../../core/validators/bcrypt-password.validator';
 import { RouterLink } from '@angular/router';
 import { ResetPasswordRequest } from '../../../../core/models/auth.model';
 import { passwordMatchValidator } from '../register-form/register-form.component';
@@ -36,7 +37,7 @@ import { passwordMatchValidator } from '../register-form/register-form.component
             </button>
           </div>
           @if (isFieldInvalid('password')) {
-            <span class="error-message">A senha deve ter no mínimo 8 caracteres.</span>
+            <span class="error-message">A senha deve ter pelo menos 8 caracteres e no máximo 72 bytes em UTF-8.</span>
           }
         </div>
 
@@ -251,7 +252,7 @@ export class ResetPasswordFormComponent {
   constructor(private readonly formBuilder: FormBuilder) {
     this.resetPasswordForm = this.formBuilder.group(
       {
-        password: ['', [Validators.required, Validators.minLength(8)]],
+        password: ['', [Validators.required, Validators.minLength(8), bcryptPasswordValidator]],
         confirmPassword: ['', [Validators.required]]
       },
       { validators: passwordMatchValidator }
