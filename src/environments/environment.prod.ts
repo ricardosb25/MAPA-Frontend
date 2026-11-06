@@ -1,4 +1,4 @@
 export const environment = {
   production: true,
-  apiUrl: 'https://api.mapa.dev.br/api/v1'
+  apiUrl: 'https://mapa-backend-7qmz.onrender.com/api/v1'
 };  
