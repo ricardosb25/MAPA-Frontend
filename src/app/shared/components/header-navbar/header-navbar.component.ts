@@ -67,6 +67,10 @@ import { BrandLogoComponent } from '../brand-logo/brand-logo.component';
             <span>Logs</span>
           </a>
         }
+        <a routerLink="/help" routerLinkActive="active" ariaCurrentWhenActive="page" class="nav-item">
+          <i class="fa-solid fa-circle-question nav-icon" aria-hidden="true"></i>
+          <span>Ajuda</span>
+        </a>
       </nav>
 
       <div class="navbar-right">
@@ -187,7 +191,7 @@ import { BrandLogoComponent } from '../brand-logo/brand-logo.component';
       letter-spacing: 0.05em;
     }
 
-    @media (max-width: 992px) {
+    @media (max-width: 1280px) {
       .navbar-center {
         flex-wrap: wrap;
         width: 100%;

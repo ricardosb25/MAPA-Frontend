@@ -72,6 +72,13 @@ export const routes: Routes = [
       import('./features/dyno/pages/dyno-page/dyno-page.component').then((module) => module.DynoPageComponent)
   },
   {
+    path: 'help',
+    title: 'Ajuda | MAPA',
+    canActivate: [authGuard],
+    loadComponent: () => import('./features/help/pages/help-page/help-page.component')
+      .then((helpModule) => helpModule.HelpPageComponent)
+  },
+  {
     path: 'challenges',
     canActivate: [authGuard, roleGuard([UserProfileType.TEACHER])],
     loadComponent: () =>

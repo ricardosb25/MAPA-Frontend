@@ -1,6 +1,6 @@
 import { ApplicationConfig, provideBrowserGlobalErrorListeners } from '@angular/core';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
-import { provideRouter } from '@angular/router';
+import { provideRouter, withInMemoryScrolling } from '@angular/router';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { providePrimeNG } from 'primeng/config';
 import { MessageService } from 'primeng/api';
@@ -59,7 +59,7 @@ export const appConfig: ApplicationConfig = {
     { provide: AccountSettingsService, useClass: HttpAccountSettingsService },
     { provide: BaseRestorationService, useClass: HttpBaseRestorationService },
     provideBrowserGlobalErrorListeners(),
-    provideRouter(routes),
+    provideRouter(routes, withInMemoryScrolling({ anchorScrolling: 'enabled' })),
     provideAnimationsAsync(),
     providePrimeNG({ theme: { preset: MapaThemePreset, options: { darkModeSelector: 'none' } } }),
     provideHttpClient(withInterceptors([authInterceptor])),
