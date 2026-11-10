@@ -50,6 +50,9 @@ describe('EcuMapGridComponent', () => {
     const fixture = await createFixture(buildMap());
     const element = fixture.nativeElement as HTMLElement;
 
+    expect(element.querySelector('.rpm-axis')?.textContent).toContain('Avanço (°) por rotação (RPM)');
+    expect(element.querySelector('.row-axis')?.textContent).toContain('Carga (%)');
+
     const rpmHeaders = Array.from(element.querySelectorAll('.rpm-header')).map(
       (header) => header.textContent?.trim()
     );
@@ -58,12 +61,12 @@ describe('EcuMapGridComponent', () => {
     const loadHeaders = Array.from(element.querySelectorAll('.load-header')).map(
       (header) => header.textContent?.trim()
     );
-    expect(loadHeaders).toEqual(['100%', '85%']);
+    expect(loadHeaders).toEqual(['Carga 100%', 'Carga 85%']);
 
     const cellValues = Array.from(element.querySelectorAll('.cell-button')).map(
       (cell) => cell.textContent?.trim()
     );
-    expect(cellValues).toEqual(['10', '15', '20', '12', '17', '22']);
+    expect(cellValues).toEqual(['10°', '15°', '20°', '12°', '17°', '22°']);
   });
 
   it('should emit the informed value when a valid cell edit is committed', async () => {
@@ -129,6 +132,6 @@ describe('EcuMapGridComponent', () => {
 
     expect(capturedCellUpdates).toHaveLength(0);
     expect(element.querySelector('.cell-input')).toBeNull();
-    expect(element.querySelector('.cell-button')?.textContent?.trim()).toBe('10');
+    expect(element.querySelector('.cell-button')?.textContent?.trim()).toBe('10°');
   });
 });

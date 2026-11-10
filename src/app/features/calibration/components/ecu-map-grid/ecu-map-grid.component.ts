@@ -12,27 +12,36 @@ interface CellPosition {
   standalone: true,
   imports: [FormsModule],
   template: `
+    @let valueSuffix = map.mapType === 'IGNITION' ? '°' : '%';
     <div class="map-grid-wrapper">
-      <table class="map-grid">
+      <table class="map-grid" [attr.aria-label]="map.label + ' em ' + map.unit">
         <thead>
           <tr>
-            <th class="axis-corner">CARGA \ RPM</th>
+            <th class="row-axis" rowspan="2" scope="col">Carga (%)</th>
+            <th class="rpm-axis" [attr.colspan]="map.rpmBreakpoints.length">
+              {{ map.mapType === 'IGNITION' ? 'Avanço (°)' : 'VE (%)' }} por rotação (RPM)
+              <span aria-hidden="true">→</span>
+            </th>
+          </tr>
+          <tr>
             @for (rpm of map.rpmBreakpoints; track rpm) {
-              <th class="rpm-header">{{ rpm }}</th>
+              <th class="rpm-header" scope="col">{{ rpm }}</th>
             }
           </tr>
         </thead>
         <tbody>
           @for (load of map.loadBreakpoints; track load; let loadIndex = $index) {
             <tr>
-              <th class="load-header">{{ load }}%</th>
+              <th class="load-header" scope="row">Carga {{ load }}%</th>
               @for (rpm of map.rpmBreakpoints; track rpm; let rpmIndex = $index) {
+                @let cellLabel = 'Carga ' + load + '%, ' + rpm + ' RPM, ' + map.unit;
                 <td class="grid-cell">
                   @if (isEditing(loadIndex, rpmIndex)) {
                     <input
                       #cellInput
                       type="number"
                       class="cell-input"
+                      [attr.aria-label]="cellLabel"
                       [attr.min]="map.minValue"
                       [attr.max]="map.maxValue"
                       [attr.step]="map.step"
@@ -46,11 +55,12 @@ interface CellPosition {
                     <button
                       type="button"
                       class="cell-button"
+                      [attr.aria-label]="cellLabel + ': ' + map.values[loadIndex][rpmIndex] + valueSuffix"
                       [disabled]="isSaving"
                       [style.backgroundColor]="getCellStyle(map.values[loadIndex][rpmIndex])"
                       (click)="handleCellClick(loadIndex, rpmIndex)"
                     >
-                      {{ map.values[loadIndex][rpmIndex] }}
+                      {{ map.values[loadIndex][rpmIndex] }}{{ valueSuffix }}
                     </button>
                   }
                 </td>
@@ -81,7 +91,8 @@ interface CellPosition {
         font-family: 'Courier New', monospace;
       }
 
-      .axis-corner,
+      .row-axis,
+      .rpm-axis,
       .rpm-header,
       .load-header {
         font-size: 0.7rem;
@@ -93,11 +104,18 @@ interface CellPosition {
         white-space: nowrap;
       }
 
-      .axis-corner {
-        text-align: left;
-        max-width: 72px;
-        white-space: normal;
-        line-height: 1.3;
+      .row-axis,
+      .load-header {
+        background-color: var(--mapa-gray-200);
+        color: var(--mapa-gray-700);
+        border-radius: 6px;
+      }
+
+      .rpm-axis,
+      .rpm-header {
+        background-color: var(--mapa-blue-100);
+        color: var(--mapa-blue-900);
+        border-radius: 6px;
       }
 
       .grid-cell {

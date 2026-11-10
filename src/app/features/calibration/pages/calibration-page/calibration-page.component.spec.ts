@@ -245,6 +245,12 @@ describe('CalibrationPageComponent', () => {
     );
     expect(element.querySelector('.map-status')?.textContent).toContain('Mapa de fábrica');
     expect(element.querySelectorAll('.cell-button').length).toBe(4);
+    expect(element.querySelector('.cell-button')?.textContent?.trim()).toMatch(/\d+%$/);
+    expect(element.querySelector('.rpm-axis')?.textContent).toContain('VE (%) por rotação (RPM)');
+    expect(element.querySelector('.legend-label')?.textContent).toMatch(/\d+% → \d+%/);
+    expect(Array.from(element.querySelectorAll('.map-guide dt'), (term) => term.textContent)).toEqual([
+      'Carga (%)', 'Rotação (RPM)', 'Avanço (°)', 'VE (%)'
+    ]);
   });
 
   it('should switch the active map when the ignition button is clicked', async () => {
@@ -261,6 +267,9 @@ describe('CalibrationPageComponent', () => {
     expect(element.querySelector('.map-card-title')?.textContent).toContain(
       'MAPA DE IGNIÇÃO — GRAUS DE AVANÇO'
     );
+    expect(element.querySelector('.cell-button')?.textContent?.trim()).toMatch(/\d+°$/);
+    expect(element.querySelector('.rpm-axis')?.textContent).toContain('Avanço (°) por rotação (RPM)');
+    expect(element.querySelector('.legend-label')?.textContent).toMatch(/\d+° → \d+°/);
   });
 
   it('should restore the factory map after the confirmation step', async () => {

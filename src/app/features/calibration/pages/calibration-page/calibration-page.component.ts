@@ -42,8 +42,7 @@ import { ChallengeModel } from '../../../../core/models/challenge.model';
               <span>NA BANCADA: {{ selectedEngine.manufacturer }} {{ selectedEngine.name }}</span>
             </span>
             <p class="page-subtitle">
-              {{ selectedEngine.manufacturer }} {{ selectedEngine.name }} · eixo X em RPM, eixo Y em carga do
-              motor (%). Clique numa célula para editar.
+              {{ selectedEngine.manufacturer }} {{ selectedEngine.name }} · Clique em uma célula do mapa para editar.
             </p>
           } @else {
             <p class="page-subtitle">Selecione um motor no catálogo para calibrar os mapas da ECU.</p>
@@ -62,17 +61,17 @@ import { ChallengeModel } from '../../../../core/models/challenge.model';
         }
 
         @if (engine() && activeMap(); as currentMap) {
+          @let scaleUnit = currentMap.mapType === 'IGNITION' ? '°' : '%';
           <section class="workspace-grid">
             <div class="map-card">
               <header class="map-card-header">
                 <span class="map-card-title">{{ mapTitles[currentMap.mapType] }}</span>
                 <span class="map-displacement-badge" title="Classe de litragem aproximada usada no mapa genérico de fábrica">
-                  <i class="fa-solid fa-gauge-high"></i>
                   {{ currentMap.displacementClass }} L
                 </span>
                 <div class="legend">
-                  <span class="legend-gradient"></span>
-                  <span class="legend-label">{{ currentMap.minValue }} → {{ currentMap.maxValue }}</span>
+                  <span class="legend-gradient" aria-hidden="true"></span>
+                  <span class="legend-label">{{ currentMap.minValue }}{{ scaleUnit }} → {{ currentMap.maxValue }}{{ scaleUnit }}</span>
                 </div>
               </header>
 
@@ -165,6 +164,28 @@ import { ChallengeModel } from '../../../../core/models/challenge.model';
               }
             </aside>
           </section>
+
+          <section class="map-guide" aria-labelledby="map-guide-title">
+            <h2 id="map-guide-title"><i class="fa-solid fa-circle-info" aria-hidden="true"></i> Como ler o mapa</h2>
+            <dl>
+              <div>
+                <dt>Carga (%)</dt>
+                <dd>Mostra quanto se exige do motor. Manter a velocidade no plano costuma exigir menos carga que acelerar numa subida. No mapa, escolha a carga pela linha.</dd>
+              </div>
+              <div>
+                <dt>Rotação (RPM)</dt>
+                <dd>Mostra a velocidade com que o motor gira. A 3.000 RPM, ele dá 3.000 voltas por minuto. No mapa, escolha a rotação pela coluna.</dd>
+              </div>
+              <div>
+                <dt>Avanço (°)</dt>
+                <dd>Indica o quanto a centelha é antecipada. Uma célula de 20° no mapa de ignição faz a vela disparar 20 graus antes de o pistão chegar ao topo da compressão.</dd>
+              </div>
+              <div>
+                <dt>VE (%)</dt>
+                <dd>Eficiência volumétrica é uma medida de quanto ar entra nos cilindros em relação à sua capacidade. No mapa de combustível, subir uma célula de 70% para 80% faz o simulador dosar mais combustível para a mesma quantidade de ar.</dd>
+              </div>
+            </dl>
+          </section>
         }
       </main>
     </div>
@@ -253,6 +274,7 @@ import { ChallengeModel } from '../../../../core/models/challenge.model';
 
       .map-card-header {
         display: flex;
+        flex-wrap: wrap;
         align-items: center;
         justify-content: space-between;
         gap: 16px;
@@ -268,9 +290,6 @@ import { ChallengeModel } from '../../../../core/models/challenge.model';
       }
 
       .map-displacement-badge {
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
         padding: 4px 10px;
         border: 1px solid var(--mapa-gray-200);
         border-radius: 999px;
@@ -300,6 +319,43 @@ import { ChallengeModel } from '../../../../core/models/challenge.model';
         font-family: 'Courier New', monospace;
         font-size: 0.72rem;
         font-weight: 700;
+        color: var(--mapa-gray-600);
+        white-space: nowrap;
+      }
+
+      .map-guide {
+        margin-top: 20px;
+        padding: 16px 20px;
+        border: 1px solid var(--mapa-gray-200);
+        border-radius: 12px;
+        background-color: var(--mapa-gray-50);
+      }
+
+      .map-guide h2 {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin: 0 0 12px;
+        color: var(--mapa-blue-900);
+        font-size: 0.9rem;
+      }
+
+      .map-guide dl {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 180px), 1fr));
+        gap: 12px 20px;
+        margin: 0;
+        font-size: 0.8rem;
+        line-height: 1.45;
+      }
+
+      .map-guide dt {
+        font-weight: 700;
+        color: var(--mapa-gray-700);
+      }
+
+      .map-guide dd {
+        margin: 2px 0 0;
         color: var(--mapa-gray-600);
       }
 
