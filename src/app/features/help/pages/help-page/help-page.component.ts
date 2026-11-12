@@ -9,6 +9,7 @@ interface HelpLesson {
   summary: string;
   paragraphs: readonly string[];
   formulas?: readonly string[];
+  terms?: readonly { symbol: string; meaning: string }[];
   exercise?: string;
   sources?: readonly { label: string; url: string }[];
 }
@@ -36,6 +37,11 @@ const HELP_MODULES: readonly HelpModule[] = [
           'Cilindrada por cilindro = π × diâmetro² × curso / 4',
           'Taxa de compressão = (volume deslocado + volume no PMS) / volume no PMS'
         ],
+        terms: [
+          { symbol: 'π (pi)', meaning: 'Constante geométrica, aproximadamente 3,1416.' },
+          { symbol: 'Diâmetro e curso', meaning: 'Largura interna do cilindro e distância percorrida pelo pistão do PMI ao PMS.' },
+          { symbol: 'PMS e PMI', meaning: 'Ponto morto superior e ponto morto inferior, os extremos do curso do pistão.' }
+        ],
         sources: [{ label: 'NASA · Motor de quatro tempos', url: 'https://www.grc.nasa.gov/www/k-12/BGP/ottoa.html' }]
       },
       {
@@ -50,7 +56,14 @@ const HELP_MODULES: readonly HelpModule[] = [
         ],
         formulas: [
           '1 ciclo de quatro tempos = 720° de virabrequim = 2 voltas',
-          'Eficiência térmica ideal de Otto = 1 − 1 / taxa_de_compressão^(γ − 1), com γ = Cp / Cv'
+          'Eficiência térmica ideal de Otto = 1 − 1 / (taxa de compressão)^(γ − 1)',
+          'γ = cₚ / cᵥ'
+        ],
+        terms: [
+          { symbol: 'γ (gama)', meaning: 'Razão entre os calores específicos do gás.' },
+          { symbol: 'cₚ', meaning: 'Calor específico do gás a pressão constante.' },
+          { symbol: 'cᵥ', meaning: 'Calor específico do gás a volume constante.' },
+          { symbol: '^', meaning: 'Eleva o valor anterior à potência indicada entre parênteses.' }
         ],
         sources: [{ label: 'NASA · Análise termodinâmica do ciclo Otto', url: 'https://www.grc.nasa.gov/www/k-12/BGP/ottoa.html' }]
       },
@@ -63,6 +76,12 @@ const HELP_MODULES: readonly HelpModule[] = [
           'A carga do MAPA é um eixo didático em porcentagem. Escolha a linha pela carga e a coluna pelo RPM. A puxada atual usa o primeiro ponto de carga da grade, que nos mapas padrão é 100%.'
         ],
         formulas: ['Voltas por segundo = RPM / 60', 'Ciclos por segundo por cilindro em quatro tempos = RPM / 120'],
+        terms: [
+          { symbol: 'RPM', meaning: 'Rotações por minuto do virabrequim.' },
+          { symbol: 'ECU', meaning: 'Unidade de controle eletrônico que comanda funções como a injeção e a ignição.' },
+          { symbol: 'MAP', meaning: 'Manifold Absolute Pressure, a pressão absoluta no coletor de admissão.' },
+          { symbol: 'TPS', meaning: 'Throttle Position Sensor, o sensor de posição da borboleta.' }
+        ],
         sources: [{ label: 'Haltech · Pressão absoluta no coletor', url: 'https://support.haltech.com/portal/en/kb/articles/manifold-pressure' }]
       },
       {
@@ -70,10 +89,15 @@ const HELP_MODULES: readonly HelpModule[] = [
         summary: 'Separe o enchimento do cilindro da proporção entre ar e combustível.',
         paragraphs: [
           'A eficiência volumétrica (VE) compara a massa de ar admitida com uma massa de referência para a cilindrada. A pressão e a temperatura usadas nessa referência importam. Em uma estratégia speed-density, a ECU pode considerar a pressão do coletor separadamente, e a VE descreve o aproveitamento do ar disponível.',
-          'AFR é a razão entre a massa de ar e a massa de combustível. Lambda compara esse AFR ao estequiométrico do combustível usado. Abaixo de 1, a mistura é rica. Acima de 1, é pobre. O MAPA usa 14,7:1 como referência fixa de seu modelo, enquanto a referência real varia com o combustível.',
+          'AFR vem de Air–Fuel Ratio e indica a razão entre as massas de ar e combustível. Lambda compara esse AFR ao estequiométrico do combustível usado. Abaixo de 1, a mistura é rica. Acima de 1, é pobre. O MAPA usa 14,7:1 como referência fixa de seu modelo, enquanto a referência real varia com o combustível.',
           'No MAPA, a VE editável funciona como ajuste da dosagem. Para a mesma massa de ar estimada, aumentar o valor da célula reduz o AFR. A faixa de edição é 10–100% para aspirados e 10–150% para turbo ou supercharger. Esses valores são limites do simulador.'
         ],
         formulas: ['VE (%) = 100 × massa de ar admitida / massa de referência', 'AFR = massa de ar / massa de combustível', 'λ = AFR medido / AFR estequiométrico do combustível'],
+        terms: [
+          { symbol: 'VE', meaning: 'Volumetric Efficiency, ou eficiência volumétrica, expressa em porcentagem.' },
+          { symbol: 'AFR', meaning: 'Partes de ar para cada parte de combustível, por massa. Em 14,7:1, são 14,7 g de ar para 1 g de combustível.' },
+          { symbol: 'λ (lambda)', meaning: 'Razão entre o AFR medido e o AFR de referência do combustível para combustão completa ideal.' }
+        ],
         sources: [
           { label: 'Haltech · Tabelas base e referência de VE', url: 'https://support.haltech.com/portal/en/kb/articles/tuning-base-tables' },
           { label: 'Haltech · Alvo de lambda', url: 'https://support.haltech.com/portal/en/kb/articles/target-lambda' }
@@ -85,9 +109,14 @@ const HELP_MODULES: readonly HelpModule[] = [
         paragraphs: [
           'A chama leva tempo para se propagar. O avanço indica quantos graus o virabrequim ainda tem de girar até o PMS de compressão quando a centelha dispara. Com 20° de avanço, a vela dispara 20° antes desse ponto.',
           'Uma centelha muito atrasada deixa menos expansão útil. Antecipar a centelha pode melhorar o torque até certo ponto. Avanço excessivo pode reduzir o torque, aumentar o esforço antes do PMS ou favorecer detonação. Detonação envolve a autoignição de parte da mistura após o início normal da combustão.',
-          'MBT é o menor avanço que produz o melhor torque em determinada condição. Um motor real pode encontrar o limite de detonação antes de atingir o MBT. O MAPA representa os dois limites com fórmulas simplificadas.'
+          'MBT vem de Minimum spark advance for Best Torque e representa o menor avanço que produz o melhor torque em determinada condição. Um motor real pode encontrar o limite de detonação antes de atingir o MBT. O MAPA representa os dois valores com fórmulas simplificadas.'
         ],
         formulas: ['Tempo até o PMS (ms) = avanço (°) × 1.000 / (6 × RPM)', 'Exemplo teórico: 20° a 3.000 RPM correspondem a cerca de 1,11 ms'],
+        terms: [
+          { symbol: 'PMS', meaning: 'Ponto morto superior, aqui no fim do tempo de compressão.' },
+          { symbol: '° e ms', meaning: 'Graus de rotação do virabrequim e milissegundos.' },
+          { symbol: '6 × RPM', meaning: 'Velocidade em graus por segundo, pois cada volta tem 360° e cada minuto tem 60 segundos.' }
+        ],
         sources: [{ label: 'Haltech · Ângulo base de ignição', url: 'https://support.haltech.com/portal/en/kb/articles/ignition-base' }]
       }
     ]
@@ -99,7 +128,7 @@ const HELP_MODULES: readonly HelpModule[] = [
         number: '06', title: 'Como ler uma tabela da ECU',
         summary: 'Encontre o ponto de operação antes de editar a célula.',
         paragraphs: [
-          'A ECU lê sensores e usa mapas como tabelas de consulta. Cada combinação de carga e RPM aponta para um valor base. No MAPA, a carga identifica a linha e o RPM identifica a coluna. A interseção contém graus de avanço na ignição ou VE em porcentagem no combustível.',
+          'A unidade de controle eletrônico (ECU) lê sensores e usa mapas como tabelas de consulta. No MAPA, a carga identifica a linha e a rotação em RPM (rotações por minuto) identifica a coluna. A interseção contém graus de avanço na ignição ou eficiência volumétrica (VE) em porcentagem no combustível.',
           'A grade tem seis cargas (100, 85, 70, 55, 40 e 25%) e usa as colunas de mil em mil RPM até 8.000 que estiverem abaixo do corte. A última coluna é o corte exato do motor. Você pode editar em passos inteiros. Pontos entre as células são calculados por interpolação.',
           'Os mapas padrão são compartilhados por classe de cilindrada e tipo. A classe mais próxima determina o mapa base, enquanto o cálculo do dinamômetro usa a cilindrada do motor. A edição é salva para o seu usuário e motor. Use Restaurar mapa de fábrica para remover os ajustes do mapa selecionado.'
         ],
@@ -110,8 +139,8 @@ const HELP_MODULES: readonly HelpModule[] = [
         number: '07', title: 'Como calibrar o mapa de combustível',
         summary: 'Faça uma referência, ajuste a mistura e compare as curvas.',
         paragraphs: [
-          'Numa ECU com VE modelada, a pressão, a temperatura e a VE ajudam a estimar a massa de ar. O alvo de lambda define a mistura desejada. A ECU calcula a dose de combustível com os dados dos injetores. A calibração compara a leitura de uma sonda de banda larga com o alvo no ponto de operação.',
-          'No MAPA, comece pelo mapa de referência, mantenha o avanço fixo e faça uma puxada. Observe o AFR por RPM e o estado final. Identifique a faixa que quer estudar e faça uma alteração pequena na linha de plena carga. Aumentar a VE enriquece a mistura. Diminuir a VE empobrece a mistura.',
+          'Numa ECU que usa eficiência volumétrica (VE), a pressão e a temperatura ajudam a estimar a massa de ar. O alvo de lambda define a mistura desejada em relação à proporção de referência do combustível. A ECU calcula a dose com os dados dos injetores. A calibração compara a leitura de uma sonda de banda larga com o alvo no ponto de operação.',
+          'No MAPA, comece pelo mapa de referência, mantenha o avanço fixo e faça uma puxada. Observe a relação ar–combustível (AFR) em cada rotação e o estado final. Identifique a faixa que quer estudar e faça uma alteração pequena na linha de plena carga. Aumentar a VE enriquece a mistura. Diminuir a VE empobrece a mistura.',
           'Repita a puxada e compare o AFR na mesma faixa. Acompanhe as células vizinhas, pois a interpolação espalha o efeito entre os pontos da grade. Use os valores desta aula como exemplos do simulador. A mistura adequada de um motor real depende do combustível, da carga e do conjunto.'
         ],
         exercise: 'No simulador, suba uma célula da linha de 100% de 70 para 75, mantendo o avanço fixo. Compare a curva de AFR antes e depois. Se a primeira puxada parar cedo, compare apenas a faixa de RPM que as duas alcançaram.',
@@ -126,7 +155,7 @@ const HELP_MODULES: readonly HelpModule[] = [
         paragraphs: [
           'Em bancada real, a referência de ignição é conferida com uma pistola de ponto. O dinamômetro e o monitoramento de detonação ajudam a avaliar o torque enquanto se mantém um ponto de carga e rotação. Temperatura, combustível e pressão de admissão também afetam o resultado.',
           'No MAPA, registre a puxada de referência e mantenha o mapa de combustível fixo. Na linha de 100%, altere o avanço em um grau numa região que a puxada alcança. Repita o teste e compare torque, potência e estado do motor na mesma faixa de RPM.',
-          'Aproximar o avanço do MBT do modelo tende a aumentar o torque. Passar desse ponto tende a reduzi-lo. Se o teste indicar detonação, volte ao último ajuste íntegro e compare as curvas. Os limites editáveis são 0–45° para aspirados e 0–35° para turbo ou supercharger.'
+          'Aproximar o avanço do MBT, o menor avanço que produz o melhor torque, tende a aumentar o torque no modelo. Passar desse ponto tende a reduzi-lo. Se o teste indicar detonação, volte ao último ajuste íntegro e compare as curvas. Os limites editáveis são 0–45° para aspirados e 0–35° para turbo ou supercharger.'
         ],
         exercise: 'Escolha um RPM onde a primeira puxada termina com o motor íntegro. Compare a região antes e depois de alterar uma célula próxima em 1°. Observe o que mudou também entre as colunas adjacentes.',
         sources: [{ label: 'Haltech · Calibração das tabelas base', url: 'https://support.haltech.com/portal/en/kb/articles/tuning-base-tables' }]
@@ -140,6 +169,12 @@ const HELP_MODULES: readonly HelpModule[] = [
           'A potência e o torque podem atingir o pico em rotações diferentes. Observe a curva e o estado final antes de comparar picos, pois uma puxada interrompida cobre uma faixa menor. O gráfico converte torque de kgf·m para N·m. O histórico guarda o resumo do ensaio, como os picos, o AFR médio e o estado final.'
         ],
         formulas: ['Torque (N·m) = força (N) × braço perpendicular (m)', 'Torque inercial = momento de inércia × aceleração angular', 'Potência (W) = torque (N·m) × 2π × RPM / 60'],
+        terms: [
+          { symbol: 'N, m e N·m', meaning: 'Newton (força), metro (distância) e newton-metro (torque).' },
+          { symbol: 'W e cv', meaning: 'Watt e cavalo-vapor, duas unidades de potência.' },
+          { symbol: '2π × RPM / 60', meaning: 'Velocidade angular em radianos por segundo. Uma volta corresponde a 2π radianos.' },
+          { symbol: 'AFR', meaning: 'Razão entre as massas de ar e combustível.' }
+        ],
         exercise: 'Compare onde aparecem o pico de torque e o pico de potência na mesma puxada. Ative a curva de AFR e confira se a faixa registrada vai até perto do corte.',
         sources: [{ label: 'Mustang Dynamometer · Manual Power Dyne PC', url: 'https://www.mustangdyne.com/wp-content/uploads/2022/09/Power-Dyne-PC-Users-Manual-v2022-09-22-01.pdf' }]
       }
@@ -162,6 +197,12 @@ const HELP_MODULES: readonly HelpModule[] = [
           'Fator de carga = (carga − 25) / 75',
           'Ajuste de VE = limitar(4 × (1,8 − c), −6, 6)',
           'VE base = (35 + 45 × fator de carga) × max(0,4; 1 − 1,6 × (r − 0,60)²) + ajuste de VE'
+        ],
+        terms: [
+          { symbol: 'r', meaning: 'Rotação atual dividida pela última rotação da grade de fábrica. Em 4.000 de 8.000 RPM, r vale 0,5.' },
+          { symbol: 'c', meaning: 'Classe de cilindrada em litros usada para gerar o mapa padrão.' },
+          { symbol: 'limitar(valor, mínimo, máximo)', meaning: 'Mantém o valor dentro da faixa indicada pelos dois limites.' },
+          { symbol: 'max', meaning: 'Escolhe o maior valor entre os argumentos.' }
         ]
       },
       {
@@ -175,6 +216,10 @@ const HELP_MODULES: readonly HelpModule[] = [
           'fração RPM = limitar((RPM − RPM inicial) / (RPM final − RPM inicial), 0, 1)',
           'valor na linha = valor inicial + (valor final − valor inicial) × fração RPM',
           'valor final = valor na primeira linha + (valor na segunda − valor na primeira) × fração carga'
+        ],
+        terms: [
+          { symbol: 'RPM inicial e final', meaning: 'Rotações das duas colunas que cercam o ponto calculado.' },
+          { symbol: 'Fração RPM e fração carga', meaning: 'Posições entre duas colunas e duas linhas, respectivamente. Zero indica o início e um indica o fim.' }
         ],
         exercise: 'Com 18° em 3.000 RPM e 22° em 4.000 RPM na mesma linha, calcule o valor em 3.250 RPM. A fração é 0,25 e o resultado é 19°.'
       },
@@ -191,6 +236,13 @@ const HELP_MODULES: readonly HelpModule[] = [
           'Massa de ar (g) = cilindrada (L) × 1,18 × (VE do ar / 100) × fator de pressão',
           'Fator de pressão = 1,00 (aspirado) ou 1,35 (turbo ou supercharger)',
           'AFR = limitar(14,7 × VE do ar / VE de combustível, 5, 30)'
+        ],
+        terms: [
+          { symbol: 'r', meaning: 'Rotação atual dividida pela referência fixa de 8.000 RPM.' },
+          { symbol: 'VE do ar', meaning: 'Eficiência volumétrica estimada pelo modelo para o ar admitido.' },
+          { symbol: 'VE de combustível', meaning: 'Valor lido no mapa editável que o simulador usa para ajustar a mistura.' },
+          { symbol: '14,7', meaning: 'AFR estequiométrico adotado pelo modelo. São 14,7 g de ar para 1 g de combustível.' },
+          { symbol: '1,18', meaning: 'Densidade de ar de referência adotada no cálculo, em gramas por litro.' }
         ],
         exercise: 'Com VE do ar de 76% e VE de combustível de 80%, o AFR fica em aproximadamente 14,0:1. Se o valor editado passar a 90%, o AFR cai para aproximadamente 12,4:1.'
       },
@@ -210,6 +262,13 @@ const HELP_MODULES: readonly HelpModule[] = [
           'Torque (N·m) = torque (kgf·m) × 9,80665',
           'Potência (cv) = torque (kgf·m) × RPM / 716,2'
         ],
+        terms: [
+          { symbol: 'MBT', meaning: 'Menor avanço de ignição que produz o melhor torque naquele ponto do modelo.' },
+          { symbol: 'r', meaning: 'RPM atual dividido por 8.000. É usado para estimar a perda em alta rotação.' },
+          { symbol: 'Compressão', meaning: 'Valor numérico da taxa geométrica. Para 9:1, use 9 na fórmula.' },
+          { symbol: 'kgf·m e N·m', meaning: 'Quilograma-força metro e newton-metro, duas unidades de torque.' },
+          { symbol: '716,2 e cv', meaning: 'Constante de conversão que combina torque em kgf·m e rotação em RPM para produzir potência em cavalos-vapor (cv).' }
+        ],
         exercise: 'Com motor aspirado de 1,8 L, compressão 9:1, grade até 8.000 RPM e avanço de 16° a 5.000 RPM, o MBT é 16,4°. A VE do ar fica perto de 76% e o torque chega a cerca de 14,8 kgf·m, resultando em aproximadamente 104 cv nesse ponto.'
       },
       {
@@ -224,6 +283,10 @@ const HELP_MODULES: readonly HelpModule[] = [
           'Limite físico (RPM) = arredondar(10.200 − 850 × cilindrada em litros)',
           'Limite de detonação (°) = 32 − 2 × (compressão − 9) + 0,5 × (RPM − 2.000) / 1.000',
           'Pico = máximo das amostras · AFR médio = soma dos AFRs / quantidade de amostras'
+        ],
+        terms: [
+          { symbol: 'RPM e °', meaning: 'Rotações por minuto no limite físico e graus de avanço no limite de detonação.' },
+          { symbol: 'AFR médio', meaning: 'Média das razões entre ar e combustível em cada ponto registrado na puxada.' }
         ]
       },
       {
@@ -294,6 +357,15 @@ const HELP_MODULES: readonly HelpModule[] = [
                             <li>{{ formula }}</li>
                           }
                         </ul>
+                        @if (lesson.terms; as terms) {
+                          <h3 class="formula-terms-title">O que os símbolos significam</h3>
+                          <dl class="formula-terms">
+                            @for (term of terms; track term.symbol) {
+                              <dt>{{ term.symbol }}</dt>
+                              <dd>{{ term.meaning }}</dd>
+                            }
+                          </dl>
+                        }
                       </div>
                     }
                     @if (lesson.exercise; as exercise) {
@@ -380,6 +452,10 @@ const HELP_MODULES: readonly HelpModule[] = [
     .formula-panel h3 { margin: 0 0 6px; font-size: 0.88rem; }
     .formula-panel ul { margin: 0; padding-left: 18px; font-family: ui-monospace, monospace; overflow-wrap: anywhere; }
     .formula-panel li + li { margin-top: 5px; }
+    .formula-panel .formula-terms-title { margin: 14px 0 6px; }
+    .formula-terms { margin: 0; }
+    .formula-terms dt { color: var(--mapa-ink); font-weight: 700; }
+    .formula-terms dd { margin: 0 0 6px; }
     .exercise { border-left: 3px solid var(--mapa-blue-500); }
     .exercise strong { display: block; color: var(--mapa-blue-900); }
     .lesson-sources { margin: 0; padding-left: 18px; font-size: 0.84rem; }
