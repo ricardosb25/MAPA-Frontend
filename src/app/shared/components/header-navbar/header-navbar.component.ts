@@ -50,11 +50,11 @@ import { BrandLogoComponent } from '../brand-logo/brand-logo.component';
         @if ((authService.currentUser$ | async)?.role === 'STUDENT') {
           <a routerLink="/my-classes" routerLinkActive="active" class="nav-item">
             <i class="fa-solid fa-chalkboard-user nav-icon"></i>
-            <span>Minhas turmas</span>
+            <span>Turmas</span>
           </a>
           <a routerLink="/my-challenges" routerLinkActive="active" class="nav-item">
             <i class="fa-solid fa-bullseye nav-icon"></i>
-            <span>Meus Desafios</span>
+            <span>Desafios</span>
           </a>
         }
         @if (authService.isAdmin$ | async) {
@@ -69,7 +69,7 @@ import { BrandLogoComponent } from '../brand-logo/brand-logo.component';
         }
         <a routerLink="/help" routerLinkActive="active" ariaCurrentWhenActive="page" class="nav-item">
           <i class="fa-solid fa-circle-question nav-icon" aria-hidden="true"></i>
-          <span>Ajuda</span>
+          <span>Aulas</span>
         </a>
       </nav>
 
