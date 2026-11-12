@@ -30,7 +30,7 @@ describe('HelpPageComponent', () => {
     const harness = await RouterTestingHarness.create();
     await harness.navigateByUrl('/help', HelpPageComponent);
     const page = harness.routeNativeElement!;
-    expect(page.querySelector('a[href="/help"][aria-current="page"]')?.textContent).toContain('Ajuda');
+    expect(page.querySelector('a[href="/help"][aria-current="page"]')?.textContent).toContain('Aulas');
     expect(page.querySelectorAll('p-accordion-header')).toHaveLength(15);
 
     const lessonHeader = page.querySelector<HTMLElement>('#matematica p-accordion-header')!;

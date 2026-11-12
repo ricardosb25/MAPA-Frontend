@@ -100,7 +100,7 @@ const HELP_MODULES: readonly HelpModule[] = [
         summary: 'Encontre o ponto de operação antes de editar a célula.',
         paragraphs: [
           'A ECU lê sensores e usa mapas como tabelas de consulta. Cada combinação de carga e RPM aponta para um valor base. No MAPA, a carga identifica a linha e o RPM identifica a coluna. A interseção contém graus de avanço na ignição ou VE em porcentagem no combustível.',
-          'A grade padrão tem seis cargas (100, 85, 70, 55, 40 e 25%) e oito rotações de 1.000 a 8.000 RPM, de mil em mil. Você pode editar em passos inteiros. Pontos entre as células são calculados por interpolação.',
+          'A grade tem seis cargas (100, 85, 70, 55, 40 e 25%) e usa as colunas de mil em mil RPM até 8.000 que estiverem abaixo do corte. A última coluna é o corte exato do motor. Você pode editar em passos inteiros. Pontos entre as células são calculados por interpolação.',
           'Os mapas padrão são compartilhados por classe de cilindrada e tipo. A classe mais próxima determina o mapa base, enquanto o cálculo do dinamômetro usa a cilindrada do motor. A edição é salva para o seu usuário e motor. Use Restaurar mapa de fábrica para remover os ajustes do mapa selecionado.'
         ],
         exercise: 'Na Calibração, localize 85% de carga e 3.000 RPM nos dois mapas. Compare o significado dos dois valores e depois encontre o ponto equivalente na linha de 100%, usada na puxada padrão.',
@@ -136,7 +136,7 @@ const HELP_MODULES: readonly HelpModule[] = [
         summary: 'Distinga torque, potência, AFR, pico e estado final.',
         paragraphs: [
           'Um dinamômetro de motor mede no eixo do motor. Um dinamômetro de chassi mede na transmissão da força aos rolos ou cubos. Em um sistema com freio, uma célula de carga mede força de reação e permite obter o torque pelo braço da alavanca. Em um sistema inercial, o torque é estimado pela aceleração e pela inércia conhecidas.',
-          'O MAPA calcula os pontos em vez de medi-los. Ele usa o motor selecionado e as matrizes efetivas de combustível e ignição. A puxada percorre a rotação em passos de 250 RPM, do primeiro ponto da grade até o último passo que cabe no corte cadastrado, salvo interrupção.',
+          'O MAPA calcula os pontos em vez de medi-los. Ele usa o motor selecionado e as matrizes efetivas de combustível e ignição. A puxada avança em passos de 250 RPM e encurta o passo final para chegar ao corte exato. Se houver falha antes, a curva termina no último ponto calculado.',
           'A potência e o torque podem atingir o pico em rotações diferentes. Observe a curva e o estado final antes de comparar picos, pois uma puxada interrompida cobre uma faixa menor. O gráfico converte torque de kgf·m para N·m. O histórico guarda o resumo do ensaio, como os picos, o AFR médio e o estado final.'
         ],
         formulas: ['Torque (N·m) = força (N) × braço perpendicular (m)', 'Torque inercial = momento de inércia × aceleração angular', 'Potência (W) = torque (N·m) × 2π × RPM / 60'],
@@ -169,7 +169,7 @@ const HELP_MODULES: readonly HelpModule[] = [
         summary: 'Calcule o valor que o simulador usa entre dois breakpoints.',
         paragraphs: [
           'Os pontos da puxada são mais próximos do que as colunas do mapa. A interpolação linear calcula o valor intermediário pela distância relativa entre as duas colunas. O código faz isso em duas linhas de carga e combina os resultados pela posição da carga. Esse processo é a interpolação bilinear.',
-          'Na puxada padrão, a carga coincide com a primeira linha. Por isso, apenas a interpolação entre RPMs afeta a curva. Acima do último RPM do mapa, o cálculo usa o valor da última coluna, pois a fração é limitada a 1.'
+          'Na puxada padrão, a carga coincide com a primeira linha. Por isso, apenas a interpolação entre RPMs afeta a curva. Para preencher a coluna de corte, o sistema interpola os valores já gravados. Se o corte ultrapassar a faixa gravada, ele usa o valor da coluna mais alta como ponto de partida.'
         ],
         formulas: [
           'fração RPM = limitar((RPM − RPM inicial) / (RPM final − RPM inicial), 0, 1)',
@@ -182,11 +182,11 @@ const HELP_MODULES: readonly HelpModule[] = [
         number: '12', title: 'Ar estimado e cálculo do AFR',
         summary: 'Veja como o modelo separa ar admitido e combustível editável.',
         paragraphs: [
-          'O simulador estima a VE do ar com uma parábola em função da rotação. O máximo do modelo é 76%, perto de 62% do último RPM da grade. O fator de pressão de 1,35 para indução forçada aparece na massa de ar usada no torque. A relação AFR usa diretamente a VE do ar estimada e a VE lida no mapa de combustível.',
+          'O simulador estima a VE do ar com uma parábola em função da rotação. O máximo do modelo é 76% a 4.960 RPM, que correspondem a 62% da referência fixa de 8.000 RPM. O fator de pressão de 1,35 para indução forçada aparece na massa de ar usada no torque. A relação AFR usa diretamente a VE do ar estimada e a VE lida no mapa de combustível.',
           'O código limita o AFR exibido ao intervalo de 5 a 30. Um valor de VE de combustível menor ou igual a zero retorna 30. A alteração de VE afeta o AFR e pode interromper a puxada por mistura pobre. O cálculo de torque por ponto não recebe o AFR diretamente.'
         ],
         formulas: [
-          'r = RPM / último RPM da grade',
+          'r = RPM / 8.000',
           'VE do ar (%) = 76 × max(0,4; 1 − 1,75 × (r − 0,62)²)',
           'Massa de ar (g) = cilindrada (L) × 1,18 × (VE do ar / 100) × fator de pressão',
           'Fator de pressão = 1,00 (aspirado) ou 1,35 (turbo ou supercharger)',
@@ -198,11 +198,11 @@ const HELP_MODULES: readonly HelpModule[] = [
         number: '13', title: 'MBT, perdas, torque e potência',
         summary: 'Acompanhe o cálculo desde o ângulo da centelha até os cv.',
         paragraphs: [
-          'O modelo estima o MBT usando taxa de compressão e RPM. A diferença entre o avanço e o MBT reduz o fator de combustão de forma quadrática. O fator fica entre 0,25 e 1. A perda em alta rotação cresce a partir de 70% do último RPM da grade e chega a 15% nesse último ponto.',
+          'O modelo estima o MBT usando taxa de compressão e RPM. A diferença entre o avanço e o MBT reduz o fator de combustão de forma quadrática. O fator fica entre 0,25 e 1. A perda em alta rotação cresce a partir de 5.600 RPM e chega a 15% a 8.000 RPM.',
           'O simulador combina a massa de ar estimada, o fator de combustão e a perda para obter torque. A constante 9,2 faz parte do modelo didático. A potência resulta do torque multiplicado pela velocidade angular e convertido para cv.'
         ],
         formulas: [
-          'r = RPM / último RPM da grade',
+          'r = RPM / 8.000',
           'MBT (°) = 14 + 1,2 × (compressão − 9) + 0,6 × (RPM − 1.000) / 1.000',
           'Fator de combustão = limitar(1 − 0,0035 × (avanço − MBT)², 0,25, 1)',
           'Fator de atrito = 1 − 0,15 × limitar((r − 0,70) / 0,30, 0, 1)',

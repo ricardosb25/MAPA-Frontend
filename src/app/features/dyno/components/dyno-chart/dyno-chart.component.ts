@@ -88,6 +88,7 @@ export class DynoChartComponent implements OnChanges {
   @Input({ required: true }) powerCurve: number[] = [];
   @Input({ required: true }) torqueCurve: number[] = [];
   @Input() afrCurve: number[] = [];
+  @Input() rpmCutoff?: number;
 
   readonly showPower = signal(true);
   readonly showTorque = signal(true);
@@ -97,7 +98,8 @@ export class DynoChartComponent implements OnChanges {
   readonly chartOptions = signal<Record<string, unknown>>({});
 
   ngOnChanges(changes: SimpleChanges): void {
-    if (changes['rpmAxis'] || changes['powerCurve'] || changes['torqueCurve'] || changes['afrCurve']) {
+    if (changes['rpmAxis'] || changes['powerCurve'] || changes['torqueCurve'] || changes['afrCurve']
+      || changes['rpmCutoff']) {
       this.rebuildChart();
     }
   }
@@ -134,7 +136,6 @@ export class DynoChartComponent implements OnChanges {
     }
 
     this.chartData.set({
-      labels: this.rpmAxis.map(String),
       datasets
     });
 
@@ -146,12 +147,14 @@ export class DynoChartComponent implements OnChanges {
         legend: { display: false },
         tooltip: {
           callbacks: {
-            title: (items: { label?: string }[]) => `${items[0]?.label ?? ''} RPM`
+            title: (items: { parsed: { x: number } }[]) => `${items[0]?.parsed.x ?? ''} RPM`
           }
         }
       },
       scales: {
         x: {
+          type: 'linear',
+          max: this.rpmCutoff,
           title: { display: true, text: 'RPM', color: '#64748b', font: { size: 11, weight: 600 } },
           ticks: { color: '#64748b', maxTicksLimit: 9 },
           grid: { color: '#e2e8f0' }
@@ -176,11 +179,11 @@ export class DynoChartComponent implements OnChanges {
   private buildDataset(label: string, data: number[], color: string, yAxisID: string): Record<string, unknown> {
     return {
       label,
-      data,
+      data: this.rpmAxis.map((rpm, pointIndex) => ({ x: rpm, y: data[pointIndex] ?? null })),
       borderColor: color,
       backgroundColor: color,
       borderWidth: 2,
-      pointRadius: 0,
+      pointRadius: this.rpmAxis.length === 1 ? 3 : 0,
       pointHoverRadius: 4,
       tension: 0.35,
       yAxisID

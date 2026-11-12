@@ -97,6 +97,7 @@ import { EngineHealthComponent } from '../../components/engine-health/engine-hea
                 @if (result(); as currentResult) {
                   <app-dyno-chart
                     [rpmAxis]="currentResult.rpmAxis"
+                    [rpmCutoff]="engine()?.rpmCutoff"
                     [powerCurve]="currentResult.powerCurve"
                     [torqueCurve]="currentResult.torqueCurve"
                     [afrCurve]="currentResult.afrCurve"
