@@ -19,11 +19,12 @@ import { AuthService } from '../../../../core/services/auth.service';
 import { FeedbackService } from '../../../../shared/services/feedback.service';
 import { HeaderNavbarComponent } from '../../../../shared/components/header-navbar/header-navbar.component';
 import { LoadingComponent } from '../../../../shared/components/loading/loading.component';
+import { TermsOfUseModalComponent } from '../../../auth/components/terms-of-use-modal/terms-of-use-modal.component';
 
 @Component({
   selector: 'app-settings-page',
   imports: [DatePipe, ReactiveFormsModule, ButtonModule, InputTextModule, PasswordModule,
-    MessageModule, ConfirmDialogComponent, HeaderNavbarComponent, LoadingComponent],
+    MessageModule, ConfirmDialogComponent, HeaderNavbarComponent, LoadingComponent, TermsOfUseModalComponent],
   template: `
 <app-header-navbar />
 <main class="settings-shell">
@@ -159,6 +160,13 @@ import { LoadingComponent } from '../../../../shared/components/loading/loading.
     <p class="audit-note"><i class="pi pi-history" aria-hidden="true"></i>
       As alterações são registradas nos logs de auditoria. Suas senhas nunca aparecem nesses registros.</p>
   }
+  <div class="audit-note">
+    <p-button label="Termos de Uso e Política de Privacidade" icon="pi pi-shield" [text]="true"
+      (onClick)="termsOpen.set(true)" />
+  </div>
+  @if (termsOpen()) {
+    <app-terms-of-use-modal (close)="termsOpen.set(false)" />
+  }
 </main>
   `,
   styles: [`
@@ -214,6 +222,7 @@ export class SettingsPageComponent {
     : 'Todos os mapas de fábrica e ajustes personalizados serão apagados. A base será recriada com os mapas padrão.');
 
   readonly settings = signal<AccountSettings | null>(null);
+  readonly termsOpen = signal(false);
   readonly isLoading = signal(true);
   readonly savingField = signal<'email' | 'password' | null>(null);
   readonly loadError = signal('');
