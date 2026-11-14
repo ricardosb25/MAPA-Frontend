@@ -369,6 +369,7 @@ export class DynoPageComponent implements OnInit, OnDestroy {
     this.subscriptions.forEach((subscription) => subscription.unsubscribe());
   }
 
+  // Solicita a puxada e atualiza as curvas e o progresso do desafio.
   handleRunSimulation(): void {
     if (this.isRunning()) {
       return;

@@ -362,6 +362,7 @@ export class ChallengesPageComponent implements OnInit {
     this.selectedChallenge.set(null);
   }
 
+  // Escolhe entre cadastro e edição conforme o desafio aberto no formulário.
   handleSave(payload: ChallengePayload): void {
     this.submitting.set(true);
     const challenge = this.selectedChallenge();

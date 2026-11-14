@@ -119,6 +119,7 @@ export class DynoChartComponent implements OnChanges {
     this.rebuildChart();
   }
 
+  // Converte o torque para Nm e limita o eixo de RPM ao corte do motor.
   private rebuildChart(): void {
     const datasets: Record<string, unknown>[] = [];
 

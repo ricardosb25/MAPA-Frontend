@@ -103,6 +103,7 @@ export class HttpAuthService extends AuthService {
     return this.currentUserSubject.getValue()?.role ?? null;
   }
 
+  // Mantém os dados e o token da sessão disponíveis ao recarregar a aba.
   private persistSession(token: string, authenticatedUser: UserModel, expiresInSeconds?: number): void {
     this.tokenStorage.saveSession(token, authenticatedUser, expiresInSeconds);
     this.currentUserSubject.next(authenticatedUser);

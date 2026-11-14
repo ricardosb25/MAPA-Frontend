@@ -207,6 +207,7 @@ export class EcuMapGridComponent implements AfterViewChecked {
     this.hasFocusedInput = false;
   }
 
+  // Valida a faixa antes de encaminhar a célula editada para salvamento.
   handleCommit(): void {
     if (this.editingCell === null || this.isSaving) {
       return;
