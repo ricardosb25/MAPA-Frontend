@@ -1,5 +1,4 @@
-import { Component, OnDestroy } from '@angular/core';
-import { CommonModule } from '@angular/common';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { HttpErrorResponse } from '@angular/common/http';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../../core/services/auth.service';
@@ -7,6 +6,7 @@ import { LoginCredentials } from '../../../../core/models/auth.model';
 import { FeedbackService } from '../../../../shared/services/feedback.service';
 import { AuthLayoutComponent } from '../../../../shared/components/auth-layout/auth-layout.component';
 import { LoginFormComponent } from '../../components/login-form/login-form.component';
+import { environment as productionEnvironment } from '../../../../../environments/environment.prod';
 
 @Component({
   selector: 'app-login-page',
@@ -21,7 +21,7 @@ import { LoginFormComponent } from '../../components/login-form/login-form.compo
       </app-auth-layout>
   `
 })
-export class LoginPageComponent implements OnDestroy {
+export class LoginPageComponent implements OnInit, OnDestroy {
   isSubmitting = false;
   private feedbackTimeoutId: ReturnType<typeof setTimeout> | null = null;
 
@@ -30,6 +30,12 @@ export class LoginPageComponent implements OnDestroy {
     private readonly feedbackService: FeedbackService,
     private readonly router: Router
   ) {}
+
+  ngOnInit(): void {
+    const healthUrl = new URL('/actuator/health', productionEnvironment.apiUrl);
+    void fetch(healthUrl, { mode: 'no-cors', credentials: 'omit', cache: 'no-store' })
+      .catch(() => undefined);
+  }
 
   ngOnDestroy(): void {
     if (this.feedbackTimeoutId) {
