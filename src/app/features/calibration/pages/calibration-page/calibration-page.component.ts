@@ -582,6 +582,7 @@ export class CalibrationPageComponent implements OnInit, OnDestroy {
     this.isRestoreConfirmOpen.set(false);
   }
 
+  // Envia a edição à API e atualiza a grade com o mapa retornado.
   handleCellSave(cellUpdate: EcuMapCellUpdate): void {
     const selectedEngine = this.engine();
     if (selectedEngine === null) {
@@ -613,6 +614,7 @@ export class CalibrationPageComponent implements OnInit, OnDestroy {
     this.isRestoreConfirmOpen.set(false);
   }
 
+  // Restaura os valores de fábrica do tipo de mapa aberto.
   handleConfirmRestore(): void {
     const selectedEngine = this.engine();
     if (selectedEngine === null || this.isRestoring()) {

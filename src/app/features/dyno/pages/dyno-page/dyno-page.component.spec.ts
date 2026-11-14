@@ -2,9 +2,11 @@ import { FeedbackService } from '../../../../shared/services/feedback.service';
 ﻿import { describe, it, expect, beforeEach, vi } from 'vitest';
 import { TestBed } from '@angular/core/testing';
 import { provideRouter } from '@angular/router';
+import { By } from '@angular/platform-browser';
 import { of, throwError } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
 import { DynoPageComponent } from './dyno-page.component';
+import { DynoChartComponent } from '../../components/dyno-chart/dyno-chart.component';
 import { DynoResult } from '../../../../core/models/dyno.model';
 import { EngineModel } from '../../../../core/models/engine.model';
 import { DynoService } from '../../../../core/services/dyno.service';
@@ -246,6 +248,11 @@ describe('DynoPageComponent', () => {
     expect(element.querySelector('.health-broken')).not.toBeNull();
     expect(element.querySelector('.health-status')?.textContent).toContain('detonação');
     expect(element.querySelector('.health-rpm')?.textContent).toContain('RPM');
+    const chart: DynoChartComponent = fixture.debugElement.query(By.directive(DynoChartComponent)).componentInstance;
+    expect(chart.chartOptions()).toMatchObject({ scales: { x: { type: 'linear', max: 6500 } } });
+    expect(chart.chartData()).toMatchObject({
+      datasets: [{ data: [{ x: 1000, y: 30.5 }, { x: 1250, y: 41.2 }, { x: 1500, y: 52 }] }, {}]
+    });
   });
 
   it('should show an error feedback when the API rejects the run', async () => {

@@ -2,7 +2,7 @@ import { DialogModule } from 'primeng/dialog';
 import { Component, EventEmitter, Output } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
-export const TERMS_OF_USE_VERSION = '1.0';
+export const TERMS_OF_USE_VERSION = '2.0';
 
 export interface TermsSection {
   readonly title: string;
@@ -11,40 +11,44 @@ export interface TermsSection {
 
 const TERMS_SECTIONS: readonly TermsSection[] = [
   {
-    title: '1. Objeto',
-    text: 'O MAPA (Motor Analysis & Performance Academy) é uma plataforma educacional destinada ao estudo de motores, mapas de injeção e ECU, disponibilizando catálogo de motores, calibragem de ECU e dinamômetro virtual. Estes Termos regulam o uso da plataforma e a proteção dos seus dados pessoais.'
+    title: '1. Uso educacional',
+    text: 'O MAPA (Motor Analysis & Performance Academy) oferece aulas, catálogo de motores, mapas de calibração de ECU, dinamômetro virtual e desafios. Os resultados são estimativas para estudo. Proteja suas credenciais e use as funções da plataforma respeitando os demais participantes e as regras da sua turma.'
   },
   {
-    title: '2. Dados pessoais tratados',
-    text: 'Para viabilizar a conta, tratamos: nome completo, e-mail, perfil declarado (professor ou aluno) e a senha (armazenada de forma criptografada e nunca exibida). Também são armazenados os conteúdos que você criar na plataforma (motores, mapas e configurações de ECU) e registros técnicos de auditoria associados à sua conta.'
+    title: '2. Conta, autenticação e recuperação',
+    text: 'Tratamos nome, e-mail, perfil (aluno, professor ou administrador), situação da conta, datas cadastrais e data e versão do aceite para criar e gerenciar o acesso. A senha é armazenada como resumo criptográfico bcrypt. A recuperação por e-mail usa um token temporário. O navegador guarda o token de sessão, os dados da conta e o vencimento em armazenamento de sessão (sessionStorage).'
   },
   {
-    title: '3. Finalidade e base legal',
-    text: 'Tratamos esses dados para criar e autenticar sua conta, personalizar a experiência, garantir a segurança da plataforma e atender obrigações legais. A base legal é o seu consentimento (art. 7º, I, e art. 8º da Lei nº 13.709/2018 — LGPD), manifestado de forma livre, informada e inequívoca ao marcar a caixa de aceite neste cadastro. A recusa impede a criação da conta.'
+    title: '3. Atividades de aprendizagem',
+    text: 'Associamos à conta o motor selecionado, os ajustes de ignição e combustível e os resultados das passadas, incluindo data, picos de potência e torque, AFR médio e estado do motor. Também registramos vínculos com turmas, desafios selecionados, quantidade de tentativas, último resultado e conclusão. Usamos esses dados para salvar o trabalho, acompanhar a aprendizagem e apresentar indicadores de desempenho.'
   },
   {
-    title: '4. Compartilhamento',
-    text: 'Não vendemos nem divulgamos seus dados pessoais. O compartilhamento ocorre apenas com provedores de infraestrutura (hospedagem do sistema, banco de dados e envio de e-mails transacionais) e quando exigido por obrigação judicial ou autoridade competente.'
+    title: '4. Quem pode ver os dados',
+    text: 'O professor pode consultar nome, e-mail e progresso dos alunos nas turmas sob sua responsabilidade e acompanhar indicadores agregados de desempenho. Administradores têm acesso às funções de gestão de contas e aos registros de auditoria. Os registros podem incluir identificadores de conta, e-mails, datas e ações como aceite, mudanças cadastrais, anonimização e restauração de bases.'
   },
   {
-    title: '5. Retenção e eliminação',
-    text: 'Seus dados são mantidos enquanto a conta estiver ativa. Ao solicitar a exclusão da conta, os dados pessoais serão eliminados ou anonimizados, ressalvadas as hipóteses legais de conservação (art. 16 da LGPD). Os registros de auditoria preservam apenas informações necessárias à rastreabilidade.'
+    title: '5. Finalidades e fundamento do tratamento',
+    text: 'O MAPA utiliza dados para prestar as funcionalidades solicitadas, acompanhar atividades das turmas, manter a segurança e a rastreabilidade e atender obrigações aplicáveis. A base legal depende da finalidade e do contexto de uso, conforme a LGPD. Quando o tratamento se basear em consentimento, ele pode ser revogado. O aceite no cadastro registra a adesão a estes termos e a ciência sobre esta política.'
   },
   {
-    title: '6. Seus direitos como titular',
-    text: 'Nos termos do art. 18 da LGPD, você pode: confirmar a existência de tratamento; acessar os dados; corrigir dados incompletos ou desatualizados; solicitar anonimização, bloqueio ou eliminação; solicitar a portabilidade; obter informações sobre compartilhamentos; e revogar o consentimento a qualquer momento (o que não afeta a licitude do tratamento anterior).'
+    title: '6. Provedores e compartilhamento',
+    text: 'Na implantação do projeto, Vercel e Render hospedam a interface e a API, Supabase fornece o banco de dados e Resend envia e-mails transacionais, como o de recuperação de senha. Esses serviços recebem os dados necessários às suas funções. O tratamento por provedores pode ocorrer fora do Brasil, conforme a infraestrutura contratada e os mecanismos aplicáveis da LGPD. Dados também podem ser comunicados quando houver obrigação legal ou ordem de autoridade competente.'
   },
   {
-    title: '7. Segurança',
-    text: 'Adotamos medidas técnicas e organizacionais proporcionais ao risco, incluindo senhas criptografadas, autenticação por token e controle de acesso por perfil. Ainda assim, nenhum sistema é 100% seguro: use uma senha única e não compartilhe suas credenciais.'
+    title: '7. Conservação e pedidos sobre a conta',
+    text: 'A desativação impede o acesso e mantém os registros. A função de anonimização da conta substitui nome e e-mail no cadastro, desativa o acesso e revoga sessões. Ela não exclui automaticamente o histórico pedagógico associado ao identificador da conta. O log da operação pode manter o e-mail anterior para rastreabilidade. Pedidos de eliminação, bloqueio ou anonimização devem ser avaliados conforme a finalidade, a necessidade de conservação e as hipóteses legais aplicáveis.'
   },
   {
-    title: '8. Alterações destes termos',
-    text: 'Estes termos podem ser atualizados em função da evolução da plataforma ou da legislação. Alterações relevantes serão comunicadas e passarão a valer a partir da nova versão, com pedido de novo aceite quando exigido. A versão aceita por você fica registrada no seu cadastro.'
+    title: '8. Direitos de privacidade',
+    text: 'Você pode solicitar confirmação do tratamento, acesso, correção, informações sobre compartilhamento e, quando aplicável, portabilidade, bloqueio, anonimização ou eliminação. Quando houver consentimento, pode revogá-lo e pedir a eliminação dos dados tratados com essa base, observadas as hipóteses legais de conservação. Também pode peticionar à ANPD nos termos da LGPD. A plataforma oferece edição de e-mail e senha em Configurações para alunos e professores.'
   },
   {
-    title: '9. Contato do controlador',
-    text: 'Para exercer seus direitos ou esclarecer dúvidas sobre privacidade, utilize o canal de suporte do projeto MAPA (contato informado pelo administrador da plataforma).'
+    title: '9. Segurança e versões do termo',
+    text: 'A plataforma usa autenticação por token, controle de acesso por perfil e registros de auditoria. No cadastro, o MAPA registra a data e a versão do termo aceito. A publicação de uma versão atualizada não altera o registro histórico de versões já aceitas.'
+  },
+  {
+    title: '10. Controlador e contato de privacidade',
+    text: 'O controlador dos dados pessoais é o MAPA-suporte. Para exercer seus direitos ou esclarecer dúvidas sobre privacidade, escreva para mapa-rsb@gmail.com. Informe o e-mail da conta e o direito que deseja exercer. Nunca envie a senha ou tokens de acesso.'
   }
 ];
 
@@ -56,7 +60,7 @@ const TERMS_SECTIONS: readonly TermsSection[] = [
     <p-dialog header="Termos de Uso e Privacidade do MAPA" [visible]="true" [modal]="true"
       [draggable]="false" [style]="{ width: 'min(92vw, 640px)' }" styleClass="mapa-dialog"
       [dismissableMask]="true" (visibleChange)="handleVisibilityChange($event)">
-      <p class="terms-version">Versão {{ termsVersion }} — vigente a partir do aceite no cadastro</p>
+      <p class="terms-version">Versão {{ termsVersion }} · 14/11/2026</p>
 
         <div class="terms-body">
           @for (section of sections; track section.title) {

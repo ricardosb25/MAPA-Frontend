@@ -17,11 +17,14 @@ describe('SettingsPageComponent', () => {
   };
   const currentUserSubject = new BehaviorSubject<UserModel | null>(null);
   const authService = { logout: vi.fn(), currentUser$: currentUserSubject, isAdmin$: of(false) };
-  const restorationService = { restoreMotors: vi.fn(), restoreMaps: vi.fn() };
+  const restorationService = {
+    restoreMotors: vi.fn(), restoreMaps: vi.fn(), getPresentationMode: vi.fn(), setPresentationMode: vi.fn()
+  };
   const feedbackService = { showSuccess: vi.fn() };
 
   beforeEach(() => {
     vi.resetAllMocks();
+    restorationService.getPresentationMode.mockReturnValue(of({ enabled: false, teacherName: null }));
     currentUserSubject.next({ id: '7', fullName: 'Ana Silva', email: 'ana@mapa.test',
       role: UserProfileType.STUDENT, active: true });
     settingsService.getSettings.mockReturnValue(of({
@@ -108,6 +111,7 @@ describe('SettingsPageComponent', () => {
     const pageContent = (fixture.nativeElement as HTMLElement).textContent;
     expect(pageContent).toContain('Restaurar base de motores');
     expect(pageContent).toContain('Restaurar base de mapas');
+    expect(pageContent).toContain('Modo apresentação');
     expect(pageContent).not.toContain('E-mail de acesso');
     expect(settingsService.getSettings).not.toHaveBeenCalled();
     fixture.componentInstance.saveEmail();
@@ -124,10 +128,40 @@ describe('SettingsPageComponent', () => {
     const pageContent = (fixture.nativeElement as HTMLElement).textContent;
     expect(pageContent).toContain('E-mail de acesso');
     expect(pageContent).not.toContain('Restaurar base de motores');
+    expect(pageContent).not.toContain('Modo apresentação');
+    expect(restorationService.getPresentationMode).not.toHaveBeenCalled();
     fixture.componentInstance.requestRestoration('maps');
     fixture.componentInstance.confirmRestoration();
     expect(restorationService.restoreMaps).not.toHaveBeenCalled();
     fixture.destroy();
+  });
+
+  it('requires a checked confirmation when enabling and disabling presentation mode', async () => {
+    currentUserSubject.next({ ...currentUserSubject.value!, role: UserProfileType.ADMIN });
+    restorationService.setPresentationMode
+      .mockReturnValueOnce(of({ enabled: true, teacherName: 'Professor Demo' }))
+      .mockReturnValueOnce(of({ enabled: false, teacherName: null }));
+    const fixture = TestBed.createComponent(SettingsPageComponent);
+    await fixture.whenStable();
+    const page = fixture.nativeElement as HTMLElement;
+
+    for (const nextState of [true, false]) {
+      const toggle = page.querySelector<HTMLInputElement>('#presentation-mode')!;
+      expect(toggle.checked).toBe(!nextState);
+      toggle.click();
+      await fixture.whenStable();
+      expect(toggle.checked).toBe(!nextState);
+      const confirmation = document.querySelector<HTMLInputElement>('app-confirm-dialog input[type="checkbox"], p-dialog input[type="checkbox"], [role="dialog"] input[type="checkbox"]')!;
+      const confirmButton = Array.from(document.querySelectorAll<HTMLButtonElement>('[role="dialog"] button'))
+        .find((button) => button.textContent?.includes(nextState ? 'Ativar modo apresentação' : 'Desativar modo apresentação'))!;
+      expect(confirmButton.disabled).toBe(true);
+      confirmation.click();
+      await fixture.whenStable();
+      confirmButton.click();
+      await fixture.whenStable();
+      expect(restorationService.setPresentationMode).toHaveBeenLastCalledWith(nextState);
+      expect(toggle.checked).toBe(nextState);
+    }
   });
 
   it('requires confirmation and prevents duplicate restoration requests', () => {

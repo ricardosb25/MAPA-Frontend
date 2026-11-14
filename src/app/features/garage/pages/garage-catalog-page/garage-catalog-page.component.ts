@@ -260,6 +260,7 @@ export class GarageCatalogPageComponent implements OnInit {
     return `Deseja realmente excluir o motor ${name} (${manufacturer}) do catálogo?`;
   }
 
+  // Define o motor usado na bancada virtual.
   handleSelectEngine(engineId: string): void {
     this.engineService.selectEngine(engineId).subscribe({
       next: () => this.reloadCurrentPage(),

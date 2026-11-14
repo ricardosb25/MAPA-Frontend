@@ -235,6 +235,7 @@ export class TeacherDashboardPageComponent {
       ? classId : null);
   }
 
+  // Busca os dados que alimentam os indicadores e gráficos do professor.
   loadDashboard(): void {
     if (this.isLoading()) return;
     this.isLoading.set(true);

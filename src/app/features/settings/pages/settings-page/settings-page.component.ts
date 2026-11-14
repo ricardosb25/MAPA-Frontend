@@ -1,7 +1,7 @@
 import { Component, DestroyRef, computed, inject, signal } from '@angular/core';
 import { DatePipe } from '@angular/common';
 import { HttpErrorResponse } from '@angular/common/http';
-import { NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
+import { FormControl, NonNullableFormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { bcryptPasswordValidator } from '../../../../core/validators/bcrypt-password.validator';
 import { Router } from '@angular/router';
 import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
@@ -10,20 +10,22 @@ import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { PasswordModule } from 'primeng/password';
 import { MessageModule } from 'primeng/message';
+import { ToggleSwitch } from 'primeng/toggleswitch';
 import { ConfirmDialogComponent } from '../../../../shared/components/confirm-dialog/confirm-dialog.component';
 import { AccountSettings } from '../../../../core/models/account-settings.model';
 import { AccountSettingsService } from '../../../../core/services/account-settings.service';
-import { BaseRestorationService } from '../../../../core/services/base-restoration.service';
+import { BaseRestorationService, PresentationModeStatus } from '../../../../core/services/base-restoration.service';
 import { UserProfileType } from '../../../../core/models/user-profile.enum';
 import { AuthService } from '../../../../core/services/auth.service';
 import { FeedbackService } from '../../../../shared/services/feedback.service';
 import { HeaderNavbarComponent } from '../../../../shared/components/header-navbar/header-navbar.component';
 import { LoadingComponent } from '../../../../shared/components/loading/loading.component';
+import { TermsOfUseModalComponent } from '../../../auth/components/terms-of-use-modal/terms-of-use-modal.component';
 
 @Component({
   selector: 'app-settings-page',
   imports: [DatePipe, ReactiveFormsModule, ButtonModule, InputTextModule, PasswordModule,
-    MessageModule, ConfirmDialogComponent, HeaderNavbarComponent, LoadingComponent],
+    MessageModule, ToggleSwitch, ConfirmDialogComponent, HeaderNavbarComponent, LoadingComponent, TermsOfUseModalComponent],
   template: `
 <app-header-navbar />
 <main class="settings-shell">
@@ -41,6 +43,28 @@ import { LoadingComponent } from '../../../../shared/components/loading/loading.
           A operação é registrada nos logs de auditoria.</p></div>
     </aside>
     <div class="settings-grid">
+      <section class="settings-card" aria-labelledby="presentation-mode-title">
+        <div class="card-heading">
+          <div><h2 id="presentation-mode-title">Modo apresentação</h2>
+            <p>Carrega turmas, alunos, desafios e resultados fictícios para demonstrar o MAPA.</p></div>
+        </div>
+        @if (presentationLoading()) {
+          <app-loading message="Carregando modo apresentação..." />
+        } @else if (presentationStatus(); as status) {
+          <div class="presentation-switch">
+            <p-toggleswitch inputId="presentation-mode" [formControl]="presentationControl"
+              [readonly]="pendingPresentation() !== null || savingPresentation()"
+              (onChange)="requestPresentationMode($event.originalEvent)" />
+            <label for="presentation-mode">{{ status.enabled ? 'Ativado' : 'Desativado' }}</label>
+          </div>
+          @if (status.enabled && status.teacherName) {
+            <p>As turmas de demonstração estão disponíveis para {{ status.teacherName }}.</p>
+          }
+        } @else {
+          <p-button label="Tentar novamente" icon="pi pi-refresh" (onClick)="loadPresentationMode()" />
+        }
+        @if (presentationError()) { <p-message severity="error">{{ presentationError() }}</p-message> }
+      </section>
       <section class="settings-card" aria-labelledby="restore-motors-title">
         <div class="card-heading"><span class="section-number">01</span>
           <div><h2 id="restore-motors-title">Base de motores</h2><p>Recrie o catálogo com os motores padrão.</p></div>
@@ -66,6 +90,16 @@ import { LoadingComponent } from '../../../../shared/components/loading/loading.
         confirmButtonLabel="Apagar e restaurar" confirmIcon="pi pi-refresh" [confirmationRequired]="false"
         [isConfirming]="restoringBase() !== null" confirmingLabel="Restaurando base..."
         (confirm)="confirmRestoration()" (cancel)="cancelRestoration()" />
+    }
+    @if (pendingPresentation() !== null) {
+      <app-confirm-dialog title="Confirmar modo apresentação"
+        [message]="pendingPresentation()
+          ? 'Serão inseridos dados fictícios para o primeiro professor ativo cadastrado.'
+          : 'As turmas, alunos, desafios e resultados da demonstração serão removidos.'"
+        [confirmButtonLabel]="pendingPresentation() ? 'Ativar modo apresentação' : 'Desativar modo apresentação'"
+        confirmationLabel="Confirmo a alteração do modo apresentação."
+        [isConfirming]="savingPresentation()" confirmingLabel="Atualizando modo apresentação..."
+        (confirm)="confirmPresentationMode()" (cancel)="cancelPresentationMode()" />
     }
   } @else if (canManageAccount() && isLoading()) {
     <app-loading variant="page" message="Carregando suas configurações..." />
@@ -159,6 +193,13 @@ import { LoadingComponent } from '../../../../shared/components/loading/loading.
     <p class="audit-note"><i class="pi pi-history" aria-hidden="true"></i>
       As alterações são registradas nos logs de auditoria. Suas senhas nunca aparecem nesses registros.</p>
   }
+  <div class="audit-note">
+    <p-button label="Termos de Uso e Política de Privacidade" icon="pi pi-shield" [text]="true"
+      (onClick)="termsOpen.set(true)" />
+  </div>
+  @if (termsOpen()) {
+    <app-terms-of-use-modal (close)="termsOpen.set(false)" />
+  }
 </main>
   `,
   styles: [`
@@ -189,6 +230,7 @@ p-message { display: block; margin-bottom: 16px; }
 form p-message { margin-bottom: 0; }
 .audit-note { display: flex; align-items: baseline; gap: 8px; color: var(--mapa-gray-500); font-size: .78rem; line-height: 1.7; margin: 24px 0 0; }
 .restore-description { color: var(--mapa-gray-600); font-size: .875rem; line-height: 1.7; margin: 0 0 24px; }
+.presentation-switch { display: flex; align-items: center; gap: 12px; }
 @media (max-width: 760px) { .settings-grid { grid-template-columns: 1fr; } .settings-shell { padding: 28px 16px; } .settings-card { padding: 22px; } }
   `]
 })
@@ -209,11 +251,18 @@ export class SettingsPageComponent {
   readonly pendingRestoration = signal<'motors' | 'maps' | null>(null);
   readonly restoringBase = signal<'motors' | 'maps' | null>(null);
   readonly restorationError = signal('');
+  readonly presentationStatus = signal<PresentationModeStatus | null>(null);
+  readonly presentationControl = new FormControl(false, { nonNullable: true });
+  readonly presentationLoading = signal(false);
+  readonly savingPresentation = signal(false);
+  readonly presentationError = signal('');
+  readonly pendingPresentation = signal<boolean | null>(null);
   readonly restorationConfirmation = computed(() => this.pendingRestoration() === 'motors'
     ? 'Todos os motores, desafios vinculados, participações, progressos, tentativas, histórico do dinamômetro, ajustes e seleções serão apagados. O catálogo será recriado com os motores padrão.'
     : 'Todos os mapas de fábrica e ajustes personalizados serão apagados. A base será recriada com os mapas padrão.');
 
   readonly settings = signal<AccountSettings | null>(null);
+  readonly termsOpen = signal(false);
   readonly isLoading = signal(true);
   readonly savingField = signal<'email' | 'password' | null>(null);
   readonly loadError = signal('');
@@ -234,6 +283,58 @@ export class SettingsPageComponent {
 
   constructor() {
     if (this.canManageAccount()) this.loadSettings();
+    if (this.isAdmin()) this.loadPresentationMode();
+  }
+
+  loadPresentationMode(): void {
+    if (!this.isAdmin()) return;
+    this.presentationLoading.set(true);
+    this.presentationError.set('');
+    this.restorationService.getPresentationMode().pipe(
+      takeUntilDestroyed(this.destroyRef),
+      finalize(() => this.presentationLoading.set(false))
+    ).subscribe({
+      next: (status) => this.applyPresentationStatus(status),
+      error: (httpError: HttpErrorResponse) => this.presentationError.set(this.errorMessage(httpError))
+    });
+  }
+
+  requestPresentationMode(toggleEvent: Event): void {
+    toggleEvent.preventDefault();
+    const status = this.presentationStatus();
+    if (!this.isAdmin() || !status || this.savingPresentation()) return;
+    this.presentationControl.setValue(status.enabled, { emitEvent: false });
+    this.presentationError.set('');
+    this.pendingPresentation.set(!status.enabled);
+  }
+
+  cancelPresentationMode(): void {
+    if (!this.savingPresentation()) this.pendingPresentation.set(null);
+  }
+
+  confirmPresentationMode(): void {
+    const enabled = this.pendingPresentation();
+    if (!this.isAdmin() || enabled === null || this.savingPresentation()) return;
+    this.savingPresentation.set(true);
+    this.restorationService.setPresentationMode(enabled).pipe(
+      takeUntilDestroyed(this.destroyRef),
+      finalize(() => {
+        this.pendingPresentation.set(null);
+        this.savingPresentation.set(false);
+      })
+    ).subscribe({
+      next: (status) => {
+        this.applyPresentationStatus(status);
+        this.feedbackService.showSuccess('Modo apresentação',
+          status.enabled ? 'Dados de demonstração carregados.' : 'Dados de demonstração removidos.');
+      },
+      error: (httpError: HttpErrorResponse) => this.presentationError.set(this.errorMessage(httpError))
+    });
+  }
+
+  private applyPresentationStatus(status: PresentationModeStatus): void {
+    this.presentationStatus.set(status);
+    this.presentationControl.setValue(status.enabled, { emitEvent: false });
   }
 
   requestRestoration(base: 'motors' | 'maps'): void {

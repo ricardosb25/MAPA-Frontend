@@ -59,7 +59,7 @@ option {
   color: var(--mapa-ink);
 }
 
-input[type='checkbox'] {
+input[type='checkbox']:not([role='switch']) {
   appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
